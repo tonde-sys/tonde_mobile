@@ -66,11 +66,20 @@ Riverpod est le mécanisme unique de gestion d'état et d'injection. Préférer 
 ## Navigation
 GoRouter. Les guards de navigation améliorent l'expérience mais ne remplacent jamais l'autorisation backend. Les redirections doivent gérer chargement de session, session expirée et deep links sans boucle.
 
+## Configuration d'environnement
+- Configuration non secrète via `--dart-define` au moment de la compilation (voir `lib/core/config/`) :
+  - `TONDE_ENVIRONMENT` : `dev` (défaut), `staging` ou `prod`.
+  - `TONDE_API_BASE_URL` : base URL de l'API, optionnelle. Sans valeur, l'application reste non connectée au backend. Schéma `https` obligatoire ; `http` toléré uniquement vers `localhost`/`127.0.0.1`.
+  - `TONDE_HTTP_LOGGING` : `true`/`false` (défaut `false`), journalisation des requêtes en développement.
+- Aucun secret dans ces définitions ni dans le dépôt.
+- Exemple : `flutter run --dart-define=TONDE_ENVIRONMENT=staging --dart-define=TONDE_API_BASE_URL=https://api.example.com`
+
 ## Réseau
 - Dio centralisé avec timeouts raisonnables, interceptors testables et parsing strict.
 - Base URL par environnement, fournie par configuration non secrète.
 - Un seul endroit pour traduire les erreurs HTTP en erreurs applicatives.
 - Refresh token : mécanisme single-flight pour éviter plusieurs refresh simultanés; sur échec définitif, effacer la session sécurisée et revenir à l'état non authentifié.
+- Manifest Android : permissions `INTERNET` et `ACCESS_NETWORK_STATE` dans le manifest principal ; aucune permission runtime supplémentaire au socle.
 - Ne jamais réessayer automatiquement une requête mutante non idempotente sans clé d'idempotence ou contrat serveur explicite.
 - Pas d'URL d'API ou de payload inventé : les contrats doivent venir du backend/OpenAPI validé.
 
@@ -82,7 +91,7 @@ GoRouter. Les guards de navigation améliorent l'expérience mais ne remplacent 
 - Si WebSocket indisponible, fallback HTTP seulement si un endpoint de snapshot/polling est défini par le backend.
 
 ## Stockage et offline
-- Tokens uniquement dans `flutter_secure_storage`.
+- Refresh token uniquement dans `flutter_secure_storage` ; access token en mémoire uniquement (perdu au redémarrage, récupéré via refresh).
 - Le cache métier doit être séparé des secrets et versionné.
 - Les données en cache sont présentées comme telles avec timestamp/indicateur de fraîcheur.
 - Les commandes de création de ticket ne sont pas mises en file offline par défaut : un ticket n'existe qu'après confirmation backend. Une stratégie offline de prise de ticket nécessite un protocole d'allocation/idempotence explicitement conçu côté backend.

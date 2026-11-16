@@ -1,0 +1,848 @@
+{
+  "@@locale": "fr",
+  "appTitle": "TONDE",
+  "@appTitle": {
+    "description": "Nom commercial de l'application."
+  },
+  "foundationTitle": "Socle technique",
+  "@foundationTitle": {
+    "description": "Titre de la page de fondation affichée tant que l'application n'est pas connectée au backend."
+  },
+  "foundationStatus": "Phase 1 — Fondation",
+  "@foundationStatus": {
+    "description": "Statut indiquant que seule la fondation technique est en place."
+  },
+  "foundationDescription": "Cette application est en cours de construction. Aucune donnée bancaire ou de santé n'est encore connectée.",
+  "@foundationDescription": {
+    "description": "Explication affichée sur la page de fondation pour éviter toute ambiguïté sur l'état du produit."
+  },
+  "notFoundTitle": "Page introuvable",
+  "@notFoundTitle": {
+    "description": "Titre affiché lorsqu'une route inconnue est demandée."
+  },
+  "notFoundDescription": "La page demandée n'existe pas.",
+  "@notFoundDescription": {
+    "description": "Explication affichée lorsqu'une route inconnue est demandée."
+  },
+  "backToHome": "Retour à l'accueil",
+  "@backToHome": {
+    "description": "Libellé du bouton qui ramène l'utilisateur à la page d'accueil."
+  },
+  "organizationsSearchHint": "Rechercher une organisation",
+  "@organizationsSearchHint": {
+    "description": "Texte indicatif du champ de recherche des organisations."
+  },
+  "organizationsEmpty": "Aucune organisation disponible.",
+  "@organizationsEmpty": {
+    "description": "Message affiché quand l'utilisateur n'a aucune organisation."
+  },
+  "organizationsNoResults": "Aucune organisation ne correspond à votre recherche.",
+  "@organizationsNoResults": {
+    "description": "Message affiché quand la recherche ne retourne aucun résultat."
+  },
+  "loadError": "Impossible de charger les données. Vérifiez votre connexion et réessayez.",
+  "@loadError": {
+    "description": "Message générique d'échec de chargement."
+  },
+  "retry": "Réessayer",
+  "@retry": {
+    "description": "Libellé du bouton de nouvelle tentative."
+  },
+  "organizationTypeBank": "Banque",
+  "@organizationTypeBank": {
+    "description": "Libellé de la catégorie banque."
+  },
+  "organizationTypeHealth": "Santé",
+  "@organizationTypeHealth": {
+    "description": "Libellé de la catégorie santé."
+  },
+  "agenciesTitle": "Agences",
+  "@agenciesTitle": {
+    "description": "Titre de la section listant les agences d'une organisation."
+  },
+  "agenciesEmpty": "Aucune agence disponible pour le moment.",
+  "@agenciesEmpty": {
+    "description": "Message affiché quand une organisation n'a aucune agence."
+  },
+  "queueCountSemantics": "{count} personnes dans la file",
+  "@queueCountSemantics": {
+    "description": "Libellé d'accessibilité du compteur de personnes en attente d'une agence."
+  },
+  "queueAhead": "{count} personnes devant vous",
+  "@queueAhead": {
+    "description": "Nombre de personnes déjà en file avant l'utilisateur."
+  },
+  "takeTicket": "Prendre un ticket",
+  "@takeTicket": {
+    "description": "Bouton principal de prise de ticket."
+  },
+  "ticketNumberLabel": "Votre numéro de ticket",
+  "@ticketNumberLabel": {
+    "description": "Libellé au-dessus du numéro de ticket."
+  },
+  "ticketPositionLabel": "Position dans la file : {position}",
+  "@ticketPositionLabel": {
+    "description": "Position de l'utilisateur dans la file d'attente."
+  },
+  "ticketActiveTitle": "Ticket actif",
+  "@ticketActiveTitle": {
+    "description": "Titre affiché quand le ticket est pris."
+  },
+  "ticketSuccessNote": "Présentez-vous à {agency}.",
+  "@ticketSuccessNote": {
+    "description": "Consigne affichée après la prise de ticket."
+  },
+  "ticketConflictTitle": "Vous avez déjà un ticket actif",
+  "@ticketConflictTitle": {
+    "description": "Titre du conflit quand un ticket est déjà actif."
+  },
+  "ticketConflictBody": "Un seul ticket actif à la fois. Votre ticket : {number} — {agency}.",
+  "@ticketConflictBody": {
+    "description": "Explication du conflit avec le ticket actif existant."
+  },
+  "viewMyTicket": "Voir mon ticket",
+  "@viewMyTicket": {
+    "description": "Bouton ouvrant le ticket actif depuis le conflit."
+  },
+  "backToAgencies": "Retour aux agences",
+  "@backToAgencies": {
+    "description": "Bouton retournant à la liste des agences."
+  },
+  "loginTitle": "Connexion",
+  "@loginTitle": {
+    "description": "Titre de la page de connexion."
+  },
+  "loginSubtitle": "Connectez-vous pour gérer vos files d'attente.",
+  "@loginSubtitle": {
+    "description": "Sous-titre de la page de connexion."
+  },
+  "usernameLabel": "Nom d'utilisateur",
+  "@usernameLabel": {
+    "description": "Libellé du champ nom d'utilisateur."
+  },
+  "passwordLabel": "Mot de passe",
+  "@passwordLabel": {
+    "description": "Libellé du champ mot de passe."
+  },
+  "loginButton": "Se connecter",
+  "@loginButton": {
+    "description": "Bouton de soumission du formulaire de connexion."
+  },
+  "noAccount": "Pas encore de compte ?",
+  "@noAccount": {
+    "description": "Invitation à créer un compte."
+  },
+  "registerLink": "Créer un compte",
+  "@registerLink": {
+    "description": "Lien vers la page d'inscription."
+  },
+  "registerTitle": "Inscription",
+  "@registerTitle": {
+    "description": "Titre de la page d'inscription."
+  },
+  "registerSubtitle": "Créez votre compte TONDE.",
+  "@registerSubtitle": {
+    "description": "Sous-titre de la page d'inscription."
+  },
+  "nameLabel": "Nom complet",
+  "@nameLabel": {
+    "description": "Libellé du champ nom complet."
+  },
+  "registerButton": "S'inscrire",
+  "@registerButton": {
+    "description": "Bouton de soumission du formulaire d'inscription."
+  },
+  "haveAccount": "Déjà un compte ?",
+  "@haveAccount": {
+    "description": "Invitation à se connecter."
+  },
+  "loginLink": "Se connecter",
+  "@loginLink": {
+    "description": "Lien vers la page de connexion."
+  },
+  "invalidCredentials": "Nom d'utilisateur ou mot de passe incorrect.",
+  "@invalidCredentials": {
+    "description": "Erreur affichée quand les identifiants sont refusés."
+  },
+  "usernameTaken": "Ce nom d'utilisateur est déjà utilisé.",
+  "@usernameTaken": {
+    "description": "Erreur affichée quand le nom d'utilisateur existe déjà."
+  },
+  "fieldRequired": "Ce champ est obligatoire.",
+  "@fieldRequired": {
+    "description": "Erreur de validation d'un champ requis."
+  },
+  "tagline": "Votre temps a de la valeur",
+  "@tagline": {
+    "description": "Slogan affiché sous le nom de l'application."
+  },
+  "heroTitle": "Gérez votre file d'attente facilement",
+  "@heroTitle": {
+    "description": "Titre de la bannière d'accueil."
+  },
+  "heroBody": "Prenez un ticket, suivez votre position en temps réel et gagnez du temps.",
+  "@heroBody": {
+    "description": "Texte de la bannière d'accueil."
+  },
+  "heroCta": "Prendre un ticket",
+  "@heroCta": {
+    "description": "Bouton principal de la bannière d'accueil."
+  },
+  "peopleAhead": "personnes avant vous",
+  "@peopleAhead": {
+    "description": "Légende sous l'indicateur de position."
+  },
+  "estimatedTime": "Temps estimé : {minutes} min",
+  "@estimatedTime": {
+    "description": "Temps d'attente estimé, {minutes} est un nombre de minutes.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "seePosition": "Voir ma position",
+  "@seePosition": {
+    "description": "Bouton qui mène à la position dans la file."
+  },
+  "myOrganizations": "Mes organisations",
+  "@myOrganizations": {
+    "description": "Titre de la section organisations de l'accueil."
+  },
+  "viewAll": "Voir tout",
+  "@viewAll": {
+    "description": "Lien vers la liste complète des organisations."
+  },
+  "needHelp": "Besoin d'aide ?",
+  "@needHelp": {
+    "description": "Titre de la bannière d'aide."
+  },
+  "helpBody": "Notre équipe est là pour vous assister.",
+  "@helpBody": {
+    "description": "Texte de la bannière d'aide."
+  },
+  "contact": "Contacter",
+  "@contact": {
+    "description": "Bouton de contact de la bannière d'aide."
+  },
+  "noActiveTicket": "Aucun ticket actif",
+  "@noActiveTicket": {
+    "description": "État vide quand aucun ticket n'est actif."
+  },
+  "noActiveTicketBody": "Prenez un ticket dans une agence pour suivre votre position en temps réel.",
+  "@noActiveTicketBody": {
+    "description": "Explication de l'état sans ticket actif."
+  },
+  "comingSoon": "Bientôt disponible",
+  "@comingSoon": {
+    "description": "Message pour les fonctionnalités à venir."
+  },
+  "logout": "Se déconnecter",
+  "@logout": {
+    "description": "Action de déconnexion."
+  },
+  "profileTitle": "Mon profil",
+  "@profileTitle": {
+    "description": "Entrée de menu du profil."
+  },
+  "aboutTitle": "À propos",
+  "@aboutTitle": {
+    "description": "Entrée de menu à propos de l'application."
+  },
+  "tabHome": "Accueil",
+  "@tabHome": {
+    "description": "Onglet accueil de la navigation basse."
+  },
+  "tabTickets": "Tickets",
+  "@tabTickets": {
+    "description": "Onglet tickets de la navigation basse."
+  },
+  "tabNotifications": "Notifications",
+  "@tabNotifications": {
+    "description": "Onglet notifications de la navigation basse."
+  },
+  "tabAssistance": "Assistance",
+  "@tabAssistance": {
+    "description": "Onglet assistance de la navigation basse."
+  },
+  "tabMore": "Plus",
+  "@tabMore": {
+    "description": "Onglet plus de la navigation basse."
+  },
+  "notifWelcome": "Bienvenue sur TONDE",
+  "@notifWelcome": {
+    "description": "Première notification fictive de la démo."
+  },
+  "notifWelcomeBody": "Votre compte de démonstration est prêt.",
+  "@notifWelcomeBody": {
+    "description": "Détail de la notification de bienvenue."
+  },
+  "notifQueue": "Votre file avance",
+  "@notifQueue": {
+    "description": "Deuxième notification fictive de la démo."
+  },
+  "notifQueueBody": "Vous gagnez des places dans la file d'attente.",
+  "@notifQueueBody": {
+    "description": "Détail de la notification de file."
+  },
+  "notifAgency": "Nouvelle agence disponible",
+  "@notifAgency": {
+    "description": "Troisième notification fictive de la démo."
+  },
+  "notifAgencyBody": "De nouvelles agences viennent d'être ajoutées.",
+  "@notifAgencyBody": {
+    "description": "Détail de la notification d'agence."
+  },
+  "profileEmail": "Adresse e-mail",
+  "@profileEmail": {
+    "description": "Libellé du champ e-mail sur la page profil."
+  },
+  "profilePhone": "Téléphone",
+  "@profilePhone": {
+    "description": "Libellé du champ téléphone sur la page profil."
+  },
+  "profileRole": "Rôle",
+  "@profileRole": {
+    "description": "Libellé du champ rôle sur la page profil."
+  },
+  "profileOrganization": "Organisation",
+  "@profileOrganization": {
+    "description": "Libellé du champ organisation sur la page profil."
+  },
+  "profileMemberSince": "Membre depuis",
+  "@profileMemberSince": {
+    "description": "Libellé de la date d'inscription sur la page profil."
+  },
+  "profileAccountInfo": "Informations du compte",
+  "@profileAccountInfo": {
+    "description": "Titre de la section informations du compte."
+  },
+  "profileNotAvailable": "Non renseigné",
+  "@profileNotAvailable": {
+    "description": "Valeur affichée quand une information est absente."
+  },
+  "editProfile": "Modifier le profil",
+  "@editProfile": {
+    "description": "Bouton ouvrant l'édition du profil."
+  },
+  "editProfileTitle": "Modifier mes informations",
+  "@editProfileTitle": {
+    "description": "Titre de la page d'édition du profil."
+  },
+  "save": "Enregistrer",
+  "@save": {
+    "description": "Bouton de sauvegarde du formulaire."
+  },
+  "cancel": "Annuler",
+  "@cancel": {
+    "description": "Bouton d'annulation du formulaire."
+  },
+  "profileUpdated": "Profil mis à jour",
+  "@profileUpdated": {
+    "description": "Confirmation affichée après la sauvegarde du profil."
+  },
+  "profileUpdateFailed": "Impossible de mettre à jour le profil.",
+  "@profileUpdateFailed": {
+    "description": "Erreur affichée quand la sauvegarde du profil échoue."
+  },
+  "invalidEmail": "Adresse e-mail invalide.",
+  "@invalidEmail": {
+    "description": "Erreur de validation du champ e-mail."
+  },
+  "invalidPhone": "Numéro de téléphone invalide.",
+  "@invalidPhone": {
+    "description": "Erreur de validation du champ téléphone."
+  },
+  "trackingTitle": "Suivi en direct",
+  "@trackingTitle": {
+    "description": "Titre de l'écran de suivi temps réel de la file."
+  },
+  "trackingStatusWaiting": "En attente",
+  "@trackingStatusWaiting": {
+    "description": "Badge de statut : le ticket attend son tour."
+  },
+  "trackingStatusCalled": "Appelé",
+  "@trackingStatusCalled": {
+    "description": "Badge de statut : le numéro vient d'être appelé."
+  },
+  "trackingStatusInService": "En cours",
+  "@trackingStatusInService": {
+    "description": "Badge de statut : prise en charge en cours."
+  },
+  "trackingStatusAbsent": "Absent",
+  "@trackingStatusAbsent": {
+    "description": "Badge de statut : le client ne s'est pas présenté."
+  },
+  "trackingCalledNow": "Au guichet maintenant",
+  "@trackingCalledNow": {
+    "description": "Libellé du numéro actuellement appelé au guichet."
+  },
+  "trackingYourTicket": "Votre ticket",
+  "@trackingYourTicket": {
+    "description": "Libellé du bloc affichant le numéro de ticket."
+  },
+  "trackingPosition": "Votre position",
+  "@trackingPosition": {
+    "description": "Libellé du rang du client dans la file."
+  },
+  "trackingYouAre": "Vous êtes n°{position} dans la file",
+  "@trackingYouAre": {
+    "description": "Phrase indiquant le rang du client dans la file.",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "trackingQrHint": "Présentez ce code au guichet",
+  "@trackingQrHint": {
+    "description": "Consigne d'usage du QR code du ticket."
+  },
+  "trackingLive": "Direct",
+  "@trackingLive": {
+    "description": "Indique que les mises à jour arrivent par WebSocket."
+  },
+  "trackingPolling": "Mode secours",
+  "@trackingPolling": {
+    "description": "Indique que les mises à jour arrivent par rafraîchissement périodique."
+  },
+  "trackingUpdatedAt": "Mis à jour à {time}",
+  "@trackingUpdatedAt": {
+    "description": "Heure de la dernière mise à jour reçue.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "trackingCalledBanner": "C'est votre tour",
+  "@trackingCalledBanner": {
+    "description": "Bandeau affiché quand le numéro du client est appelé."
+  },
+  "trackingCalledBannerBody": "Présentez votre QR code au guichet.",
+  "@trackingCalledBannerBody": {
+    "description": "Consigne affichée avec le bandeau d'appel."
+  },
+  "trackingWaitTime": "Attente estimée",
+  "@trackingWaitTime": {
+    "description": "Libellé du temps d'attente estimé."
+  },
+  "trackingMinutesValue": "{minutes} min",
+  "@trackingMinutesValue": {
+    "description": "Valeur du temps d'attente, en minutes.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "trackingInQueue": "dans la file",
+  "@trackingInQueue": {
+    "description": "Suffixe de la carte de position : « 4 / dans la file »."
+  },
+  "offlineMode": "Mode hors ligne",
+  "@offlineMode": {
+    "description": "Préfixe du bandeau affiché quand l'appareil n'a plus de réseau."
+  },
+  "offlineLocalData": "Affichage des données locales",
+  "@offlineLocalData": {
+    "description": "Suffixe du bandeau hors ligne : les données affichées viennent du cache local."
+  },
+  "offlinePendingSync": "En attente de synchronisation",
+  "@offlinePendingSync": {
+    "description": "Libellé de l'attente de synchronisation."
+  },
+  "offlinePendingActions": "{count} action(s) en attente",
+  "@offlinePendingActions": {
+    "description": "Nombre d'actions enregistrées localement et pas encore envoyées au serveur.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketPendingSync": "Non synchronisé",
+  "@ticketPendingSync": {
+    "description": "Pastille d'un ticket pris hors ligne, pas encore confirmé par le serveur."
+  },
+  "trackingPendingTitle": "Suivi en attente",
+  "@trackingPendingTitle": {
+    "description": "Titre affiché à la place du suivi quand le ticket attend sa synchronisation."
+  },
+  "trackingPendingBody": "Votre ticket est enregistré sur ce téléphone. Le suivi en direct démarrera dès le retour du réseau.",
+  "@trackingPendingBody": {
+    "description": "Explication du suivi différé d'un ticket pris hors ligne."
+  },
+  "ticketPendingTitle": "Ticket enregistré hors ligne",
+  "@ticketPendingTitle": {
+    "description": "Titre de l'écran de succès quand le ticket a été pris hors ligne."
+  },
+  "ticketPendingNote": "Il sera confirmé et synchronisé dès le retour du réseau.",
+  "@ticketPendingNote": {
+    "description": "Explication de la confirmation différée du ticket."
+  },
+  "moreSettings": "Préférences",
+  "@moreSettings": {
+    "description": "Titre de la section de préférences de l'onglet Plus."
+  },
+  "moreLanguage": "Langue",
+  "@moreLanguage": {
+    "description": "Entrée de menu ouvrant le choix de la langue."
+  },
+  "moreAppearance": "Apparence",
+  "@moreAppearance": {
+    "description": "Entrée de menu ouvrant le choix du thème clair ou sombre."
+  },
+  "languageSystem": "Système",
+  "@languageSystem": {
+    "description": "Option de langue : suivre la langue du téléphone."
+  },
+  "themeSystem": "Système",
+  "@themeSystem": {
+    "description": "Option de thème : suivre le réglage du téléphone."
+  },
+  "themeLight": "Clair",
+  "@themeLight": {
+    "description": "Option de thème : affichage clair."
+  },
+  "themeDark": "Sombre",
+  "@themeDark": {
+    "description": "Option de thème : affichage sombre."
+  },
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "description": "Numéro de version affiché dans la fenêtre À propos.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutBody": "Application citoyenne de gestion des files d'attente pour les banques et les établissements de santé au Burundi.",
+  "@aboutBody": {
+    "description": "Description de l'application dans la fenêtre À propos."
+  },
+  "ticketDetailsTitle": "Détails du ticket",
+  "@ticketDetailsTitle": {
+    "description": "Titre de l'écran de détail du ticket."
+  },
+  "passYourNumber": "Votre numéro de ticket",
+  "@passYourNumber": {
+    "description": "Libellé au-dessus du numéro sur la carte pass."
+  },
+  "passDesk": "Guichet",
+  "@passDesk": {
+    "description": "Libellé du guichet assigné sur la carte pass."
+  },
+  "passDeskPending": "En attente",
+  "@passDeskPending": {
+    "description": "Guichet pas encore attribué."
+  },
+  "passPendingQr": "Le QR code apparaîtra dès la synchronisation du ticket.",
+  "@passPendingQr": {
+    "description": "Explication quand le ticket n'a pas encore de QR code."
+  },
+  "passOpenDetails": "Voir le détail du ticket",
+  "@passOpenDetails": {
+    "description": "Invitation à ouvrir l'écran de détail depuis la carte."
+  },
+  "ticketSemantics": "Ticket {number}, position {position} dans la file",
+  "@ticketSemantics": {
+    "description": "Étiquette d'accessibilité de la carte ticket.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "detailsQueue": "File d'attente",
+  "@detailsQueue": {
+    "description": "Titre de la section file d'attente."
+  },
+  "detailsInstitution": "Institution",
+  "@detailsInstitution": {
+    "description": "Titre de la section institution."
+  },
+  "detailsName": "Nom",
+  "detailsAgency": "Agence",
+  "@detailsAgency": {
+    "description": "Libellé de l'agence."
+  },
+  "detailsAddress": "Adresse",
+  "@detailsAddress": {
+    "description": "Libellé de l'adresse de l'agence."
+  },
+  "detailsTicket": "Ticket",
+  "@detailsTicket": {
+    "description": "Titre de la section ticket."
+  },
+  "detailsPeopleAhead": "Personnes devant vous",
+  "@detailsPeopleAhead": {
+    "description": "Nombre de personnes devant le client."
+  },
+  "detailsCalledNumber": "Numéro appelé",
+  "@detailsCalledNumber": {
+    "description": "Numéro actuellement appelé au guichet."
+  },
+  "detailsCounter": "Guichet",
+  "@detailsCounter": {
+    "description": "Guichet attribué au ticket."
+  },
+  "detailsIssuedAt": "Émis le",
+  "@detailsIssuedAt": {
+    "description": "Date et heure d'émission du ticket."
+  },
+  "detailsNumber": "Numéro",
+  "@detailsNumber": {
+    "description": "Numéro du ticket."
+  },
+  "detailsStatus": "Statut",
+  "@detailsStatus": {
+    "description": "Statut courant du ticket."
+  },
+  "detailsRefresh": "Actualiser le suivi",
+  "@detailsRefresh": {
+    "description": "Bouton de rafraîchissement manuel."
+  },
+  "detailsRefreshing": "Actualisation…",
+  "@detailsRefreshing": {
+    "description": "État du bouton pendant le rafraîchissement."
+  },
+  "detailsNotifications": "Notifications du ticket",
+  "@detailsNotifications": {
+    "description": "Bouton ouvrant les notifications du ticket."
+  },
+  "detailsNotificationsEmpty": "Aucune notification pour ce ticket.",
+  "@detailsNotificationsEmpty": {
+    "description": "Liste vide de notifications."
+  },
+  "detailsCancel": "Annuler le ticket",
+  "@detailsCancel": {
+    "description": "Action d'annulation du ticket."
+  },
+  "detailsCancelTitle": "Annuler le ticket {number} ?",
+  "@detailsCancelTitle": {
+    "description": "Confirmation d'annulation.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsCancelBody": "Votre place sera libérée immédiatement. Cette action est définitive : il faudra reprendre un ticket à l'accueil.",
+  "@detailsCancelBody": {
+    "description": "Conséquence de l'annulation."
+  },
+  "detailsCancelKeep": "Conserver mon ticket",
+  "@detailsCancelKeep": {
+    "description": "Bouton d'abandon de l'annulation."
+  },
+  "detailsCancelConfirm": "Oui, annuler",
+  "@detailsCancelConfirm": {
+    "description": "Confirmation définitive de l'annulation."
+  },
+  "detailsCancelled": "Ticket annulé",
+  "@detailsCancelled": {
+    "description": "Message affiché après annulation."
+  },
+  "detailsQrTitle": "Pass de validation",
+  "@detailsQrTitle": {
+    "description": "Titre du bloc QR code."
+  },
+  "servicesTitle": "Services",
+  "@servicesTitle": {
+    "description": "Titre de l'écran de choix du service."
+  },
+  "servicesChooseHint": "Choisissez le service qui correspond à votre demande.",
+  "@servicesChooseHint": {
+    "description": "Invitation à choisir un service."
+  },
+  "servicesEmpty": "Aucun service disponible pour cette agence.",
+  "@servicesEmpty": {
+    "description": "Liste de services vide."
+  },
+  "serviceUnavailable": "Ce service n'est plus proposé par cette agence. Choisissez-en un autre.",
+  "@serviceUnavailable": {
+    "description": "Service introuvable (lien obsolète)."
+  },
+  "changeService": "Changer de service",
+  "@changeService": {
+    "description": "Retour au choix du service."
+  },
+  "detailsService": "Service",
+  "@detailsService": {
+    "description": "Service demandé, affiché sur la feuille du ticket."
+  },
+  "ticketCancelQuestion": "Voulez-vous annuler le ticket ?",
+  "@ticketCancelQuestion": {
+    "description": "Confirmation d'annulation depuis l'accueil."
+  },
+  "ticketCancelBody": "Le ticket {number} sera retiré de la file et votre place sera perdue.",
+  "@ticketCancelBody": {
+    "description": "Conséquence de l'annulation depuis l'accueil.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "backToDashboard": "Retour au tableau de bord",
+  "@backToDashboard": {
+    "description": "Retour à l'accueil depuis la confirmation de ticket."
+  },
+  "ticketServed": "Terminé",
+  "@ticketServed": {
+    "description": "Pastille affichée quand le client est déjà passé au guichet."
+  },
+  "onboardingSkip": "Passer",
+  "@onboardingSkip": {
+    "description": "Bouton d'abandon de la présentation initiale."
+  },
+  "onboardingNext": "Suivant",
+  "@onboardingNext": {
+    "description": "Bouton d'avancement dans la présentation."
+  },
+  "onboardingBack": "Précédent",
+  "@onboardingBack": {
+    "description": "Bouton de retour dans la présentation."
+  },
+  "onboardingStart": "Commencer",
+  "@onboardingStart": {
+    "description": "Bouton final de la présentation."
+  },
+  "onboardingTitle1": "Fini les files d'attente interminables.",
+  "@onboardingTitle1": {
+    "description": "Titre du premier écran de présentation."
+  },
+  "onboardingBody1": "Prenez votre ticket à distance et suivez l'évolution de la file en temps réel depuis votre téléphone.",
+  "@onboardingBody1": {
+    "description": "Texte du premier écran de présentation."
+  },
+  "onboardingTitle2": "Arrivez juste à temps.",
+  "@onboardingTitle2": {
+    "description": "Titre du deuxième écran de présentation."
+  },
+  "onboardingBody2": "Visualisez le nombre de personnes avant vous et recevez une alerte dès que votre tour approche.",
+  "@onboardingBody2": {
+    "description": "Texte du deuxième écran de présentation."
+  },
+  "onboardingTitle3": "Déjà un ticket papier ? Scannez-le.",
+  "@onboardingTitle3": {
+    "description": "Titre du troisième écran de présentation."
+  },
+  "onboardingBody3": "Synchronisez votre ticket imprimé sur votre mobile pour patienter où vous voulez sans perdre votre place.",
+  "@onboardingBody3": {
+    "description": "Texte du troisième écran de présentation."
+  },
+  "ticketServedNote": "Votre passage est terminé. Vous pouvez reprendre un ticket à tout moment.",
+  "notifTicketConfirmedTitle": "Votre ticket {number} est confirmé",
+  "notifTicketConfirmedBody": "Vous êtes inscrit dans la file {service} de l’agence {agency}.",
+  "notifProgressTitle": "Encore {count} personnes avant votre tour",
+  "notifProgressBody": "Temps d’attente estimé : {minutes} minutes. Préparez vos documents.",
+  "notifApproachingTitle": "Votre tour approche !",
+  "notifApproachingBody": "{count, plural, =1{Il ne reste qu’une personne avant vous.} other{Il ne reste que {count} personnes avant vous.}} Rapprochez-vous de l’agence.",
+  "notifCalledTitle": "C’est votre tour !",
+  "notifCalledBody": "Le ticket {number} est appelé au {counter}. Présentez-vous immédiatement.",
+  "notifReminderTitle": "Votre ticket est toujours appelé",
+  "notifReminderBody": "Veuillez rejoindre le {counter} sans attendre.",
+  "notifAbsentTitle": "Vous avez été marqué absent",
+  "notifAbsentBody": "Le ticket {number} a été marqué absent. Consultez l’application pour vérifier les possibilités de reprise.",
+  "notifResumedTitle": "Votre ticket a été réactivé",
+  "notifResumedBody": "Le ticket {number} est de nouveau dans la file d’attente.",
+  "notifServedTitle": "Votre passage est terminé",
+  "notifServedBody": "Merci d’avoir utilisé TONDE !",
+  "notifCounterFallback": "guichet",
+  "notifCenterEmpty": "Aucune notification pour le moment",
+  "notifCenterEmptyBody": "Vous serez prévenu à chaque étape de votre file d’attente.",
+  "moreNotifications": "Notifications",
+  "moreNotificationsSubtitle": "Alertes de file d’attente et appels au guichet",
+  "@notifTicketConfirmedTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifTicketConfirmedBody": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      },
+      "agency": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifProgressTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@notifProgressBody": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@notifApproachingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@notifCalledBody": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "counter": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifReminderBody": {
+    "placeholders": {
+      "counter": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAbsentBody": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifResumedBody": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "notifDelete": "Supprimer la notification",
+  "notifUnreadCount": "{count, plural, =0{Aucune non lue} =1{1 non lue} other{{count} non lues}}",
+  "@notifUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profilePhotoTitle": "Photo de profil",
+  "profilePhotoHint": "Touchez la photo pour la changer",
+  "profilePhotoCamera": "Prendre une photo",
+  "profilePhotoGallery": "Choisir dans la galerie",
+  "profilePhotoRemove": "Supprimer la photo",
+  "profilePhotoUpdated": "Photo de profil mise à jour",
+  "profilePhotoRemoved": "Photo de profil supprimée",
+  "profilePhotoFailed": "Impossible de mettre à jour la photo de profil"
+}

@@ -1,0 +1,26 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tonde/core/config/app_config_provider.dart';
+import 'package:tonde/core/logging/app_log_interceptor.dart';
+
+/// Client HTTP unique, configuré depuis [AppConfig].
+final dioProvider = Provider<Dio>((ref) {
+  final config = ref.watch(appConfigProvider);
+
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: config.apiBaseUrl?.toString() ?? '',
+      connectTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 20),
+      headers: const {'Accept': 'application/json'},
+    ),
+  );
+
+  if (config.enableHttpLogging) {
+    dio.interceptors.add(AppLogInterceptor());
+  }
+
+  ref.onDispose(dio.close);
+  return dio;
+});

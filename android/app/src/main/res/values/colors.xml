@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fond de l'écran de démarrage natif : identique au fond de l'écran de
+         marque Flutter, pour que la transition ne se voie pas. -->
+    <color name="tonde_splash_background">#FF1E293B</color>
+</resources>
