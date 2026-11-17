@@ -24,8 +24,11 @@ final profilePhotoProvider =
 class ProfilePhotoNotifier extends AsyncNotifier<String?> {
   /// La photo appartient au compte : deux personnes qui se succèdent sur le
   /// même téléphone ne doivent pas hériter de l'avatar de la précédente.
-  static String keyFor(String username) =>
-      'profile.photo.${username.toLowerCase()}';
+  ///
+  /// La clé est l'identifiant serveur, et non l'e-mail : celui-ci peut changer
+  /// (l'utilisateur en demande la modification), et la photo disparaîtrait avec
+  /// lui.
+  static String keyFor(String userId) => 'profile.photo.$userId';
 
   @override
   Future<String?> build() async {
@@ -35,7 +38,7 @@ class ProfilePhotoNotifier extends AsyncNotifier<String?> {
     }
     final cached = await ref
         .watch(localCacheProvider)
-        .read(keyFor(user.username));
+        .read(keyFor(user.id));
     if (cached is! String) {
       return null;
     }
@@ -65,7 +68,7 @@ class ProfilePhotoNotifier extends AsyncNotifier<String?> {
       await picker.delete(path);
       return false;
     }
-    await ref.read(localCacheProvider).write(keyFor(user.username), path);
+    await ref.read(localCacheProvider).write(keyFor(user.id), path);
     state = AsyncData(path);
     if (previous != null && previous != path) {
       // L'ancienne image n'est plus référencée : la garder ne ferait
@@ -82,7 +85,7 @@ class ProfilePhotoNotifier extends AsyncNotifier<String?> {
       return;
     }
     final previous = state.value;
-    await ref.read(localCacheProvider).write(keyFor(user.username), null);
+    await ref.read(localCacheProvider).write(keyFor(user.id), null);
     if (!ref.mounted) {
       return;
     }

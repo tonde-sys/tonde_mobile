@@ -12,7 +12,11 @@ import 'package:tonde/features/tracking/data/queue_tracking_service_provider.dar
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 void main() {
   testWidgets('l\'en-tête de l\'accueil ne défile pas avec le contenu', (

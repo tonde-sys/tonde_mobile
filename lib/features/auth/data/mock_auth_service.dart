@@ -3,15 +3,20 @@ import 'package:tonde/features/auth/data/user_codec.dart';
 import 'package:tonde/features/auth/domain/auth_service.dart';
 import 'package:tonde/features/auth/domain/user.dart';
 
-/// Service fictif approuvé par Vizane (2026-11-09) pour la démo : les comptes
-/// vivent en mémoire. À remplacer par le client backend réel dès que le
-/// contrat d'authentification sera disponible (Phase 3).
+/// Service fictif de démonstration : les comptes vivent en mémoire.
 ///
-/// Depuis le lot 15, la **session** est restaurée depuis le cache local quand
-/// un [LocalCache] est fourni : sans cela, une application relancée sans réseau
-/// retomberait sur l'écran de connexion et le ticket stocké deviendrait
-/// inaccessible, ce qui vide de sens le mode hors ligne. Le service backend
-/// réel suivra son propre mécanisme (refresh token dans le stockage sécurisé).
+/// Actif **uniquement** quand aucune base URL n'est fournie à la compilation
+/// (`TONDE_API_BASE_URL` vide) : dès qu'elle est renseignée, c'est
+/// `ApiAuthService` qui prend le relais, sans qu'aucun écran ne change.
+///
+/// La session est restaurée depuis le cache local quand un [LocalCache] est
+/// fourni : sans cela, une application relancée sans réseau retomberait sur
+/// l'écran de connexion et le ticket stocké deviendrait inaccessible.
+///
+/// Depuis l'alignement sur le backend, l'identifiant de connexion est l'e-mail —
+/// comme côté serveur. Le compte de démonstration utilise donc l'adresse
+/// réelle de Vizane plutôt qu'un « nom d'utilisateur » qui n'existe nulle part
+/// en base.
 final class MockAuthService implements AuthService {
   MockAuthService({
     this.latency = const Duration(milliseconds: 500),
@@ -20,22 +25,26 @@ final class MockAuthService implements AuthService {
 
   static const String sessionKey = 'session.user';
 
+  /// Compte de démonstration : e-mail → mot de passe.
+  static const String demoEmail = 'kananijospin63@gmail.com';
+  static const String demoPassword = '12345';
+
   /// Délai artificiel pour rendre l'authentification perceptible en démo.
   final Duration latency;
 
   final LocalCache? _cache;
 
   /// Comptes de démonstration fournis par Vizane.
-  final Map<String, String> _passwords = {'jospin kanani': '12345'};
+  final Map<String, String> _passwords = {demoEmail: demoPassword};
 
-  /// Profils de démonstration : username → User complet.
+  /// Profils de démonstration : e-mail (normalisé) → User complet.
   final Map<String, User> _profiles = {
-    'jospin kanani': const User(
+    demoEmail: const User(
+      id: 'demo-jospin',
       name: 'Jospin Kanani',
-      username: 'jospin kanani',
-      email: 'kananijospin63@gmail.com',
+      email: demoEmail,
       phone: '+257 79490806',
-      role: 'Agent',
+      role: 'Client',
       organization: 'TONDE - Bujumbura',
       createdAt: '2026-01-15',
     ),
@@ -45,7 +54,7 @@ final class MockAuthService implements AuthService {
 
   Future<void> _wait() => Future<void>.delayed(latency);
 
-  String _normalize(String username) => username.trim().toLowerCase();
+  String _normalize(String email) => email.trim().toLowerCase();
 
   @override
   Future<User?> currentUser() async {
@@ -65,11 +74,11 @@ final class MockAuthService implements AuthService {
 
   @override
   Future<User> login({
-    required String username,
+    required String email,
     required String password,
   }) async {
     await _wait();
-    final key = _normalize(username);
+    final key = _normalize(email);
     if (_passwords[key] != password) {
       throw const InvalidCredentialsException();
     }
@@ -81,20 +90,20 @@ final class MockAuthService implements AuthService {
   @override
   Future<User> register({
     required String name,
-    required String username,
+    required String email,
     required String password,
   }) async {
     await _wait();
-    final key = _normalize(username);
+    final key = _normalize(email);
     if (_passwords.containsKey(key)) {
-      throw const UsernameAlreadyTakenException();
+      throw const EmailAlreadyTakenException();
     }
     _passwords[key] = password;
     final now = DateTime.now().toIso8601String().split('T').first;
     final user = User(
+      id: 'demo-${_profiles.length + 1}',
       name: name.trim(),
-      username: key,
-      email: '$key@tonde.app',
+      email: key,
       createdAt: now,
     );
     _profiles[key] = user;
@@ -122,7 +131,10 @@ final class MockAuthService implements AuthService {
       role: role?.trim(),
       organization: organization?.trim(),
     );
-    _profiles[updated.username] = updated;
+    final key = updated.email;
+    if (key != null) {
+      _profiles[key] = updated;
+    }
     await _setCurrent(updated);
     return updated;
   }

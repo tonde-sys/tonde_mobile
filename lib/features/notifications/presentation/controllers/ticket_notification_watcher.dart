@@ -135,6 +135,11 @@ final class TicketNotificationWatcher {
         // Le client est au guichet : plus rien à relancer.
         _reminder?.cancel();
 
+      case QueueStatus.done:
+        // Service rendu (ou ticket annulé) : la file ne l'attend plus. Laisser
+        // tourner un rappel « présentez-vous » harcèlerait un client déjà parti.
+        _reminder?.cancel();
+
       case QueueStatus.waiting:
         if (previous == QueueStatus.absent) {
           _emit(

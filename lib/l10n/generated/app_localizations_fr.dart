@@ -109,7 +109,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginSubtitle => 'Connectez-vous pour gérer vos files d\'attente.';
 
   @override
-  String get usernameLabel => 'Nom d\'utilisateur';
+  String get emailLabel => 'Adresse e-mail';
 
   @override
   String get passwordLabel => 'Mot de passe';
@@ -142,11 +142,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginLink => 'Se connecter';
 
   @override
-  String get invalidCredentials =>
-      'Nom d\'utilisateur ou mot de passe incorrect.';
+  String get invalidCredentials => 'Adresse e-mail ou mot de passe incorrect.';
 
   @override
-  String get usernameTaken => 'Ce nom d\'utilisateur est déjà utilisé.';
+  String get emailTaken => 'Cette adresse e-mail est déjà utilisée.';
 
   @override
   String get fieldRequired => 'Ce champ est obligatoire.';
@@ -705,4 +704,31 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get profilePhotoFailed =>
       'Impossible de mettre à jour la photo de profil';
+
+  @override
+  String get emailInvalid => 'Saisissez une adresse e-mail valide.';
+
+  @override
+  String get networkError => 'Serveur injoignable. Vérifiez votre connexion.';
+
+  @override
+  String get organizationTypeOther => 'Autre';
+
+  @override
+  String get trackingStatusDone => 'Terminé';
+
+  @override
+  String get accountDisabled =>
+      'Ce compte a été désactivé. Contactez votre organisation.';
+
+  @override
+  String get accountLocked =>
+      'Trop de tentatives. Réessayez dans quelques minutes.';
+
+  @override
+  String get authErrorGeneric => 'La connexion a échoué. Réessayez.';
+
+  @override
+  String get passwordTooShort =>
+      'Le mot de passe doit contenir au moins 8 caractères.';
 }

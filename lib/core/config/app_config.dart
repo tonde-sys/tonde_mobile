@@ -87,4 +87,21 @@ class AppConfig {
   final bool enableHttpLogging;
 
   bool get isApiConfigured => apiBaseUrl != null;
+
+  /// Racine versionnée de l'API (`https://…/api/v1`).
+  ///
+  /// Centralisée ici parce que trois consommateurs doivent parler au même
+  /// endroit : le client HTTP, le WebSocket et les tests. Laisser chacun
+  /// concaténer `/api/v1` produisait deux variantes selon qu'une barre oblique
+  /// finale traînait ou non — et une seule des deux atteignait le serveur.
+  Uri? get apiRoot {
+    final base = apiBaseUrl;
+    if (base == null) {
+      return null;
+    }
+    final prefix = base.path.endsWith('/')
+        ? base.path.substring(0, base.path.length - 1)
+        : base.path;
+    return base.replace(path: '$prefix/api/v1');
+  }
 }

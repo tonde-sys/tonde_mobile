@@ -5,7 +5,7 @@ import 'package:tonde/features/auth/presentation/controllers/auth_controller.dar
 import 'package:tonde/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
-/// Widget d'en-tête du profil : grand avatar, nom et @username.
+/// Widget d'en-tête du profil : grand avatar, nom et identifiant de connexion.
 class ProfileHeader extends ConsumerWidget {
   const ProfileHeader({super.key, this.user});
 
@@ -29,15 +29,11 @@ class ProfileHeader extends ConsumerWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        if (resolved != null) ...[
-          const SizedBox(height: 2),
-          Text(
-            '@${resolved.username}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
+        // Pas de ligne d'identifiant ici : le backend n'a pas de nom
+        // d'utilisateur, et l'e-mail est déjà listé dans la carte
+        // d'informations juste en dessous. L'afficher deux fois sur le même
+        // écran n'ajoute rien et donne l'impression d'un doublon de données.
+
         const SizedBox(height: 6),
         // Sans cette ligne, la pastille appareil photo se lit comme un
         // ornement : le geste attendu doit être écrit.
@@ -67,11 +63,6 @@ class ProfileInfoCard extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          ProfileInfoTile(
-            icon: Icons.alternate_email,
-            label: l10n.usernameLabel,
-            value: '@${user.username}',
-          ),
           if (user.email != null)
             ProfileInfoTile(
               icon: Icons.email_outlined,

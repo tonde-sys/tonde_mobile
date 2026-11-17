@@ -9,29 +9,46 @@ void main() {
     expect(await service.currentUser(), isNull);
 
     final user = await service.login(
-      username: 'jospin kanani',
-      password: '12345',
+      email: MockAuthService.demoEmail,
+      password: MockAuthService.demoPassword,
     );
 
-    expect(user.username, 'jospin kanani');
+    // L'identité affichée est l'e-mail : le backend n'a pas de nom
+    // d'utilisateur, et le mock suit le même contrat pour que les écrans ne
+    // dépendent pas du mode d'exécution.
+    expect(user.email, MockAuthService.demoEmail);
     expect(user.name, 'Jospin Kanani');
     expect(await service.currentUser(), same(user));
+  });
+
+  test('ignore la casse et les espaces de l\'adresse', () async {
+    final service = MockAuthService(latency: Duration.zero);
+
+    final user = await service.login(
+      email: '  ${MockAuthService.demoEmail.toUpperCase()}  ',
+      password: MockAuthService.demoPassword,
+    );
+
+    expect(user.email, MockAuthService.demoEmail);
   });
 
   test('refuse un mot de passe incorrect', () async {
     final service = MockAuthService(latency: Duration.zero);
 
     expect(
-      () => service.login(username: 'jospin kanani', password: 'mauvais'),
+      () => service.login(
+        email: MockAuthService.demoEmail,
+        password: 'mauvais',
+      ),
       throwsA(isA<InvalidCredentialsException>()),
     );
   });
 
-  test('refuse un nom d\'utilisateur inconnu', () async {
+  test('refuse une adresse inconnue', () async {
     final service = MockAuthService(latency: Duration.zero);
 
     expect(
-      () => service.login(username: 'inconnu', password: '12345'),
+      () => service.login(email: 'inconnu@example.com', password: '12345'),
       throwsA(isA<InvalidCredentialsException>()),
     );
   });
@@ -41,32 +58,35 @@ void main() {
 
     final user = await service.register(
       name: 'Jean Test',
-      username: 'jean.test',
-      password: 'secret',
+      email: 'jean.test@example.com',
+      password: 'motdepasse',
     );
 
     expect(user.name, 'Jean Test');
-    expect(user.username, 'jean.test');
+    expect(user.email, 'jean.test@example.com');
     expect(await service.currentUser(), same(user));
   });
 
-  test('refuse un nom d\'utilisateur déjà pris', () async {
+  test('refuse une adresse déjà prise', () async {
     final service = MockAuthService(latency: Duration.zero);
 
     expect(
       () => service.register(
         name: 'Autre',
-        username: 'jospin kanani',
-        password: 'secret',
+        email: MockAuthService.demoEmail,
+        password: 'motdepasse',
       ),
-      throwsA(isA<UsernameAlreadyTakenException>()),
+      throwsA(isA<EmailAlreadyTakenException>()),
     );
   });
 
   test('la déconnexion efface la session', () async {
     final service = MockAuthService(latency: Duration.zero);
 
-    await service.login(username: 'jospin kanani', password: '12345');
+    await service.login(
+      email: MockAuthService.demoEmail,
+      password: MockAuthService.demoPassword,
+    );
     await service.logout();
 
     expect(await service.currentUser(), isNull);

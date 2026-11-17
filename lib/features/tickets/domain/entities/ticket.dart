@@ -8,6 +8,8 @@ final class Ticket {
     required this.organizationName,
     required this.agencyId,
     required this.agencyName,
+    this.id,
+    this.qrToken,
     this.serviceId,
     this.serviceName,
     this.pendingSync = false,
@@ -15,8 +17,24 @@ final class Ticket {
     this.issuedAt,
   });
 
+  /// Identifiant serveur du ticket.
+  ///
+  /// Nul tant que le ticket n'a pas été confirmé (prise hors ligne). C'est lui
+  /// qui ouvre le suivi temps réel : `GET /tickets/{id}` et le WebSocket
+  /// `/tickets/ws/queue/{id}` prennent un identifiant, pas un numéro — le
+  /// numéro n'est unique que dans un service, et deux agences peuvent émettre
+  /// « A-001 » le même jour.
+  final String? id;
+
   final String number;
   final int position;
+
+  /// Jeton du QR code, signé par le serveur (`qr_token`).
+  ///
+  /// Vient du ticket et non du flux WebSocket : les messages de file ne le
+  /// transportent pas, et un écran de suivi sans QR obligerait le client à
+  /// rouvrir son ticket pour le présenter au guichet.
+  final String? qrToken;
 
   /// Date et heure d'émission du ticket.
   ///
@@ -55,8 +73,9 @@ final class Ticket {
   /// en attente.
   final bool served;
 
-  Ticket copyWith({bool? served}) {
+  Ticket copyWith({bool? served, String? id, String? qrToken}) {
     return Ticket(
+      id: id ?? this.id,
       number: number,
       position: position,
       estimatedMinutes: estimatedMinutes,
@@ -69,6 +88,7 @@ final class Ticket {
       pendingSync: pendingSync,
       served: served ?? this.served,
       issuedAt: issuedAt,
+      qrToken: qrToken ?? this.qrToken,
     );
   }
 
@@ -81,6 +101,7 @@ final class Ticket {
       return true;
     }
     return other is Ticket &&
+        other.id == id &&
         other.number == number &&
         other.position == position &&
         other.estimatedMinutes == estimatedMinutes &&
@@ -92,11 +113,13 @@ final class Ticket {
         other.serviceName == serviceName &&
         other.pendingSync == pendingSync &&
         other.served == served &&
-        other.issuedAt == issuedAt;
+        other.issuedAt == issuedAt &&
+        other.qrToken == qrToken;
   }
 
   @override
   int get hashCode => Object.hash(
+    id,
     number,
     position,
     estimatedMinutes,
@@ -109,5 +132,6 @@ final class Ticket {
     pendingSync,
     served,
     issuedAt,
+    qrToken,
   );
 }

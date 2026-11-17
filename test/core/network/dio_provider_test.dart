@@ -30,7 +30,9 @@ void main() {
     () {
       final dio = _container(_config()).read(dioProvider);
 
-      expect(dio.options.baseUrl, 'https://api.example.com');
+      // La base inclut le prefixe versionne : les chemins s'ecrivent
+      // « /tickets », pas « /api/v1/tickets ».
+      expect(dio.options.baseUrl, 'https://api.example.com/api/v1');
       expect(dio.options.connectTimeout, const Duration(seconds: 10));
       expect(dio.options.sendTimeout, const Duration(seconds: 20));
       expect(dio.options.receiveTimeout, const Duration(seconds: 20));

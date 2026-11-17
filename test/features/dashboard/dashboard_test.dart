@@ -16,7 +16,11 @@ import 'package:tonde/features/tracking/data/queue_tracking_service_provider.dar
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 const _ticket = Ticket(
   number: 'T-9999',
@@ -143,7 +147,7 @@ void main() {
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
   });
 
   testWidgets('annuler le ticket depuis l\'accueil demande confirmation', (

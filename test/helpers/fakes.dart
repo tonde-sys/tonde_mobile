@@ -22,13 +22,13 @@ class FakeAuthService implements AuthService {
 
   @override
   Future<User> login({
-    required String username,
+    required String email,
     required String password,
   }) async {
     if (rejectLogin) {
       throw const InvalidCredentialsException();
     }
-    final user = User(name: username, username: username);
+    final user = User(id: 'u-${email.hashCode}', name: email, email: email);
     _current = user;
     return user;
   }
@@ -36,10 +36,10 @@ class FakeAuthService implements AuthService {
   @override
   Future<User> register({
     required String name,
-    required String username,
+    required String email,
     required String password,
   }) async {
-    final user = User(name: name, username: username);
+    final user = User(id: 'u-${email.hashCode}', name: name, email: email);
     _current = user;
     return user;
   }

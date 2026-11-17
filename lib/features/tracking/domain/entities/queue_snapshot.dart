@@ -12,18 +12,31 @@ enum QueueStatus {
   inService,
 
   /// Le client ne s'est pas présenté.
-  absent;
+  absent,
+
+  /// Le service est terminé ou le ticket annulé.
+  ///
+  /// Distinct de [inService] : le guichet a fini, le client n'est plus attendu.
+  /// Sans cet état, un ticket clôturé retombait sur [waiting] — l'écran
+  /// affichait « En attente » pour un service déjà rendu, et la surveillance de
+  /// fin de prise en charge ne se déclenchait jamais, laissant le client bloqué
+  /// sur un ticket qui ne comptait plus.
+  done;
 
   /// Convertit la valeur brute du flux en statut connu.
   ///
-  /// Le contrat n'étant pas encore figé, plusieurs graphies sont tolérées ;
-  /// toute valeur inconnue retombe sur [QueueStatus.waiting] plutôt que de
-  /// faire échouer l'affichage.
+  /// Le contrat est désormais figé (statuts en minuscules du backend), mais les
+  /// graphies historiques restent tolérées ; toute valeur inconnue retombe sur
+  /// [QueueStatus.waiting] plutôt que de faire échouer l'affichage.
   static QueueStatus fromWire(Object? raw) {
-    return switch (raw) {
+    return switch (raw?.toString().toLowerCase()) {
       'called' || 'calling' || 'now_calling' => QueueStatus.called,
-      'in_service' || 'serving' || 'in_progress' => QueueStatus.inService,
+      'serving' || 'in_service' || 'in_progress' => QueueStatus.inService,
       'absent' || 'no_show' || 'missed' => QueueStatus.absent,
+      'done' || 'completed' || 'cancelled' || 'canceled' || 'expired' =>
+        QueueStatus.done,
+      // TRANSFERRED et INCOMPLETE sont encore ACTIFS côté serveur : le client
+      // sera rappelé, il reste donc « en attente » pour lui.
       _ => QueueStatus.waiting,
     };
   }
@@ -48,23 +61,45 @@ final class QueueSnapshot {
 
   /// Lit un message du flux.
   ///
-  /// Les clés sont tolérantes tant que le contrat backend n'est pas figé ;
-  /// les champs absents prennent une valeur neutre plutôt que de lever.
-  factory QueueSnapshot.fromJson(Map<String, dynamic> json, {DateTime? now}) {
-    final position = _asInt(json['position'] ?? json['rank'] ?? json['place']);
-    final called = json['called_number'] ?? json['current_number'];
-    final counter = json['counter'] ?? json['counter_label'] ?? json['desk'];
+  /// [previous] porte l'état déjà affiché. Il n'est pas décoratif : les messages
+  /// `queue_update` poussés en direct ne transportent PAS le statut (seul le
+  /// snapshot de connexion le fait). Sans lui, chaque mise à jour de position
+  /// ramènerait un ticket « appelé » à « en attente », et le client verrait son
+  /// écran régresser à chaque mouvement de file.
+  factory QueueSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    DateTime? now,
+    QueueSnapshot? previous,
+  }) {
+    final rawPosition = _asInt(
+      json['position'] ?? json['rank'] ?? json['place'],
+    );
+    final called = json['current_called_number'] ?? json['called_number'];
+    final counter = json['counter_name'] ?? json['counter'] ?? json['desk'];
     final qr = json['qr_payload'] ?? json['qr'];
+    final hasStatus = json['status'] != null;
     return QueueSnapshot(
       ticketNumber: (json['ticket_number'] ?? json['number'] ?? '').toString(),
-      position: position == null || position < 1 ? 1 : position,
+      // La position 0 est une information, pas une absence : le backend la
+      // renvoie pour un ticket appelé ou servi, et pour une file Redis
+      // indisponible. La forcer à 1 annoncerait « vous êtes le prochain » à un
+      // client déjà au guichet.
+      position: rawPosition == null || rawPosition < 0 ? 1 : rawPosition,
       estimatedMinutes:
-          _asInt(json['estimated_minutes'] ?? json['eta_minutes']) ?? 0,
-      status: QueueStatus.fromWire(json['status']),
+          _asInt(
+            json['estimated_wait_minutes'] ??
+                json['estimated_minutes'] ??
+                json['eta_minutes'],
+          ) ??
+          previous?.estimatedMinutes ??
+          0,
+      status: hasStatus
+          ? QueueStatus.fromWire(json['status'])
+          : (previous?.status ?? QueueStatus.waiting),
       updatedAt: now ?? DateTime.now(),
-      calledNumber: called?.toString(),
-      counterLabel: counter?.toString(),
-      qrPayload: qr?.toString(),
+      calledNumber: called?.toString() ?? previous?.calledNumber,
+      counterLabel: counter?.toString() ?? previous?.counterLabel,
+      qrPayload: qr?.toString() ?? previous?.qrPayload,
     );
   }
 
@@ -94,7 +129,9 @@ final class QueueSnapshot {
 
   /// Vrai quand la file n'attend plus rien du client.
   bool get isTerminal =>
-      status == QueueStatus.inService || status == QueueStatus.absent;
+      status == QueueStatus.inService ||
+      status == QueueStatus.absent ||
+      status == QueueStatus.done;
 
   QueueSnapshot copyWith({
     int? position,

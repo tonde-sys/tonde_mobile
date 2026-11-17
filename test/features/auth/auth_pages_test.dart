@@ -41,12 +41,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'jospin kanani');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'jospin@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'mauvais');
     await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Incorrect username or password.'), findsOneWidget);
+    expect(find.text('Incorrect email address or password.'), findsOneWidget);
   });
 
   testWidgets("l'inscription crée un compte et ouvre le tableau de bord", (
@@ -61,8 +64,11 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Jean Test');
-    await tester.enterText(find.byType(TextFormField).at(1), 'jean.test');
-    await tester.enterText(find.byType(TextFormField).at(2), 'secret');
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'jean.test@example.com',
+    );
+    await tester.enterText(find.byType(TextFormField).at(2), 'motdepasse');
     await tester.tap(find.widgetWithText(FilledButton, 'Sign up'));
     await tester.pumpAndSettle();
 

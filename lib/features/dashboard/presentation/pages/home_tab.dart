@@ -12,6 +12,7 @@ import 'package:tonde/features/tickets/domain/entities/ticket.dart';
 import 'package:tonde/features/tickets/presentation/controllers/ticket_controller.dart';
 import 'package:tonde/features/tickets/presentation/widgets/ticket_pass_card.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
+import 'package:tonde/features/organizations/presentation/organization_type_style.dart';
 
 /// Onglet Accueil du tableau de bord.
 class HomeTab extends ConsumerWidget {
@@ -459,7 +460,6 @@ class _OrganizationMiniCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final isBank = organization.type == OrganizationType.bank;
 
     return SizedBox(
       width: 150,
@@ -482,9 +482,7 @@ class _OrganizationMiniCard extends StatelessWidget {
                         radius: 18,
                         backgroundColor: colorScheme.primaryContainer,
                         child: Icon(
-                          isBank
-                              ? Icons.account_balance_outlined
-                              : Icons.local_hospital_outlined,
+                          organization.type.icon,
                           size: 18,
                           color: colorScheme.onPrimaryContainer,
                         ),
@@ -508,9 +506,7 @@ class _OrganizationMiniCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isBank
-                        ? l10n.organizationTypeBank
-                        : l10n.organizationTypeHealth,
+                    organization.type.label(l10n),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: colorScheme.primary,
                     ),

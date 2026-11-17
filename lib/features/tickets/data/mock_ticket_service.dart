@@ -51,8 +51,10 @@ final class MockTicketService implements TicketService {
     if (existing != null && !existing.served) {
       throw TicketAlreadyActiveException(existing);
     }
+    final sequence = ++_sequence;
     final ticket = Ticket(
-      number: 'T-${++_sequence}',
+      id: 'mock-$sequence',
+      number: 'T-$sequence',
       position: service.waitingCount + 1,
       // Une minute par personne devant soi, comme au guichet.
       estimatedMinutes: service.waitingCount,
@@ -62,6 +64,7 @@ final class MockTicketService implements TicketService {
       agencyName: agency.name,
       serviceId: service.id,
       serviceName: service.name,
+      qrToken: 'mock-qr-$sequence',
       issuedAt: DateTime.now(),
     );
     _active = ticket;

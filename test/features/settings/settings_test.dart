@@ -17,8 +17,8 @@ import 'package:tonde/features/tickets/data/ticket_service_provider.dart';
 import '../../helpers/fakes.dart';
 
 const _user = User(
+  id: 'u-jospin',
   name: 'Jospin Kanani',
-  username: 'jospin kanani',
   email: 'kananijospin63@gmail.com',
   phone: '+257 79490806',
   role: 'Agent',

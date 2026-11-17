@@ -19,7 +19,7 @@ import 'package:tonde/features/tracking/domain/queue_tracking_service.dart';
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Test', username: 'test');
+const _user = User(id: 'u-test', name: 'Test', email: 'test@example.com');
 
 /// Flux figé : évite de laisser un minuteur de simulation derrière lui.
 class _StaticTracking implements QueueTrackingService {

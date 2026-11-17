@@ -57,7 +57,9 @@ class TicketNotifier extends AsyncNotifier<Ticket?> {
   /// Sans cela, un client servi resterait bloqué sur un ticket « actif » et ne
   /// pourrait jamais en reprendre un autre sans annuler.
   void _watchServing(Ticket? ticket) {
-    if (ticket == null || ticket.pendingSync || ticket.served) {
+    // Un ticket pris hors ligne n'a pas d'identifiant serveur : il n'existe
+    // qu'en local, donc aucun flux temps réel ne peut le décrire.
+    if (ticket == null || ticket.pendingSync || ticket.served || ticket.id == null) {
       return;
     }
     ref.listen(queueTrackingProvider(ticket), (previous, next) {

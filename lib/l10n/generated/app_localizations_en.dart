@@ -108,7 +108,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Sign in to manage your queues.';
 
   @override
-  String get usernameLabel => 'Username';
+  String get emailLabel => 'Email address';
 
   @override
   String get passwordLabel => 'Password';
@@ -141,10 +141,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginLink => 'Sign in';
 
   @override
-  String get invalidCredentials => 'Incorrect username or password.';
+  String get invalidCredentials => 'Incorrect email address or password.';
 
   @override
-  String get usernameTaken => 'This username is already in use.';
+  String get emailTaken => 'This email address is already in use.';
 
   @override
   String get fieldRequired => 'This field is required.';
@@ -698,4 +698,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhotoFailed => 'Could not update the profile photo';
+
+  @override
+  String get emailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get networkError => 'Server unreachable. Check your connection.';
+
+  @override
+  String get organizationTypeOther => 'Other';
+
+  @override
+  String get trackingStatusDone => 'Completed';
+
+  @override
+  String get accountDisabled =>
+      'This account has been disabled. Contact your organization.';
+
+  @override
+  String get accountLocked => 'Too many attempts. Try again in a few minutes.';
+
+  @override
+  String get authErrorGeneric => 'Sign-in failed. Try again.';
+
+  @override
+  String get passwordTooShort =>
+      'The password must be at least 8 characters long.';
 }

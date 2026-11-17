@@ -112,6 +112,6 @@ void main() {
 
     expect(find.byType(OnboardingPage), findsNothing);
     // Non connecté : la porte d'authentification affiche la connexion.
-    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
   });
 }

@@ -8,6 +8,7 @@ import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/organizations/presentation/controllers/organizations_controller.dart';
 import 'package:tonde/features/organizations/presentation/widgets/async_error_view.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
+import 'package:tonde/features/organizations/presentation/organization_type_style.dart';
 
 /// Étape intermédiaire entre l'agence et le ticket : le choix du service.
 ///
@@ -140,7 +141,6 @@ class _AgencyHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final isBank = organization.type == OrganizationType.bank;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -152,9 +152,7 @@ class _AgencyHeader extends StatelessWidget {
               radius: 22,
               backgroundColor: scheme.primaryContainer,
               child: Icon(
-                isBank
-                    ? Icons.account_balance_outlined
-                    : Icons.local_hospital_outlined,
+                organization.type.icon,
                 size: 22,
                 color: scheme.onPrimaryContainer,
               ),

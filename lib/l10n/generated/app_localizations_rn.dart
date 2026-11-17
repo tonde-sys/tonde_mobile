@@ -109,7 +109,7 @@ class AppLocalizationsRn extends AppLocalizations {
   String get loginSubtitle => 'Injira kugira utunganye imirongo yawe.';
 
   @override
-  String get usernameLabel => 'Izina ry\'ukoresha';
+  String get emailLabel => 'Aderesi imeyili';
 
   @override
   String get passwordLabel => 'Ijambo ry\'ibanga';
@@ -143,10 +143,10 @@ class AppLocalizationsRn extends AppLocalizations {
 
   @override
   String get invalidCredentials =>
-      'Izina ry\'ukoresha canke ijambo ry\'ibanga ntivyo.';
+      'Aderesi imeyili canke ijambo ry\'ibanga ntivyo.';
 
   @override
-  String get usernameTaken => 'Iri zina ry\'ukoresha ryarakoreshejwe.';
+  String get emailTaken => 'Iyi aderesi imeyili isanzwe ikoreshwa.';
 
   @override
   String get fieldRequired => 'Iki kibanza kirakenewe.';
@@ -700,4 +700,32 @@ class AppLocalizationsRn extends AppLocalizations {
 
   @override
   String get profilePhotoFailed => 'Ifoto ntishoboye guhindurwa';
+
+  @override
+  String get emailInvalid => 'Andika aderesi imeyili ibereye.';
+
+  @override
+  String get networkError =>
+      'Seriveri ntishobora kugerwaho. Reba umurongo wawe.';
+
+  @override
+  String get organizationTypeOther => 'Ibindi';
+
+  @override
+  String get trackingStatusDone => 'Byarangiye';
+
+  @override
+  String get accountDisabled =>
+      'Iyi konti yahagaritswe. Vugana n\'umuryango wawe.';
+
+  @override
+  String get accountLocked =>
+      'Ugerageje kenshi. Ongera ugerageze nyuma y\'iminota mike.';
+
+  @override
+  String get authErrorGeneric => 'Kwinjira ntibishobotse. Ongera ugerageze.';
+
+  @override
+  String get passwordTooShort =>
+      'Ijambobanga rigomba kuba rifise nibura inyuguti 8.';
 }

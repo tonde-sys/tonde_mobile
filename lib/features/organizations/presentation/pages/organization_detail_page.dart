@@ -7,6 +7,7 @@ import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/organizations/presentation/controllers/organizations_controller.dart';
 import 'package:tonde/features/organizations/presentation/widgets/async_error_view.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
+import 'package:tonde/features/organizations/presentation/organization_type_style.dart';
 
 /// Détail d'une organisation : en-tête et liste de ses agences.
 class OrganizationDetailPage extends ConsumerWidget {
@@ -101,7 +102,6 @@ class _OrganizationHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isBank = organization.type == OrganizationType.bank;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -114,9 +114,7 @@ class _OrganizationHeader extends StatelessWidget {
               radius: 28,
               backgroundColor: colorScheme.primaryContainer,
               child: Icon(
-                isBank
-                    ? Icons.account_balance_outlined
-                    : Icons.local_hospital_outlined,
+                organization.type.icon,
                 size: 30,
                 color: colorScheme.onPrimaryContainer,
               ),
@@ -132,9 +130,7 @@ class _OrganizationHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isBank
-                        ? l10n.organizationTypeBank
-                        : l10n.organizationTypeHealth,
+                    organization.type.label(l10n),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w600,

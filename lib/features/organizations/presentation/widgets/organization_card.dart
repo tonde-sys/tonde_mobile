@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
+import 'package:tonde/features/organizations/presentation/organization_type_style.dart';
 
 /// Carte présentant une organisation dans la liste de découverte.
 class OrganizationCard extends StatelessWidget {
@@ -16,7 +17,6 @@ class OrganizationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isBank = organization.type == OrganizationType.bank;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -26,9 +26,7 @@ class OrganizationCard extends StatelessWidget {
         leading: CircleAvatar(
           backgroundColor: colorScheme.primaryContainer,
           child: Icon(
-            isBank
-                ? Icons.account_balance_outlined
-                : Icons.local_hospital_outlined,
+            organization.type.icon,
             color: colorScheme.onPrimaryContainer,
           ),
         ),
@@ -36,9 +34,7 @@ class OrganizationCard extends StatelessWidget {
           organization.name,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Text(
-          isBank ? l10n.organizationTypeBank : l10n.organizationTypeHealth,
-        ),
+        subtitle: Text(organization.type.label(l10n)),
         trailing: const Icon(Icons.chevron_right),
       ),
     );

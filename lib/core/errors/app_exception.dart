@@ -45,14 +45,33 @@ final class RequestCancelledException extends AppException {
 }
 
 /// Le backend a répondu avec un statut hors du comportement attendu.
+///
+/// [code] est le code métier du serveur (`TICKET_ALREADY_ACTIVE`,
+/// `GRACE_PERIOD_NOT_ELAPSED`, `EMAIL_EXISTS`…). Sans lui, l'application ne
+/// pouvait distinguer « votre ticket est déjà actif » de « le serveur a
+/// échoué » : les deux arrivaient en 4xx avec un message générique, et l'écran
+/// affichait une panne là où le serveur donnait une consigne.
 final class ApiException extends AppException {
   const ApiException({
     required this.statusCode,
+    this.code,
+    this.serverMessage,
     super.message = 'Réponse du serveur inattendue.',
     super.cause,
   });
 
   final int statusCode;
+
+  /// Code métier renvoyé par le serveur, s'il en fournit un.
+  final String? code;
+
+  /// Message du serveur. Destiné à l'écran SEULEMENT s'il a été traduit par
+  /// l'appelant : le backend répond en français, l'application parle trois
+  /// langues. Utilisez [code] pour choisir un libellé traduit.
+  final String? serverMessage;
+
+  /// Vrai quand le serveur refuse la session (jeton absent, invalide, expiré).
+  bool get isUnauthenticated => statusCode == 401;
 }
 
 /// Erreur non classifiée.

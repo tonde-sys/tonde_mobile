@@ -116,9 +116,9 @@
   "@loginSubtitle": {
     "description": "Sous-titre de la page de connexion."
   },
-  "usernameLabel": "Nom d'utilisateur",
-  "@usernameLabel": {
-    "description": "Libellé du champ nom d'utilisateur."
+  "emailLabel": "Adresse e-mail",
+  "@emailLabel": {
+    "description": "Libellé du champ identifiant de connexion. Le backend n'a pas de nom d'utilisateur : le compte est identifié par l'e-mail."
   },
   "passwordLabel": "Mot de passe",
   "@passwordLabel": {
@@ -160,13 +160,13 @@
   "@loginLink": {
     "description": "Lien vers la page de connexion."
   },
-  "invalidCredentials": "Nom d'utilisateur ou mot de passe incorrect.",
+  "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
   "@invalidCredentials": {
     "description": "Erreur affichée quand les identifiants sont refusés."
   },
-  "usernameTaken": "Ce nom d'utilisateur est déjà utilisé.",
-  "@usernameTaken": {
-    "description": "Erreur affichée quand le nom d'utilisateur existe déjà."
+  "emailTaken": "Cette adresse e-mail est déjà utilisée.",
+  "@emailTaken": {
+    "description": "Réponse du serveur (EMAIL_EXISTS) à l'inscription."
   },
   "fieldRequired": "Ce champ est obligatoire.",
   "@fieldRequired": {
@@ -844,5 +844,22 @@
   "profilePhotoRemove": "Supprimer la photo",
   "profilePhotoUpdated": "Photo de profil mise à jour",
   "profilePhotoRemoved": "Photo de profil supprimée",
-  "profilePhotoFailed": "Impossible de mettre à jour la photo de profil"
+  "profilePhotoFailed": "Impossible de mettre à jour la photo de profil",
+  "emailInvalid": "Saisissez une adresse e-mail valide.",
+  "@emailInvalid": {
+    "description": "Validation locale avant envoi, pour éviter un aller-retour réseau sur une adresse manifestement fausse."
+  },
+  "networkError": "Serveur injoignable. Vérifiez votre connexion.",
+  "@networkError": {
+    "description": "Erreur de transport (pas de réseau, délai dépassé) : distincte d'un refus du serveur."
+  },
+  "organizationTypeOther": "Autre",
+  "trackingStatusDone": "Terminé",
+  "@trackingStatusDone": {
+    "description": "Statut d'un ticket dont le service est rendu ou annulé."
+  },
+  "accountDisabled": "Ce compte a été désactivé. Contactez votre organisation.",
+  "accountLocked": "Trop de tentatives. Réessayez dans quelques minutes.",
+  "authErrorGeneric": "La connexion a échoué. Réessayez.",
+  "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères."
 }

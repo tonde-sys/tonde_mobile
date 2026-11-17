@@ -15,7 +15,7 @@ import 'package:tonde/features/organizations/domain/repositories/organization_re
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Test', username: 'test');
+const _user = User(id: 'u-test', name: 'Test', email: 'test@example.com');
 
 class _FailingOrganizationRepository implements OrganizationRepository {
   @override

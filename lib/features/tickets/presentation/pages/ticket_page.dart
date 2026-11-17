@@ -452,7 +452,10 @@ class _SuccessViewState extends ConsumerState<_SuccessView> {
                   const SizedBox(height: 12),
                   const PendingSyncChip(),
                 ],
-                if (!ticket.served) ...[
+                // Position 0 = le client n'est pas (ou plus) dans la file :
+                // ticket déjà appelé, servi, ou file momentanément indisponible.
+                // Afficher « Position 0 » serait un rang, et faux.
+                if (!ticket.served && ticket.position > 0) ...[
                   const SizedBox(height: 16),
                   Text(
                     l10n.ticketPositionLabel(ticket.position),

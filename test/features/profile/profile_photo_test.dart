@@ -15,7 +15,11 @@ import 'package:tonde/features/profile/presentation/widgets/profile_avatar.dart'
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 /// Sélecteur piloté par le test : il ne touche ni à la galerie ni à l'appareil
 /// photo, mais il enregistre exactement ce que l'écran lui demande.
@@ -110,7 +114,7 @@ void main() {
     expect(find.text('Photo de profil mise à jour'), findsOneWidget);
     // La photo appartient au compte : elle est enregistrée sous son identifiant.
     expect(
-      await cache.read(ProfilePhotoNotifier.keyFor('jospin kanani')),
+      await cache.read(ProfilePhotoNotifier.keyFor(_user.id)),
       photo.path,
     );
   });
@@ -132,7 +136,7 @@ void main() {
     final photo = _tempImage();
     final picker = _FakePicker();
     final cache = MemoryLocalCache();
-    await cache.write(ProfilePhotoNotifier.keyFor('jospin kanani'), photo.path);
+    await cache.write(ProfilePhotoNotifier.keyFor(_user.id), photo.path);
 
     final container = await _pumpProfile(tester, picker: picker, cache: cache);
     expect(container.read(profilePhotoProvider).value, photo.path);
@@ -146,7 +150,7 @@ void main() {
     expect(find.text('Photo de profil supprimée'), findsOneWidget);
     expect(picker.deleted, [photo.path]);
     expect(
-      await cache.read(ProfilePhotoNotifier.keyFor('jospin kanani')),
+      await cache.read(ProfilePhotoNotifier.keyFor(_user.id)),
       isNull,
     );
   });
@@ -170,7 +174,7 @@ void main() {
   ) async {
     final cache = MemoryLocalCache();
     await cache.write(
-      ProfilePhotoNotifier.keyFor('jospin kanani'),
+      ProfilePhotoNotifier.keyFor(_user.id),
       'C:/chemin/inexistant/avatar.png',
     );
 

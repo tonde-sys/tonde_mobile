@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tonde/app/router/app_routes.dart';
-import 'package:tonde/features/auth/domain/auth_service.dart';
+import 'package:tonde/features/auth/presentation/auth_error_message.dart';
 import 'package:tonde/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:tonde/features/auth/presentation/email_validation.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
 /// Page d'inscription : crée un compte et connecte l'utilisateur.
@@ -17,14 +18,14 @@ class RegisterPage extends ConsumerStatefulWidget {
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
   void dispose() {
     _nameController.dispose();
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -37,7 +38,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         .read(authControllerProvider.notifier)
         .register(
           name: _nameController.text,
-          username: _usernameController.text,
+          email: _emailController.text,
           password: _passwordController.text,
         );
   }
@@ -105,17 +106,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _usernameController,
+                      controller: _emailController,
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
                       decoration: InputDecoration(
-                        labelText: l10n.usernameLabel,
-                        prefixIcon: const Icon(Icons.person_outline),
+                        labelText: l10n.emailLabel,
+                        prefixIcon: const Icon(Icons.alternate_email),
                         border: const OutlineInputBorder(),
                       ),
-                      validator: (value) =>
-                          value == null || value.trim().isEmpty
-                          ? l10n.fieldRequired
-                          : null,
+                      validator: (value) => validateEmail(l10n, value),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -139,14 +139,23 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                         ),
                       ),
-                      validator: (value) => value == null || value.isEmpty
-                          ? l10n.fieldRequired
-                          : null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired;
+                        }
+                        // Le serveur refuse en dessous de 8 caractères. Le dire
+                        // ici évite un aller-retour qui n'apprendrait rien de
+                        // plus à l'utilisateur.
+                        if (value.length < 8) {
+                          return l10n.passwordTooShort;
+                        }
+                        return null;
+                      },
                     ),
-                    if (authAsync.error is UsernameAlreadyTakenException) ...[
+                    if (authAsync.hasError) ...[
                       const SizedBox(height: 16),
                       Text(
-                        l10n.usernameTaken,
+                        authErrorMessage(l10n, authAsync.error),
                         style: TextStyle(color: colorScheme.error),
                       ),
                     ],

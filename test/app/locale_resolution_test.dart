@@ -10,7 +10,11 @@ import 'package:tonde/features/organizations/data/repositories/organization_repo
 
 import '../helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 void main() {
   testWidgets('utilise le français quand la locale système est fr', (

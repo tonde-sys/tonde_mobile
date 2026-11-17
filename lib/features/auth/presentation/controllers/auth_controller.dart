@@ -14,7 +14,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> login({
-    required String username,
+    required String email,
     required String password,
   }) async {
     if (state.isLoading) {
@@ -24,13 +24,13 @@ class AuthNotifier extends AsyncNotifier<User?> {
     state = await AsyncValue.guard(
       () => ref
           .read(authServiceProvider)
-          .login(username: username, password: password),
+          .login(email: email, password: password),
     );
   }
 
   Future<void> register({
     required String name,
-    required String username,
+    required String email,
     required String password,
   }) async {
     if (state.isLoading) {
@@ -40,7 +40,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
     state = await AsyncValue.guard(
       () => ref
           .read(authServiceProvider)
-          .register(name: name, username: username, password: password),
+          .register(name: name, email: email, password: password),
     );
   }
 

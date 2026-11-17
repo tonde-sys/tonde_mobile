@@ -11,7 +11,11 @@ import 'package:tonde/features/organizations/data/repositories/organization_repo
 
 import 'helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 List<Override> _overrides({FakeAuthService? auth}) => [
   organizationRepositoryProvider.overrideWithValue(
@@ -35,9 +39,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // Non connecté : la porte d'authentification redirige vers la connexion.
-    expect(find.text('Username'), findsOneWidget);
+    expect(find.text('Email address'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'jospin kanani');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'jospin@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), '12345');
     await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
     await tester.pumpAndSettle();

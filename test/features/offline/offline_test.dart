@@ -26,7 +26,11 @@ import 'package:tonde/features/tickets/presentation/controllers/ticket_controlle
 
 import '../../helpers/fakes.dart';
 
-const _user = User(name: 'Jospin Kanani', username: 'jospin kanani');
+const _user = User(
+  id: 'u-jospin',
+  name: 'Jospin Kanani',
+  email: 'jospin@example.com',
+);
 
 const _organization = Organization(
   id: 'org-1',
@@ -203,21 +207,27 @@ void main() {
     test('la session est restaurée depuis le cache au redémarrage', () async {
       final cache = MemoryLocalCache();
       final first = MockAuthService(latency: Duration.zero, cache: cache);
-      await first.login(username: 'jospin kanani', password: '12345');
+      await first.login(
+        email: MockAuthService.demoEmail,
+        password: MockAuthService.demoPassword,
+      );
 
       // Nouveau service = redémarrage de l'application : la mémoire est vide.
       final restarted = MockAuthService(latency: Duration.zero, cache: cache);
 
       final restored = await restarted.currentUser();
       expect(restored, isNotNull);
-      expect(restored!.username, 'jospin kanani');
+      expect(restored!.email, MockAuthService.demoEmail);
       expect(restored.name, 'Jospin Kanani');
     });
 
     test('la déconnexion efface la session persistée', () async {
       final cache = MemoryLocalCache();
       final service = MockAuthService(latency: Duration.zero, cache: cache);
-      await service.login(username: 'jospin kanani', password: '12345');
+      await service.login(
+        email: MockAuthService.demoEmail,
+        password: MockAuthService.demoPassword,
+      );
       await service.logout();
 
       final restarted = MockAuthService(latency: Duration.zero, cache: cache);
@@ -226,7 +236,10 @@ void main() {
 
     test('sans cache, le service reste purement en mémoire', () async {
       final service = MockAuthService(latency: Duration.zero);
-      await service.login(username: 'jospin kanani', password: '12345');
+      await service.login(
+        email: MockAuthService.demoEmail,
+        password: MockAuthService.demoPassword,
+      );
 
       final restarted = MockAuthService(latency: Duration.zero);
       expect(await restarted.currentUser(), isNull);

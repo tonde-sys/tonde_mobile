@@ -18,6 +18,6 @@ final queueTrackingServiceProvider = Provider<QueueTrackingService>((ref) {
   }
   return WebSocketQueueTrackingService(
     config: config,
-    dio: ref.watch(dioProvider),
+    client: ref.watch(apiClientProvider),
   );
 });

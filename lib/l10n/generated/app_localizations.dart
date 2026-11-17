@@ -274,11 +274,11 @@ abstract class AppLocalizations {
   /// **'Connectez-vous pour gérer vos files d\'attente.'**
   String get loginSubtitle;
 
-  /// Libellé du champ nom d'utilisateur.
+  /// Libellé du champ identifiant de connexion. Le backend n'a pas de nom d'utilisateur : le compte est identifié par l'e-mail.
   ///
   /// In fr, this message translates to:
-  /// **'Nom d\'utilisateur'**
-  String get usernameLabel;
+  /// **'Adresse e-mail'**
+  String get emailLabel;
 
   /// Libellé du champ mot de passe.
   ///
@@ -343,14 +343,14 @@ abstract class AppLocalizations {
   /// Erreur affichée quand les identifiants sont refusés.
   ///
   /// In fr, this message translates to:
-  /// **'Nom d\'utilisateur ou mot de passe incorrect.'**
+  /// **'Adresse e-mail ou mot de passe incorrect.'**
   String get invalidCredentials;
 
-  /// Erreur affichée quand le nom d'utilisateur existe déjà.
+  /// Réponse du serveur (EMAIL_EXISTS) à l'inscription.
   ///
   /// In fr, this message translates to:
-  /// **'Ce nom d\'utilisateur est déjà utilisé.'**
-  String get usernameTaken;
+  /// **'Cette adresse e-mail est déjà utilisée.'**
+  String get emailTaken;
 
   /// Erreur de validation d'un champ requis.
   ///
@@ -1329,6 +1329,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de mettre à jour la photo de profil'**
   String get profilePhotoFailed;
+
+  /// Validation locale avant envoi, pour éviter un aller-retour réseau sur une adresse manifestement fausse.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez une adresse e-mail valide.'**
+  String get emailInvalid;
+
+  /// Erreur de transport (pas de réseau, délai dépassé) : distincte d'un refus du serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur injoignable. Vérifiez votre connexion.'**
+  String get networkError;
+
+  /// No description provided for @organizationTypeOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get organizationTypeOther;
+
+  /// Statut d'un ticket dont le service est rendu ou annulé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get trackingStatusDone;
+
+  /// No description provided for @accountDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce compte a été désactivé. Contactez votre organisation.'**
+  String get accountDisabled;
+
+  /// No description provided for @accountLocked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives. Réessayez dans quelques minutes.'**
+  String get accountLocked;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In fr, this message translates to:
+  /// **'La connexion a échoué. Réessayez.'**
+  String get authErrorGeneric;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe doit contenir au moins 8 caractères.'**
+  String get passwordTooShort;
 }
 
 class _AppLocalizationsDelegate

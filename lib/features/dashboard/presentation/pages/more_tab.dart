@@ -12,7 +12,7 @@ import 'package:tonde/l10n/generated/app_localizations.dart';
 /// Onglet Plus : accès au profil, préférences d'affichage et déconnexion.
 ///
 /// Aucune donnée personnelle n'est affichée ici : la tuile de compte ne montre
-/// que l'icône de l'utilisateur, et les informations (nom, @username, e-mail,
+/// que l'icône de l'utilisateur, et les informations (nom, e-mail,
 /// téléphone, rôle, organisation) s'ouvrent au clic sur la page profil. C'est
 /// aussi ce qui rend l'onglet présentable sur un téléphone partagé.
 class MoreTab extends ConsumerWidget {

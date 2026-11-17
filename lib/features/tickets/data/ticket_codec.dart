@@ -7,6 +7,7 @@ import 'package:tonde/features/tickets/domain/entities/ticket.dart';
 /// toucher à [Ticket].
 Map<String, Object?> ticketToJson(Ticket ticket) {
   return <String, Object?>{
+    'id': ticket.id,
     'number': ticket.number,
     'position': ticket.position,
     'estimatedMinutes': ticket.estimatedMinutes,
@@ -16,6 +17,7 @@ Map<String, Object?> ticketToJson(Ticket ticket) {
     'agencyName': ticket.agencyName,
     'serviceId': ticket.serviceId,
     'serviceName': ticket.serviceName,
+    'qrToken': ticket.qrToken,
     'pendingSync': ticket.pendingSync,
     'served': ticket.served,
     'issuedAt': ticket.issuedAt?.toIso8601String(),
@@ -35,6 +37,7 @@ Ticket? ticketFromJson(Object? document) {
     return null;
   }
   return Ticket(
+    id: _asNullableString(document['id']),
     number: number,
     position: _asInt(document['position']),
     estimatedMinutes: _asInt(document['estimatedMinutes']),
@@ -44,6 +47,7 @@ Ticket? ticketFromJson(Object? document) {
     agencyName: _asString(document['agencyName']),
     serviceId: _asNullableString(document['serviceId']),
     serviceName: _asNullableString(document['serviceName']),
+    qrToken: _asNullableString(document['qrToken']),
     pendingSync: document['pendingSync'] == true,
     served: document['served'] == true,
     issuedAt: _asDate(document['issuedAt']),

@@ -1,8 +1,15 @@
 /// Utilisateur connecté à l'application.
+///
+/// Le backend identifie un compte par son **e-mail** (ou son téléphone pour
+/// l'inscription par OTP) : il n'existe pas de « nom d'utilisateur » côté
+/// serveur. Le mobile portait un champ `username` obligatoire, ce qui obligeait
+/// à inventer une valeur à l'inscription et rendait le profil incohérent avec la
+/// base. L'identité stable est désormais [id] — fourni par le serveur — et
+/// [email] / [phone] sont les identifiants de connexion.
 final class User {
   const User({
+    required this.id,
     required this.name,
-    required this.username,
     this.email,
     this.phone,
     this.role,
@@ -10,16 +17,17 @@ final class User {
     this.createdAt,
   });
 
+  /// Identifiant serveur. Stable : il ne change ni au renommage ni au
+  /// changement d'e-mail, et c'est lui qui rattache les tickets au compte.
+  final String id;
+
   /// Nom complet affiché à l'utilisateur.
   final String name;
 
-  /// Identifiant de connexion, normalisé en minuscules.
-  final String username;
-
-  /// Adresse e-mail de l'utilisateur.
+  /// Adresse e-mail, identifiant de connexion d'un compte créé par e-mail.
   final String? email;
 
-  /// Numéro de téléphone.
+  /// Numéro de téléphone, identifiant de connexion d'un compte créé par OTP.
   final String? phone;
 
   /// Rôle dans l'organisation (ex. Agent, Superviseur, Client).
@@ -36,8 +44,8 @@ final class User {
   /// Les paramètres à `null` conservent la valeur existante ; pour effacer
   /// un champ, utilisez [clear] ou transmettez une chaîne vide.
   User copyWith({
+    String? id,
     String? name,
-    String? username,
     String? email,
     String? phone,
     String? role,
@@ -49,8 +57,8 @@ final class User {
     bool clearOrganization = false,
   }) {
     return User(
+      id: id ?? this.id,
       name: name ?? this.name,
-      username: username ?? this.username,
       email: clearEmail ? null : (email ?? this.email),
       phone: clearPhone ? null : (phone ?? this.phone),
       role: clearRole ? null : (role ?? this.role),

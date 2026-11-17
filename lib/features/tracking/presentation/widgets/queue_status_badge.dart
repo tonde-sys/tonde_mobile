@@ -25,6 +25,8 @@ class QueueStatusBadge extends StatefulWidget {
       QueueStatus.called => const Color(0xFFE24B4A),
       QueueStatus.inService => const Color(0xFF1D9E75),
       QueueStatus.absent => const Color(0xFFD4537E),
+      // Neutre : le service est rendu, il n'y a plus rien à signaler.
+      QueueStatus.done => const Color(0xFF6B7280),
     };
   }
 
@@ -34,6 +36,7 @@ class QueueStatusBadge extends StatefulWidget {
       QueueStatus.called => l10n.trackingStatusCalled,
       QueueStatus.inService => l10n.trackingStatusInService,
       QueueStatus.absent => l10n.trackingStatusAbsent,
+      QueueStatus.done => l10n.trackingStatusDone,
     };
   }
 
