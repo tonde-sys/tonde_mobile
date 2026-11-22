@@ -42,6 +42,25 @@ enum QueueStatus {
   }
 }
 
+/// Guichet momentanément en pause, avec son heure de reprise annoncée.
+final class CounterPauseInfo {
+  const CounterPauseInfo({required this.name, this.pausedUntil});
+
+  final String name;
+  final DateTime? pausedUntil;
+
+  static CounterPauseInfo? fromJson(Object? raw) {
+    if (raw is! Map) return null;
+    final name = raw['name']?.toString();
+    if (name == null || name.isEmpty) return null;
+    final until = raw['paused_until']?.toString();
+    return CounterPauseInfo(
+      name: name,
+      pausedUntil: until == null || until.isEmpty ? null : DateTime.tryParse(until),
+    );
+  }
+}
+
 /// Photo instantanée de la position du client dans la file.
 ///
 /// Chaque message du flux WebSocket (ou chaque réponse du polling de secours)
@@ -57,6 +76,8 @@ final class QueueSnapshot {
     this.calledNumber,
     this.counterLabel,
     this.qrPayload,
+    this.etaVersion,
+    this.pausedCounters = const [],
   });
 
   /// Lit un message du flux.
@@ -78,6 +99,12 @@ final class QueueSnapshot {
     final counter = json['counter_name'] ?? json['counter'] ?? json['desk'];
     final qr = json['qr_payload'] ?? json['qr'];
     final hasStatus = json['status'] != null;
+    final etaVersion = _asInt(json['eta_version']);
+    final incomingEta = _asInt(
+      json['estimated_wait_minutes'] ??
+          json['estimated_minutes'] ??
+          json['eta_minutes'],
+    );
     return QueueSnapshot(
       ticketNumber: (json['ticket_number'] ?? json['number'] ?? '').toString(),
       // La position 0 est une information, pas une absence : le backend la
@@ -85,14 +112,12 @@ final class QueueSnapshot {
       // indisponible. La forcer à 1 annoncerait « vous êtes le prochain » à un
       // client déjà au guichet.
       position: rawPosition == null || rawPosition < 0 ? 1 : rawPosition,
-      estimatedMinutes:
-          _asInt(
-            json['estimated_wait_minutes'] ??
-                json['estimated_minutes'] ??
-                json['eta_minutes'],
-          ) ??
-          previous?.estimatedMinutes ??
-          0,
+      // Un ETA `null` envoyé par le backend AWTE signifie « pas de prévision
+      // fiable ». On ne le remplace PAR une ancienne valeur que pour les
+      // serveurs historiques qui n'envoient pas encore `eta_version` : sinon le
+      // client afficherait indéfiniment une estimation périmée.
+      estimatedMinutes: incomingEta ??
+          (etaVersion == null ? previous?.estimatedMinutes : null),
       status: hasStatus
           ? QueueStatus.fromWire(json['status'])
           : (previous?.status ?? QueueStatus.waiting),
@@ -100,6 +125,10 @@ final class QueueSnapshot {
       calledNumber: called?.toString() ?? previous?.calledNumber,
       counterLabel: counter?.toString() ?? previous?.counterLabel,
       qrPayload: qr?.toString() ?? previous?.qrPayload,
+      etaVersion: etaVersion ?? previous?.etaVersion,
+      pausedCounters: json.containsKey('paused_counters')
+          ? _parsePausedCounters(json['paused_counters'])
+          : (previous?.pausedCounters ?? const []),
     );
   }
 
@@ -109,7 +138,16 @@ final class QueueSnapshot {
   final int position;
 
   /// Temps d'attente estimé, calculé par le serveur.
-  final int estimatedMinutes;
+  ///
+  /// Null quand aucune capacité fiable ne permet de calculer une prévision :
+  /// l'écran affiche alors « Estimation en cours », jamais « 0 min ».
+  final int? estimatedMinutes;
+
+  /// Version du contrat ETA du serveur. Null sur un serveur historique.
+  final int? etaVersion;
+
+  /// Guichets en pause de l'agence, avec leur heure de reprise si elle est connue.
+  final List<CounterPauseInfo> pausedCounters;
 
   final QueueStatus status;
 
@@ -136,21 +174,28 @@ final class QueueSnapshot {
   QueueSnapshot copyWith({
     int? position,
     int? estimatedMinutes,
+    bool clearEstimatedMinutes = false,
     QueueStatus? status,
     DateTime? updatedAt,
     String? calledNumber,
     String? counterLabel,
     String? qrPayload,
+    int? etaVersion,
+    List<CounterPauseInfo>? pausedCounters,
   }) {
     return QueueSnapshot(
       ticketNumber: ticketNumber,
       position: position ?? this.position,
-      estimatedMinutes: estimatedMinutes ?? this.estimatedMinutes,
+      estimatedMinutes: clearEstimatedMinutes
+          ? null
+          : (estimatedMinutes ?? this.estimatedMinutes),
       status: status ?? this.status,
       updatedAt: updatedAt ?? this.updatedAt,
       calledNumber: calledNumber ?? this.calledNumber,
       counterLabel: counterLabel ?? this.counterLabel,
       qrPayload: qrPayload ?? this.qrPayload,
+      etaVersion: etaVersion ?? this.etaVersion,
+      pausedCounters: pausedCounters ?? this.pausedCounters,
     );
   }
 
@@ -162,5 +207,13 @@ final class QueueSnapshot {
       return value.round();
     }
     return int.tryParse(value?.toString() ?? '');
+  }
+
+  static List<CounterPauseInfo> _parsePausedCounters(Object? raw) {
+    if (raw is! List) return const [];
+    return raw
+        .map(CounterPauseInfo.fromJson)
+        .whereType<CounterPauseInfo>()
+        .toList(growable: false);
   }
 }

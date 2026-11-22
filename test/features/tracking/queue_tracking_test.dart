@@ -153,9 +153,43 @@ void main() {
       final snapshot = QueueSnapshot.fromJson(const <String, dynamic>{});
 
       expect(snapshot.position, 1);
-      expect(snapshot.estimatedMinutes, 0);
+      // Un ETA absent reste absent : l'écran affiche « Estimation en cours ».
+      expect(snapshot.estimatedMinutes, isNull);
       expect(snapshot.status, QueueStatus.waiting);
       expect(snapshot.calledNumber, isNull);
+    });
+
+    test('un ETA null du serveur AWTE ne réutilise pas une ancienne valeur', () {
+      final previous = QueueSnapshot.fromJson(const {
+        'ticket_number': 'A-001',
+        'estimated_wait_minutes': 12,
+        'eta_version': 3,
+      });
+      final next = QueueSnapshot.fromJson(
+        const {
+          'ticket_number': 'A-001',
+          'estimated_wait_minutes': null,
+          'eta_version': 4,
+        },
+        previous: previous,
+      );
+
+      expect(next.estimatedMinutes, isNull);
+    });
+
+    test('lit les guichets en pause avec leur heure de reprise', () {
+      final snapshot = QueueSnapshot.fromJson({
+        'paused_counters': [
+          {
+            'name': 'Guichet 1',
+            'paused_until': '2026-11-22T12:45:00Z',
+          },
+        ],
+      });
+
+      expect(snapshot.pausedCounters, hasLength(1));
+      expect(snapshot.pausedCounters.first.name, 'Guichet 1');
+      expect(snapshot.pausedCounters.first.pausedUntil, isNotNull);
     });
 
     test('accepte les graphies alternatives du statut', () {

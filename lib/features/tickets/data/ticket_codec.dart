@@ -40,7 +40,7 @@ Ticket? ticketFromJson(Object? document) {
     id: _asNullableString(document['id']),
     number: number,
     position: _asInt(document['position']),
-    estimatedMinutes: _asInt(document['estimatedMinutes']),
+    estimatedMinutes: _asNullableInt(document['estimatedMinutes']),
     organizationId: organizationId,
     organizationName: _asString(document['organizationName']),
     agencyId: agencyId,
@@ -58,6 +58,8 @@ DateTime? _asDate(Object? value) =>
     value is String ? DateTime.tryParse(value) : null;
 
 int _asInt(Object? value) => value is int ? value : 0;
+
+int? _asNullableInt(Object? value) => value is int ? value : null;
 
 String _asString(Object? value) => value is String ? value : '';
 

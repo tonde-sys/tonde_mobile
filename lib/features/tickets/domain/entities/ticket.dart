@@ -46,7 +46,7 @@ final class Ticket {
   /// Temps d'attente estimé en minutes, calculé par le serveur.
   /// Fourni par le mock en démo ; viendra du backend réel dès que le
   /// contrat sera disponible.
-  final int estimatedMinutes;
+  final int? estimatedMinutes;
   final String organizationId;
   final String organizationName;
   final String agencyId;

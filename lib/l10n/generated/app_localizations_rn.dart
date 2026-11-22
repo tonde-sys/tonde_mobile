@@ -340,8 +340,22 @@ class AppLocalizationsRn extends AppLocalizations {
   String get trackingWaitTime => 'Igihe giteganyijwe';
 
   @override
-  String trackingMinutesValue(int minutes) {
+  String trackingMinutesValue(int? minutes) {
+    if (minutes == null) return trackingEtaUnavailable;
     return 'iminota $minutes';
+  }
+
+  @override
+  String get trackingEtaUnavailable => 'Igihe kirategurwa';
+
+  @override
+  String trackingCounterPaused(String counter) {
+    return '$counter iri mu kuruhuka.';
+  }
+
+  @override
+  String trackingCounterPausedUntil(String counter, String time) {
+    return '$counter iri mu kuruhuka kugeza saa $time.';
   }
 
   @override
@@ -591,6 +605,11 @@ class AppLocalizationsRn extends AppLocalizations {
   @override
   String notifProgressBody(int minutes) {
     return 'Igihe utegereje: iminota $minutes. Tegura inyandiko zawe.';
+  }
+
+  @override
+  String notifProgressBodyNoEta(int count) {
+    return 'Harasigaye abantu $count imbere yawe. Tegura inyandiko zawe.';
   }
 
   @override

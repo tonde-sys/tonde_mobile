@@ -341,8 +341,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get trackingWaitTime => 'Attente estimée';
 
   @override
-  String trackingMinutesValue(int minutes) {
+  String trackingMinutesValue(int? minutes) {
+    if (minutes == null) return trackingEtaUnavailable;
     return '$minutes min';
+  }
+
+  @override
+  String get trackingEtaUnavailable => 'Estimation en cours';
+
+  @override
+  String trackingCounterPaused(String counter) {
+    return '$counter est en pause.';
+  }
+
+  @override
+  String trackingCounterPausedUntil(String counter, String time) {
+    return "$counter est en pause jusqu'à $time.";
   }
 
   @override
@@ -594,6 +608,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String notifProgressBody(int minutes) {
     return 'Temps d’attente estimé : $minutes minutes. Préparez vos documents.';
+  }
+
+  @override
+  String notifProgressBodyNoEta(int count) {
+    return 'Encore $count personnes avant votre tour. Préparez vos documents.';
   }
 
   @override

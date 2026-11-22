@@ -131,7 +131,7 @@ Ticket? ticketFromBackend(Object? document) {
     id: id,
     number: number,
     position: _asInt(document['position']),
-    estimatedMinutes: _asInt(document['estimated_wait_minutes']),
+    estimatedMinutes: _asNullableInt(document['estimated_wait_minutes']),
     organizationId: _asString(document['organization_id']),
     organizationName: _asString(document['organization_name']),
     agencyId: _asString(document['agency_id']),
@@ -153,6 +153,13 @@ int _asInt(Object? value) {
     return value.round();
   }
   return int.tryParse(value?.toString() ?? '') ?? 0;
+}
+
+/// Un ETA absent reste absent : le mobile ne doit jamais inventer « 0 min ».
+int? _asNullableInt(Object? value) {
+  if (value is int) return value;
+  if (value is num) return value.round();
+  return int.tryParse(value?.toString() ?? '');
 }
 
 String _asString(Object? value) => value is String ? value : '';

@@ -316,6 +316,11 @@ class _TicketPaper extends StatelessWidget {
               ),
             ),
             const _PaperRule(),
+            if (snapshot.pausedCounters.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                child: _counterPauseNotice(context, l10n, snapshot.pausedCounters.first),
+              ),
             _PaperSection(
               title: l10n.detailsQueue,
               children: [
@@ -828,4 +833,44 @@ class _PendingSyncView extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _counterPauseNotice(
+  BuildContext context,
+  AppLocalizations l10n,
+  CounterPauseInfo pause,
+) {
+  final until = pause.pausedUntil;
+  final text = until == null
+      ? l10n.trackingCounterPaused(pause.name)
+      : l10n.trackingCounterPausedUntil(
+          pause.name,
+          MaterialLocalizations.of(context).formatTimeOfDay(
+            TimeOfDay.fromDateTime(until),
+          ),
+        );
+  final color = Theme.of(context).colorScheme.tertiary;
+  return Container(
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: color.withValues(alpha: 0.35)),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    child: Row(
+      children: [
+        Icon(Icons.pause_circle_outline, size: 18, color: color),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

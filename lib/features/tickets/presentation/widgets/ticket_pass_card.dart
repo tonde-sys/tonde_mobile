@@ -161,6 +161,15 @@ class _TicketPassCardState extends ConsumerState<TicketPassCard>
                           ],
                         ),
                         const SizedBox(height: 12),
+                        if (snapshot?.pausedCounters.isNotEmpty ?? false)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _counterPauseLabel(
+                              context,
+                              l10n,
+                              snapshot!.pausedCounters.first,
+                            ),
+                          ),
                         Row(
                           children: [
                             Icon(
@@ -479,6 +488,38 @@ class _DashedRule extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _counterPauseLabel(
+  BuildContext context,
+  AppLocalizations l10n,
+  CounterPauseInfo pause,
+) {
+  final until = pause.pausedUntil;
+  final text = until == null
+      ? l10n.trackingCounterPaused(pause.name)
+      : l10n.trackingCounterPausedUntil(
+          pause.name,
+          MaterialLocalizations.of(context).formatTimeOfDay(
+            TimeOfDay.fromDateTime(until),
+          ),
+        );
+  final color = Theme.of(context).colorScheme.tertiary;
+  return Row(
+    children: [
+      Icon(Icons.pause_circle_outline, size: 15, color: color),
+      const SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 class _DashedRulePainter extends CustomPainter {

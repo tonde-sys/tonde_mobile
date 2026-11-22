@@ -436,6 +436,9 @@
       }
     }
   },
+  "trackingEtaUnavailable": "Estimation en cours",
+  "trackingCounterPaused": "{counter} est en pause.",
+  "trackingCounterPausedUntil": "{counter} est en pause jusqu'à {time}.",
   "trackingInQueue": "dans la file",
   "@trackingInQueue": {
     "description": "Suffixe de la carte de position : « 4 / dans la file »."
@@ -742,6 +745,7 @@
   "notifTicketConfirmedBody": "Vous êtes inscrit dans la file {service} de l’agence {agency}.",
   "notifProgressTitle": "Encore {count} personnes avant votre tour",
   "notifProgressBody": "Temps d’attente estimé : {minutes} minutes. Préparez vos documents.",
+  "notifProgressBodyNoEta": "Encore {count} personnes avant vous. Préparez vos documents.",
   "notifApproachingTitle": "Votre tour approche !",
   "notifApproachingBody": "{count, plural, =1{Il ne reste qu’une personne avant vous.} other{Il ne reste que {count} personnes avant vous.}} Rapprochez-vous de l’agence.",
   "notifCalledTitle": "C’est votre tour !",

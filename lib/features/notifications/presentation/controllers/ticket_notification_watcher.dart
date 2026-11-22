@@ -174,7 +174,9 @@ final class TicketNotificationWatcher {
         urgent: false,
         compose: (l10n) => (
           title: l10n.notifProgressTitle(ahead),
-          body: l10n.notifProgressBody(snapshot.estimatedMinutes),
+          body: snapshot.estimatedMinutes == null
+              ? l10n.notifProgressBodyNoEta(ahead)
+              : l10n.notifProgressBody(snapshot.estimatedMinutes!),
         ),
       );
     }

@@ -722,7 +722,16 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'{minutes} min'**
-  String trackingMinutesValue(int minutes);
+  String trackingMinutesValue(int? minutes);
+
+  /// Estimation indisponible : le serveur n'a pas de capacité fiable.
+  String get trackingEtaUnavailable;
+
+  /// Guichet en pause sans heure de reprise annoncée.
+  String trackingCounterPaused(String counter);
+
+  /// Guichet en pause avec heure de reprise annoncée.
+  String trackingCounterPausedUntil(String counter, String time);
 
   /// Suffixe de la carte de position : « 4 / dans la file ».
   ///
@@ -1167,6 +1176,9 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Temps d’attente estimé : {minutes} minutes. Préparez vos documents.'**
   String notifProgressBody(int minutes);
+
+  /// Notification de progression sans ETA disponible.
+  String notifProgressBodyNoEta(int count);
 
   /// No description provided for @notifApproachingTitle.
   ///
