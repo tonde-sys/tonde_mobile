@@ -28,7 +28,12 @@ jobs:
     name: Build + publication APK
     runs-on: ubuntu-latest
     steps:
+      # Historique et tags complets : les notes de version comparent le tag
+      # publié au précédent. Avec la profondeur 1 par défaut, `git tag` est
+      # vide et `git log` ne voit qu'un commit.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Le runner a un JDK 25 par défaut : Gradle 8.14 ne sait pas l'exécuter
       # et le build meurt en 20 s sur une erreur de classe. Le poste de dev
@@ -123,7 +128,12 @@ jobs:
         id: notes
         shell: bash
         run: |
-          PREV=$(git tag --sort=-creatordate | grep -v "^${{ github.event.inputs.tag || github.ref_name }}$" | head -1)
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          # `grep` sort en code 1 quand il ne sélectionne rien, et GitHub
+          # exécute les étapes en `pipefail` : sans le `|| true`, un dépôt
+          # sans tag précédent fait échouer la publication alors que le
+          # binaire est déjà construit.
+          PREV=$(git tag --sort=-creatordate | grep -vx "$TAG" | head -1 || true)
           if [ -n "$PREV" ]; then
             RANGE="$PREV..HEAD"
             ENTETE="Depuis $PREV :"
@@ -131,7 +141,8 @@ jobs:
             RANGE="HEAD"
             ENTETE="Première version publiée :"
           fi
-          CORPS=$(git log $RANGE --no-merges --pretty='- %s' --reverse | grep -v '^- ci' | head -40)
+          CORPS=$(git log "$RANGE" --no-merges --pretty='- %s' --reverse \
+            | grep -v '^- ci' | head -40 || true)
           {
             echo "body<<NOTES"
             echo "APK Android (build ${BUILD})."
