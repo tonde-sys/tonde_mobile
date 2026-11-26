@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tonde/app/router/app_routes.dart';
+import 'package:tonde/core/config/app_config.dart';
 import 'package:tonde/core/settings/settings_providers.dart';
 import 'package:tonde/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:tonde/features/dashboard/presentation/widgets/profile_widgets.dart';
@@ -107,6 +109,26 @@ class MoreTab extends ConsumerWidget {
                   context.go(AppRoutes.login);
                 }
               },
+            ),
+          ),
+
+          // ---- Version et mode de compilation ----
+          //
+          // « L'application met du temps à s'ouvrir » a deux causes très
+          // différentes : un vrai problème de démarrage, ou un APK de debug
+          // installé à la place de la release — un build debug n'est pas
+          // compilé en AOT et démarre plusieurs fois plus lentement. Cette
+          // ligne permet de trancher en trois secondes, sans adb ni fichier
+          // à comparer.
+          Padding(
+            padding: const EdgeInsets.only(top: 24),
+            child: Center(
+              child: Text(
+                'TONDE $kAppVersion · ${kReleaseMode ? 'release' : 'debug'}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ),
         ],

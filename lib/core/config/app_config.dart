@@ -2,7 +2,7 @@
 ///
 /// À garder alignée avec `version:` du `pubspec.yaml` : le numéro de build
 /// (`+1`) n'est pas montré.
-const String kAppVersion = '1.0.0';
+const String kAppVersion = '1.0.1';
 
 /// Environnements d'exécution de l'application.
 enum AppEnvironment {

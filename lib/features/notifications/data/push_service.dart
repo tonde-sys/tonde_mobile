@@ -120,13 +120,28 @@ final class FirebasePushService implements PushService {
 
   final FirebaseMessaging _messaging;
 
+  /// Initialisation en cours ou terminée.
+  ///
+  /// `main()` la lance sans toujours l'attendre (le SDK natif peut dépasser la
+  /// seconde sur un téléphone lent). Tout ce qui a besoin de Firebase s'y
+  /// raccroche, plutôt que de supposer que l'initialisation a déjà eu lieu :
+  /// c'est ce qui évite qu'un jeton soit silencieusement abandonné.
+  Future<bool>? _initialization;
+
   bool _ready = false;
 
   /// Vrai une fois Firebase initialisé et le handler de fond enregistré.
   bool get isReady => _ready;
 
   @override
-  Future<bool> initialize() async {
+  Future<bool> initialize() => _initialization ??= _initialize();
+
+  /// Une seule tentative par lancement.
+  ///
+  /// Un échec ici vient d'une configuration absente ou d'un Play Services
+  /// manquant, pas d'une panne passagère : réessayer en boucle ne changerait
+  /// rien et retarderait chaque appel.
+  Future<bool> _initialize() async {
     if (_ready) {
       return true;
     }
@@ -134,39 +149,54 @@ final class FirebasePushService implements PushService {
       if (Firebase.apps.isEmpty) {
         await Firebase.initializeApp();
       }
-    } on Object {
-      // Configuration absente ou invalide : l'application continue sans push.
+
+      // iOS n'a pas d'équivalent au POST_NOTIFICATIONS d'Android : la demande
+      // d'autorisation passe par Firebase. Sur Android c'est déjà
+      // LocalNotificationService qui la porte, au moment de la première prise
+      // de ticket — redemander ici ouvrirait un second dialogue.
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        await _messaging.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        // Premier plan : pas de bannière, l'écran de suivi est déjà à l'écran
+        // et se met à jour par le WebSocket. Le son viendra de l'application
+        // (L3), pas du système, pour n'être joué qu'une fois.
+        await _messaging.setForegroundNotificationPresentationOptions(
+          alert: false,
+          badge: true,
+          sound: false,
+        );
+      }
+
+      FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
+      _ready = true;
+      return true;
+    } on Object catch (error, stackTrace) {
+      // Configuration absente, Play Services manquant, autorisation refusée :
+      // l'application continue sans push. L'erreur est remontée plutôt que
+      // masquée, mais elle ne doit pas s'échapper : `initialize()` est aussi
+      // appelé depuis des `unawaited`, où elle deviendrait une exception non
+      // gérée qui fait tomber la zone.
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'tonde',
+          context: ErrorDescription('initialisation des notifications push'),
+        ),
+      );
       return false;
     }
-
-    // iOS n'a pas d'équivalent au POST_NOTIFICATIONS d'Android : la demande
-    // d'autorisation passe par Firebase. Sur Android c'est déjà
-    // LocalNotificationService qui la porte, au moment de la première prise de
-    // ticket — redemander ici ouvrirait un second dialogue.
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await _messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      // Premier plan : pas de bannière, l'écran de suivi est déjà à l'écran et
-      // se met à jour par le WebSocket. Le son viendra de l'application (L3),
-      // pas du système, pour n'être joué qu'une fois.
-      await _messaging.setForegroundNotificationPresentationOptions(
-        alert: false,
-        badge: true,
-        sound: false,
-      );
-    }
-
-    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
-    _ready = true;
-    return true;
   }
 
   @override
   Future<String?> token() async {
-    if (!_ready) {
+    // Attendre l'initialisation plutôt que renvoyer null : un jeton manquant
+    // ici ne serait jamais redemandé, et l'appareil resterait muet jusqu'au
+    // prochain démarrage.
+    if (!await initialize()) {
       return null;
     }
     try {
@@ -185,13 +215,19 @@ final class FirebasePushService implements PushService {
   }
 
   @override
-  Stream<String?> get tokenRefreshes => _ready
-      // ignore: deprecated_member_use
-      ? _messaging.onTokenRefresh
-      : const Stream<String?>.empty();
+  Stream<String?> get tokenRefreshes async* {
+    if (!await initialize()) {
+      return;
+    }
+    // ignore: deprecated_member_use
+    yield* _messaging.onTokenRefresh;
+  }
 
   @override
   Future<void> deleteToken() async {
+    // Volontairement pas d'`await initialize()` : la déconnexion ne doit pas
+    // attendre le SDK natif. Le serveur a déjà oublié cet appareil (il reçoit
+    // `device_token`), et un jeton local orphelin ne joint plus aucun compte.
     if (!_ready) {
       return;
     }
@@ -204,11 +240,14 @@ final class FirebasePushService implements PushService {
   }
 
   @override
-  Stream<PushTap> get taps {
-    if (!_ready) {
-      return const Stream<PushTap>.empty();
+  Stream<PushTap> get taps async* {
+    // Un flux qui attend l'initialisation plutôt qu'un flux vide : sinon un
+    // abonnement pris avant que Firebase soit prêt resterait muet pour toute
+    // la session, et un appui sur une notification n'ouvrirait rien.
+    if (!await initialize()) {
+      return;
     }
-    return FirebaseMessaging.onMessageOpenedApp
+    yield* FirebaseMessaging.onMessageOpenedApp
         .map((message) => PushTap.fromData(message.data))
         .where((tap) => tap != null)
         .cast<PushTap>();
@@ -216,7 +255,7 @@ final class FirebasePushService implements PushService {
 
   @override
   Future<PushTap?> initialTap() async {
-    if (!_ready) {
+    if (!await initialize()) {
       return null;
     }
     try {

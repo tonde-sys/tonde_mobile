@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tonde/app/bootstrap.dart';
+import 'package:tonde/core/logging/startup_timeline.dart';
 import 'package:tonde/core/offline/local_cache.dart';
 import 'package:tonde/core/offline/local_cache_provider.dart';
 import 'package:tonde/features/notifications/data/local_notification_service.dart';
@@ -10,12 +13,25 @@ import 'package:tonde/features/notifications/presentation/controllers/notificati
 import 'package:tonde/features/profile/data/local_profile_photo_picker.dart';
 import 'package:tonde/features/profile/presentation/controllers/profile_photo_providers.dart';
 
+/// Temps maximal accordé à Firebase avant d'afficher l'écran.
+///
+/// En deçà, l'initialisation est terminée au moment du premier rendu et rien
+/// ne change par rapport à un démarrage strictement séquentiel. Au-delà — un
+/// téléphone d'entrée de gamme met parfois plus d'une seconde à démarrer le
+/// SDK natif — on affiche l'écran et l'initialisation continue seule. Le
+/// service attend sa propre disponibilité avant de rendre un jeton, donc
+/// aucun appareil ne perd son enregistrement push.
+const Duration _pushBudget = Duration(milliseconds: 800);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  StartupTimeline.mark('main');
 
   // Le cache local est ouvert avant le premier écran : le ticket actif doit
-  // être disponible dès l'affichage, même sans réseau.
+  // être disponible dès l'affichage, même sans réseau. Hive ouvre un fichier
+  // local, l'attente se compte en dizaines de millisecondes.
   final cache = await _openCache();
+  StartupTimeline.mark('cache');
 
   // Les notifications système sont préparées ici, pas dans un écran : le
   // canal doit exister avant la première alerte, et l'initialisation ne doit
@@ -33,14 +49,19 @@ Future<void> main() async {
       ),
     );
   }
+  StartupTimeline.mark('notifications');
 
-  // Firebase est préparé avant le premier écran : `onBackgroundMessage` doit
-  // être enregistré tôt, sinon un push reçu application fermée ne réveille
-  // pas l'isolate prévu. Un échec n'est pas fatal — sans configuration, le
-  // service retombe en mode inerte et l'application démarre sans push.
+  // Firebase est lancé avant le premier écran, mais avec un budget.
+  //
+  // Jusqu'ici, `initializeApp` était attendu sans limite : c'est lui qui
+  // tenait l'écran figé sur les téléphones lents. Le handler de fond reste
+  // enregistré tôt, ce qui est la seule chose qui doive l'être avant un push.
   final push = FirebasePushService();
   try {
-    await push.initialize();
+    await push.initialize().timeout(_pushBudget);
+  } on TimeoutException {
+    // Budget dépassé, pas initialisation abandonnée : elle se termine seule
+    // en tâche de fond, et `token()` l'attendra.
   } on Object catch (error, stackTrace) {
     FlutterError.reportError(
       FlutterErrorDetails(
@@ -51,6 +72,7 @@ Future<void> main() async {
       ),
     );
   }
+  StartupTimeline.mark('push');
 
   runApp(
     ProviderScope(
@@ -65,6 +87,13 @@ Future<void> main() async {
       child: const TondeBootstrap(),
     ),
   );
+
+  // Relevé après la première image, pas après l'initialisation de Flutter :
+  // c'est le moment où l'utilisateur voit l'application.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    StartupTimeline.mark('first_frame');
+    StartupTimeline.reportOnce();
+  });
 }
 
 Future<LocalCache> _openCache() async {
