@@ -23,6 +23,19 @@
 
 **Reste à faire : rien de code.** Les essais sur appareil (L2, 4.9) et le déblocage iOS restent à faire côté produit.
 
+### Livraison au 2026-11-26
+
+| Produit | Version publiée | Contenu |
+|---|---|---|
+| Mobile | [`v1.0.0+2`](https://github.com/tonde-sys/tonde_mobile/releases/tag/v1.0.0) | APK 57,5 Mo — prise de ticket, suivi, push, son, widget, centre d'aide |
+| Desktop | [`v0.3.0`](https://github.com/tonde-sys/tonde-desktop/releases/tag/v0.3.0) | MSI + NSIS + `latest.json` — file temps réel, rappel sans doublon |
+
+Le tag déclenche la publication : `v*` sur mobile (`mobile-release.yml`) comme sur desktop (`release.yml`). Le tag doit correspondre à la version du `pubspec.yaml` / `package.json`, sinon le job s'arrête avant de compiler — un binaire qui annonce une autre version ne serait jamais proposé par l'updater.
+
+**Deux réserves à connaître :**
+- **Aucun keystore** n'est versionné : l'APK release est signé avec la clé de debug. Il remplace une installation de debug, mais ne peut pas aller sur le Play Store. Une vraie clé de publication est à créer avant la première mise en ligne.
+- Le runner CI fournit un **JDK 25**, que Gradle 8.14 n'exécute pas : le workflow fixe Java 17 (`actions/setup-java`). Sans cela, la compilation échoue en 20 s.
+
 ---
 
 ## 0. Ce qui est déjà fait (à ne pas refaire)
