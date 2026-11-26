@@ -1,0 +1,99 @@
+name: Release mobile
+
+# Publie l'APK Android sur un tag `vX.Y.Z`, avec la même logique que le
+# desktop : le tag doit correspondre à la version du pubspec, sinon
+# l'installeur publié ne serait jamais proposé par l'updater.
+#
+# Déclenchement : push d'un tag `v1.0.0` (le numéro de build `+N` reste
+# dans le nom de la release) ou lancement manuel.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag à publier (ex. v1.0.0)"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build + publication APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Version épinglée identique à mobile-ci.yml : une release doit sortir
+      # du même compilateur que la CI qui l'a validée.
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.3
+          channel: stable
+          cache: true
+
+      - name: Vérifier tag == version
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          RAW=$(grep -m1 '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')
+          VERSION="${RAW%%+*}"
+          BUILD="${RAW#*+}"
+          echo "tag=$TAG version=$VERSION build=$BUILD"
+          if [ "$TAG" != "v$VERSION" ]; then
+            echo "::error::Le tag $TAG ne correspond pas à la version $VERSION du pubspec"
+            exit 1
+          fi
+          echo "BUILD=$BUILD" >> "$GITHUB_ENV"
+
+      - run: flutter pub get
+
+      # Les traductions générées sont suivies : si l'ARB a bougé sans
+      # régénération, l'APK partirait avec des libellés périmés.
+      - name: Vérifier les traductions générées
+        shell: bash
+        run: |
+          flutter gen-l10n
+          if ! git diff --quiet -- lib/l10n/generated; then
+            echo "::error::lib/l10n/generated n'est pas à jour — lancer flutter gen-l10n"
+            git diff --stat -- lib/l10n/generated
+            exit 1
+          fi
+
+      - run: flutter analyze
+
+      # Le canal natif (sonnerie, widget) ne se valide qu'en compilant.
+      - name: Build APK release
+        run: flutter build apk --release
+
+      - name: Nommer l'artefact
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             "dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${BUILD}.apk"
+          ls -lh dist/
+
+      - name: Publier la release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: "TONDE Mobile ${{ github.event.inputs.tag || github.ref_name }}+${{ env.BUILD }}"
+          body: |
+            APK Android (build ${{ env.BUILD }}).
+
+            Installation : ouvrir le fichier sur le téléphone, autoriser
+            l'installation depuis cette source si Android le demande.
+
+            L'APK est signé avec la clé de debug : il remplace une installation
+            de debug existante, mais ne peut pas être publié sur le Play Store.
+          files: dist/*.apk
+          fail_on_unmatched_files: true
+          draft: false
+          prerelease: false
