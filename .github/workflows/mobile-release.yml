@@ -117,19 +117,43 @@ jobs:
              "dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${BUILD}.apk"
           ls -lh dist/
 
+      # Les commits depuis le tag précédent, sans le bruit de fusion : c'est
+      # ce que le client doit lire, pas un journal technique.
+      - name: Notes de version
+        id: notes
+        shell: bash
+        run: |
+          PREV=$(git tag --sort=-creatordate | grep -v "^${{ github.event.inputs.tag || github.ref_name }}$" | head -1)
+          if [ -n "$PREV" ]; then
+            RANGE="$PREV..HEAD"
+            ENTETE="Depuis $PREV :"
+          else
+            RANGE="HEAD"
+            ENTETE="Première version publiée :"
+          fi
+          CORPS=$(git log $RANGE --no-merges --pretty='- %s' --reverse | grep -v '^- ci' | head -40)
+          {
+            echo "body<<NOTES"
+            echo "APK Android (build ${BUILD})."
+            echo
+            echo "$ENTETE"
+            echo
+            echo "${CORPS:-- pas de changement fonctionnel}"
+            echo
+            echo "Installation : ouvrir le fichier sur le téléphone, autoriser"
+            echo "l'installation depuis cette source si Android le demande."
+            echo
+            echo "L'APK est signé avec la clé de debug : il remplace une installation"
+            echo "de debug existante, mais ne peut pas être publié sur le Play Store."
+            echo "NOTES"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Publier la release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           name: "TONDE Mobile ${{ github.event.inputs.tag || github.ref_name }}+${{ env.BUILD }}"
-          body: |
-            APK Android (build ${{ env.BUILD }}).
-
-            Installation : ouvrir le fichier sur le téléphone, autoriser
-            l'installation depuis cette source si Android le demande.
-
-            L'APK est signé avec la clé de debug : il remplace une installation
-            de debug existante, mais ne peut pas être publié sur le Play Store.
+          body: ${{ steps.notes.outputs.body }}
           files: dist/*.apk
           fail_on_unmatched_files: true
           draft: false
