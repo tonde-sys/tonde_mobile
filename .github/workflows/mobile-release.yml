@@ -30,6 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Le runner a un JDK 25 par défaut : Gradle 8.14 ne sait pas l'exécuter
+      # et le build meurt en 20 s sur une erreur de classe. Le poste de dev
+      # compile en 17, on aligne la CI dessus plutôt que l'inverse.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       # Version épinglée identique à mobile-ci.yml : une release doit sortir
       # du même compilateur que la CI qui l'a validée.
       - uses: subosito/flutter-action@v2
@@ -68,6 +76,12 @@ jobs:
 
       - run: flutter analyze
 
+      # flutter doctor signale des licences non acceptées sur l'image : Gradle
+      # refuse alors d'installer la moindre plateforme manquante.
+      - name: Licences Android
+        shell: bash
+        run: yes | flutter doctor --android-licenses > /dev/null 2>&1 || true
+
       # Le canal natif (sonnerie, widget) ne se valide qu'en compilant.
       #
       # L'échec est remonté en annotation : les journaux d'un job ne sont
@@ -78,7 +92,12 @@ jobs:
         run: |
           set -o pipefail
           if ! flutter build apk --release --verbose 2>&1 | tee build-apk.log; then
-            MSG=$(tail -c 3000 build-apk.log | tr '\n' '|' | sed 's/%/%25/g; s/\r//g')
+            # Gradle met la cause dans « What went wrong », loin de la pile
+            # d'appels qui termine le journal.
+            MSG=$(grep -A 12 "What went wrong" build-apk.log | tr '\n' '|' | sed 's/%/%25/g; s/\r//g' | cut -c1-3000)
+            if [ -z "$MSG" ]; then
+              MSG=$(tail -c 2500 build-apk.log | tr '\n' '|' | sed 's/%/%25/g; s/\r//g')
+            fi
             echo "::error title=Build APK::${MSG}"
             exit 1
           fi
