@@ -69,8 +69,26 @@ jobs:
       - run: flutter analyze
 
       # Le canal natif (sonnerie, widget) ne se valide qu'en compilant.
+      #
+      # L'échec est remonté en annotation : les journaux d'un job ne sont
+      # lisibles qu'avec un jeton, alors qu'une annotation est publique. Sans
+      # cela, un build cassé ne laisse qu'un « exit code 1 ».
       - name: Build APK release
-        run: flutter build apk --release
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! flutter build apk --release --verbose 2>&1 | tee build-apk.log; then
+            MSG=$(tail -c 3000 build-apk.log | tr '\n' '|' | sed 's/%/%25/g; s/\r//g')
+            echo "::error title=Build APK::${MSG}"
+            exit 1
+          fi
+
+      - name: Diagnostic de l'environnement
+        if: failure()
+        shell: bash
+        run: |
+          OUT=$(flutter doctor -v 2>&1 | head -45 | tr '\n' '|' | sed 's/%/%25/g; s/\r//g')
+          echo "::warning title=flutter doctor::${OUT}"
 
       - name: Nommer l'artefact
         shell: bash
