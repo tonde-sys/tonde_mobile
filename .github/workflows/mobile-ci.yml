@@ -5,7 +5,7 @@ name: Mobile CI
 #
 # Pas de build d'APK ici : la compilation Android demande le SDK, Gradle et
 # plusieurs minutes de téléchargement, pour un résultat que `flutter test` ne
-# couvre pas mieux. Elle reste dans le processus de livraison.
+# couvre pas mieux. Elle vit dans mobile-release.yml, déclenché par un tag.
 
 on:
   push:
