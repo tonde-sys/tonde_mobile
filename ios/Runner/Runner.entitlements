@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Autorise l'application à recevoir des notifications distantes.
+	     Sans cette autorisation, APNs refuse silencieusement : l'appareil
+	     s'enregistre, obtient un jeton, et ne reçoit jamais rien.
+
+	     `development` couvre les builds de développement et TestFlight.
+	     Xcode bascule automatiquement la valeur à `production` lors d'une
+	     distribution App Store, à condition que la signature soit gérée par
+	     Xcode. Si la signature est manuelle, il faut la changer à la main.
+
+	     La capacité « Push Notifications » doit aussi être activée sur la
+	     cible Runner (Xcode > Signing & Capabilities), et l'App ID doit avoir
+	     les push activés dans le portail Apple Developer. -->
+	<key>aps-environment</key>
+	<string>development</string>
+</dict>
+</plist>

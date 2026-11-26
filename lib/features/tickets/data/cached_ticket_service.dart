@@ -25,6 +25,13 @@ final class CachedTicketService implements TicketService {
   static const String activeKey = 'ticket.active';
   static const String pendingKey = 'ticket.pending';
 
+  /// Ticket dont l'activité vient de se terminer côté serveur.
+  ///
+  /// Écrit au moment précis où `GET /tickets/active` passe de « un ticket » à
+  /// « aucun ticket » : c'est le seul instant où l'application sait encore
+  /// quel ticket a disparu, et donc le seul où elle peut l'expliquer au client.
+  static const String lastClosedKey = 'ticket.last_closed';
+
   final TicketService _remote;
   final LocalCache _cache;
   final bool Function() _isOnline;
@@ -44,6 +51,17 @@ final class CachedTicketService implements TicketService {
         final cached = await _readActive();
         if (cached != null && cached.pendingSync) {
           return cached;
+        }
+        if (cached != null) {
+          // On le garde de côté avant de l'effacer : l'accueil doit pouvoir
+          // dire au client ce qui est arrivé à son ticket au lieu de lui
+          // présenter la carte « aucun ticket actif » comme à un nouveau
+          // venu. Le statut mémorisé permet de choisir les mots justes
+          // (passage terminé / ticket expiré).
+          await _cache.write(lastClosedKey, <String, Object?>{
+            'ticket': ticketToJson(cached),
+            'closed_at': DateTime.now().toUtc().toIso8601String(),
+          });
         }
         await _cache.write(activeKey, null);
         return null;
@@ -78,7 +96,7 @@ final class CachedTicketService implements TicketService {
     }
 
     final existing = await _readActive();
-    if (existing != null && !existing.served) {
+    if (existing != null && !existing.isClosed) {
       throw TicketAlreadyActiveException(existing);
     }
     final pending = Ticket(
@@ -163,23 +181,27 @@ final class CachedTicketService implements TicketService {
     return document == null ? 0 : 1;
   }
 
-  /// Marque le ticket comme servi côté serveur **et** dans le cache.
+  /// Enregistre l'état courant du ticket dans le cache.
   ///
-  /// Les deux mémoires doivent s'accorder : si le serveur continue de croire
-  /// que le client attend encore, il refusera le ticket suivant alors que
-  /// l'écran, lui, affiche déjà « Terminé ».
+  /// Le serveur fait foi, mais le cache doit s'accorder avec lui : si le
+  /// serveur croit encore que le client attend alors que l'écran affiche déjà
+  /// « Terminé », il refusera le ticket suivant. Inversement, un client absent
+  /// dont le cache dirait « en attente » ne verrait jamais son bouton de
+  /// reprise au redémarrage.
+  ///
+  /// L'écriture distante reste facultative : elle est un no-op sur le client
+  /// HTTP — le mobile ne fait pas avancer la machine à états — mais elle
+  /// permet à un service de démonstration de rester cohérent avec son cache.
   @override
-  Future<void> markServed(Ticket ticket) async {
-    final served = ticket.copyWith(served: true);
+  Future<void> saveStatus(Ticket ticket) async {
     if (_isOnline()) {
       try {
-        await _remote.markServed(served);
+        await _remote.saveStatus(ticket);
       } on Object {
-        // Le serveur reconciliera plus tard : l'état local fait foi pour la
-        // session en cours, et un échec ne doit jamais bloquer le client.
+        // Le prochain rafraîchissement serveur corrigera l'écart.
       }
     }
-    await _writeActive(served);
+    await _writeActive(ticket);
   }
 
   /// Annule le ticket actif.
@@ -187,6 +209,9 @@ final class CachedTicketService implements TicketService {
   /// Le cache est vidé dans tous les cas : un ticket annulé ne doit jamais
   /// réapparaître au prochain démarrage, même si le serveur n'a pas pu être
   /// joint. L'échec réseau est donc volontairement avalé.
+  ///
+  /// L'avis de clôture est effacé aussi : le client a annulé lui-même, il n'a
+  /// pas à lire un message lui apprenant la disparition de son ticket.
   @override
   Future<void> cancelTicket() async {
     if (_isOnline()) {
@@ -198,11 +223,59 @@ final class CachedTicketService implements TicketService {
     }
     await _cache.write(activeKey, null);
     await _cache.write(pendingKey, null);
+    await _cache.write(lastClosedKey, null);
+  }
+
+  /// Demande le retour en file d'un ticket absent.
+  ///
+  /// Pas de repli hors ligne, contrairement à la prise de ticket : reprendre sa
+  /// place exige que le serveur réinsère le ticket dans la file Redis. Sans
+  /// réseau, il n'y a pas de place à reprendre — et prétendre le contraire
+  /// laisserait le client attendre un rappel qui n'arrivera jamais.
+  @override
+  Future<Ticket> resumeTicket(Ticket ticket) async {
+    final resumed = await _remote.resumeTicket(ticket);
+    await _writeActive(resumed);
+    return resumed;
+  }
+
+  /// Durée pendant laquelle l'avis de clôture reste affichable.
+  ///
+  /// Passé ce délai le message n'aide plus : « reprenez un ticket » collé à un
+  /// ticket de la semaine dernière se lit comme un défaut de l'application.
+  static const Duration lastClosedTtl = Duration(hours: 24);
+
+  @override
+  Future<Ticket?> lastClosedTicket() async {
+    final document = await _cache.read(lastClosedKey);
+    if (document is! Map) {
+      return null;
+    }
+    final ticket = ticketFromJson(document['ticket']);
+    if (ticket == null) {
+      return null;
+    }
+    final closedAt = DateTime.tryParse('${document['closed_at']}');
+    if (closedAt == null || DateTime.now().toUtc().difference(closedAt) > lastClosedTtl) {
+      await _cache.write(lastClosedKey, null);
+      return null;
+    }
+    return ticket;
   }
 
   Future<Ticket?> _readActive() async =>
       ticketFromJson(await _cache.read(activeKey));
 
-  Future<void> _writeActive(Ticket? ticket) =>
-      _cache.write(activeKey, ticket == null ? null : ticketToJson(ticket));
+  /// Écrit le ticket courant, et efface l'avis de clôture.
+  ///
+  /// Un ticket vivant rend caduc le message « votre ticket n'est plus actif » :
+  /// le client en a repris un, ou le précédent est revenu en file. La remise à
+  /// zéro est donc faite ici plutôt qu'à chaque appel, pour qu'aucun chemin
+  /// (création, reprise, synchronisation) ne puisse l'oublier.
+  Future<void> _writeActive(Ticket? ticket) async {
+    if (ticket != null) {
+      await _cache.write(lastClosedKey, null);
+    }
+    await _cache.write(activeKey, ticket == null ? null : ticketToJson(ticket));
+  }
 }

@@ -51,5 +51,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Sans ce mode, iOS ne réveille pas l'application pour un push reçu
+	     écran verrouillé ou app en arrière-plan : le ticket appelé arriverait
+	     en retard, c'est-à-dire inutilement. Le mode seul ne suffit pas : la
+	     capacité « Push Notifications » doit aussi être activée sur la cible
+	     Runner (Xcode > Signing & Capabilities). -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<!-- Centre d'aide : sans cette liste, `canLaunchUrl` répond faux sur iOS
+	     et les boutons « Appeler » / « Écrire » paraîtraient morts. -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>whatsapp</string>
+	</array>
 </dict>
 </plist>

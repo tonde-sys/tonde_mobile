@@ -6,6 +6,7 @@ import 'package:tonde/features/notifications/domain/entities/tonde_notification.
 import 'package:tonde/features/notifications/domain/notification_service.dart';
 import 'package:tonde/features/notifications/presentation/controllers/ticket_notification_watcher.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
@@ -186,7 +187,7 @@ void main() {
 
   test('la fin de prise en charge clôt le parcours', () async {
     watcher.onTicket(_ticket);
-    watcher.onTicket(_ticket.copyWith(served: true));
+    watcher.onTicket(_ticket.copyWith(status: TicketStatus.done));
     await pumpEventQueue();
 
     expect(kinds(), contains(TondeNotificationKind.served));

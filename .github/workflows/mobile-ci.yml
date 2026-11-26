@@ -1,0 +1,56 @@
+name: Mobile CI
+
+# Deux garde-fous, dans cet ordre : les fichiers de traduction doivent
+# correspondre aux ARB, puis le code doit s'analyser et les tests passer.
+#
+# Pas de build d'APK ici : la compilation Android demande le SDK, Gradle et
+# plusieurs minutes de téléchargement, pour un résultat que `flutter test` ne
+# couvre pas mieux. Elle reste dans le processus de livraison.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Permet de relancer à la main depuis l'onglet Actions.
+  workflow_dispatch:
+
+# Une seule exécution par branche : une série de commits rapprochés ne doit pas
+# empiler cinq jobs identiques.
+concurrency:
+  group: mobile-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Version épinglée : `stable` ferait passer la CI d'une version de
+          # Flutter à l'autre sans qu'aucun commit ne bouge, et une analyse
+          # qui casse du jour au lendemain ne dit plus rien sur le code.
+          flutter-version: 3.38.3
+          channel: stable
+          cache: true
+
+      - name: Dépendances
+        run: flutter pub get
+
+      # Les fichiers générés sont versionnés pour que le dépôt compile sans
+      # outillage. Le revers : un ARB modifié sans régénération passerait
+      # inaperçu jusqu'à ce qu'un écran affiche l'ancien texte.
+      - name: Traductions à jour
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n/generated \
+            || (echo "::error::lib/l10n/generated n'est pas à jour. Lancez 'flutter gen-l10n' et commitez le résultat." && exit 1)
+
+      - name: Analyse statique
+        run: flutter analyze
+
+      - name: Tests
+        run: flutter test --reporter expanded

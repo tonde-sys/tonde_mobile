@@ -40,11 +40,13 @@ class AgencyServicesPage extends ConsumerWidget {
       body: organizationsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => AsyncErrorView(
+          error: error,
           onRetry: () => ref.invalidate(organizationsProvider),
         ),
         data: (organizations) => agenciesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => AsyncErrorView(
+            error: error,
             onRetry: () => ref.invalidate(agenciesProvider(organizationId)),
           ),
           data: (agencies) {
@@ -74,6 +76,7 @@ class AgencyServicesPage extends ConsumerWidget {
                   ],
                   error: (error, stackTrace) => [
                     AsyncErrorView(
+                      error: error,
                       onRetry: () => ref.invalidate(
                         servicesProvider((
                           organizationId: organizationId,

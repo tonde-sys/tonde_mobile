@@ -26,6 +26,7 @@ class OrganizationDetailPage extends ConsumerWidget {
       body: organizationsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => AsyncErrorView(
+          error: error,
           onRetry: () => ref.invalidate(organizationsProvider),
         ),
         data: (organizations) {
@@ -53,6 +54,7 @@ class OrganizationDetailPage extends ConsumerWidget {
                 ],
                 error: (error, stackTrace) => [
                   AsyncErrorView(
+                    error: error,
                     onRetry: () =>
                         ref.invalidate(agenciesProvider(organizationId)),
                   ),

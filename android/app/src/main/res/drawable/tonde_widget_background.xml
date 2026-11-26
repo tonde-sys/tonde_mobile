@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond du widget : rectangle arrondi opaque, aux angles du Design System.
+     Le rayon est de 20 dp parce qu'Android 12+ applique lui-même un arrondi
+     système d'environ 16 dp : un rayon plus grand garderait la main sur la
+     forme, un rayon plus petit disparaîtrait sous le masque du lanceur. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/tonde_widget_background" />
+    <corners android:radius="20dp" />
+</shape>

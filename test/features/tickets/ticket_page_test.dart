@@ -13,6 +13,7 @@ import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/tickets/data/mock_ticket_service.dart';
 import 'package:tonde/features/tickets/data/ticket_service_provider.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tracking/data/queue_tracking_service_provider.dart';
 import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/features/tracking/domain/queue_tracking_service.dart';
@@ -235,7 +236,7 @@ void main() {
         agency: agencies.first,
         service: services.first,
       );
-      await tickets.markServed(previous);
+      await tickets.saveStatus(previous.copyWith(status: TicketStatus.done));
     });
 
     await _openHorizonDetail(tester, tickets: tickets);

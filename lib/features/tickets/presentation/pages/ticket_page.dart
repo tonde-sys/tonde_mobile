@@ -10,6 +10,7 @@ import 'package:tonde/features/organizations/presentation/controllers/organizati
 import 'package:tonde/features/organizations/presentation/widgets/async_error_view.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
 import 'package:tonde/features/tickets/presentation/controllers/ticket_controller.dart';
+import 'package:tonde/features/tickets/presentation/widgets/home_widget_invite_card.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
 /// Confirmation de la prise de ticket pour un service précis.
@@ -58,16 +59,19 @@ class _TicketPageState extends ConsumerState<TicketPage> {
       body: organizationsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => AsyncErrorView(
+          error: error,
           onRetry: () => ref.invalidate(organizationsProvider),
         ),
         data: (organizations) => agenciesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => AsyncErrorView(
+            error: error,
             onRetry: () => ref.invalidate(agenciesProvider(organizationId)),
           ),
           data: (agencies) => servicesAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => AsyncErrorView(
+              error: error,
               onRetry: () => ref.invalidate(
                 servicesProvider((
                   organizationId: organizationId,
@@ -90,12 +94,13 @@ class _TicketPageState extends ConsumerState<TicketPage> {
                   child: CircularProgressIndicator(),
                 ),
                 error: (error, stackTrace) => AsyncErrorView(
+                  error: error,
                   onRetry: () => ref.invalidate(activeTicketProvider),
                 ),
                 data: (ticket) {
                   // Un ticket déjà servi ne bloque plus la prise : le client
                   // peut en reprendre un immédiatement.
-                  final blocking = ticket != null && !ticket.served;
+                  final blocking = ticket != null && !ticket.isClosed;
                   // Deux cas gardent l'écran de confirmation : le ticket encore
                   // en attente de **cette** agence, et celui que le client vient
                   // de prendre ici. Un ticket servi lors d'un passage antérieur
@@ -104,7 +109,7 @@ class _TicketPageState extends ConsumerState<TicketPage> {
                   final showConfirmation =
                       ticket != null &&
                       ticket.agencyId == agency.id &&
-                      (!ticket.served || ticket.number == _justTaken);
+                      (!ticket.isClosed || ticket.number == _justTaken);
                   if (showConfirmation) {
                     return _SuccessView(ticket: ticket);
                   }
@@ -129,7 +134,7 @@ class _TicketPageState extends ConsumerState<TicketPage> {
                             service: service,
                           );
                       final created = ref.read(activeTicketProvider).value;
-                      if (!mounted || created == null || created.served) {
+                      if (!mounted || created == null || created.isClosed) {
                         return;
                       }
                       setState(() => _justTaken = created.number);
@@ -415,7 +420,7 @@ class _SuccessViewState extends ConsumerState<_SuccessView> {
         ),
         const SizedBox(height: 16),
         Text(
-          ticket.served
+          ticket.isClosed
               ? l10n.ticketServed
               : (pending ? l10n.ticketPendingTitle : l10n.ticketActiveTitle),
           style: textTheme.headlineSmall,
@@ -455,7 +460,7 @@ class _SuccessViewState extends ConsumerState<_SuccessView> {
                 // Position 0 = le client n'est pas (ou plus) dans la file :
                 // ticket déjà appelé, servi, ou file momentanément indisponible.
                 // Afficher « Position 0 » serait un rang, et faux.
-                if (!ticket.served && ticket.position > 0) ...[
+                if (!ticket.isClosed && ticket.position > 0) ...[
                   const SizedBox(height: 16),
                   Text(
                     l10n.ticketPositionLabel(ticket.position),
@@ -468,13 +473,20 @@ class _SuccessViewState extends ConsumerState<_SuccessView> {
         ),
         const SizedBox(height: 16),
         Text(
-          ticket.served
+          ticket.isClosed
               ? l10n.ticketServedNote
               : (pending
                     ? l10n.ticketPendingNote
                     : l10n.ticketSuccessNote(ticket.agencyName)),
           textAlign: TextAlign.center,
         ),
+        // Proposition d'épingler le widget : seulement pendant une visite en
+        // cours (un ticket clos n'a plus rien à suivre) et jamais pour un
+        // ticket hors ligne, dont le widget ne saurait rien afficher.
+        if (!ticket.isClosed && !pending) ...[
+          const SizedBox(height: 24),
+          const HomeWidgetInviteCard(),
+        ],
         const SizedBox(height: 32),
         FilledButton(
           onPressed: () => context.go(AppRoutes.home),

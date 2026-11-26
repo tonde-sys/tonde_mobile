@@ -400,6 +400,78 @@ abstract class AppLocalizations {
   /// **'Voir ma position'**
   String get seePosition;
 
+  /// Titre de la bannière d'accueil quand un ticket est actif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous êtes dans la file'**
+  String get heroTitleActive;
+
+  /// Texte de la bannière d'accueil quand un ticket est actif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre position se met à jour en temps réel. Restez à portée de voix du guichet.'**
+  String get heroBodyActive;
+
+  /// Bouton de reprise après une absence au guichet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre mon ticket'**
+  String get resumeTicket;
+
+  /// Confirmation après une reprise de ticket réussie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre ticket est de retour dans la file.'**
+  String get resumeSuccess;
+
+  /// Refus serveur RECOVERY_WINDOW_EXPIRED.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le délai de reprise est écoulé. Prenez un nouveau ticket.'**
+  String get resumeWindowExpired;
+
+  /// Refus serveur MAX_MISSED_COUNT_REACHED.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop d\'absences : la reprise n\'est plus possible. Prenez un nouveau ticket.'**
+  String get resumeMaxMissed;
+
+  /// Échec générique d'une reprise de ticket.
+  ///
+  /// In fr, this message translates to:
+  /// **'La reprise n\'a pas abouti. Réessayez dans un instant.'**
+  String get resumeFailed;
+
+  /// Rappel affiché sous un ticket absent, avec l'heure limite de reprise.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous ne vous êtes pas présenté. Reprenez votre ticket avant {time}.'**
+  String ticketAbsentNote(String time);
+
+  /// Titre affiché quand le ticket a été appelé puis clôturé au guichet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre passage est terminé'**
+  String get ticketClosedServedTitle;
+
+  /// Explication affichée sous le titre, pour un ticket servi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le guichet a clôturé le ticket {number}. Vous pouvez en reprendre un quand vous voulez.'**
+  String ticketClosedServedBody(String number);
+
+  /// Titre affiché quand le ticket a quitté la file sans avoir été appelé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre ticket a expiré'**
+  String get ticketClosedExpiredTitle;
+
+  /// Explication affichée sous le titre, pour un ticket expiré ou retiré de la file.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le ticket {number} n\'est plus dans la file. Reprenez un ticket pour être rappelé.'**
+  String ticketClosedExpiredBody(String number);
+
   /// Titre de la section organisations de l'accueil.
   ///
   /// In fr, this message translates to:
@@ -722,16 +794,25 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'{minutes} min'**
-  String trackingMinutesValue(int? minutes);
+  String trackingMinutesValue(int minutes);
 
-  /// Estimation indisponible : le serveur n'a pas de capacité fiable.
+  /// No description provided for @trackingEtaUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Estimation en cours'**
   String get trackingEtaUnavailable;
 
-  /// Guichet en pause sans heure de reprise annoncée.
-  String trackingCounterPaused(String counter);
+  /// No description provided for @trackingCounterPaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'{counter} est en pause.'**
+  String trackingCounterPaused(Object counter);
 
-  /// Guichet en pause avec heure de reprise annoncée.
-  String trackingCounterPausedUntil(String counter, String time);
+  /// No description provided for @trackingCounterPausedUntil.
+  ///
+  /// In fr, this message translates to:
+  /// **'{counter} est en pause jusqu\'à {time}.'**
+  String trackingCounterPausedUntil(Object counter, Object time);
 
   /// Suffixe de la carte de position : « 4 / dans la file ».
   ///
@@ -835,7 +916,7 @@ abstract class AppLocalizations {
   /// **'Sombre'**
   String get themeDark;
 
-  /// Numéro de version affiché dans la fenêtre À propos.
+  /// No description provided for @appVersion.
   ///
   /// In fr, this message translates to:
   /// **'Version {version}'**
@@ -1177,8 +1258,11 @@ abstract class AppLocalizations {
   /// **'Temps d’attente estimé : {minutes} minutes. Préparez vos documents.'**
   String notifProgressBody(int minutes);
 
-  /// Notification de progression sans ETA disponible.
-  String notifProgressBodyNoEta(int count);
+  /// No description provided for @notifProgressBodyNoEta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Encore {count} personnes avant vous. Préparez vos documents.'**
+  String notifProgressBodyNoEta(Object count);
 
   /// No description provided for @notifApproachingTitle.
   ///
@@ -1281,6 +1365,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Alertes de file d’attente et appels au guichet'**
   String get moreNotificationsSubtitle;
+
+  /// No description provided for @moreCallSound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Son à l’appel'**
+  String get moreCallSound;
+
+  /// No description provided for @moreCallSoundSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait sonner le téléphone quand votre numéro est appelé'**
+  String get moreCallSoundSubtitle;
 
   /// No description provided for @notifDelete.
   ///
@@ -1389,6 +1485,738 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le mot de passe doit contenir au moins 8 caractères.'**
   String get passwordTooShort;
+
+  /// No description provided for @assistanceMyTicket.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon ticket'**
+  String get assistanceMyTicket;
+
+  /// No description provided for @assistanceFaq.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get assistanceFaq;
+
+  /// No description provided for @assistanceContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous contacter'**
+  String get assistanceContact;
+
+  /// No description provided for @assistanceGiveFeedback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donner mon avis'**
+  String get assistanceGiveFeedback;
+
+  /// No description provided for @assistanceGiveFeedbackBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dites-nous comment s\'est passé votre passage.'**
+  String get assistanceGiveFeedbackBody;
+
+  /// No description provided for @assistanceReportBug.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler un problème'**
+  String get assistanceReportBug;
+
+  /// No description provided for @assistanceReportBugBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelque chose ne fonctionne pas ? Décrivez-le.'**
+  String get assistanceReportBugBody;
+
+  /// No description provided for @assistanceMyFeedback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes retours'**
+  String get assistanceMyFeedback;
+
+  /// No description provided for @assistanceMyFeedbackBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivez ce que vous nous avez envoyé.'**
+  String get assistanceMyFeedbackBody;
+
+  /// No description provided for @assistanceFeedbackSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis et retours'**
+  String get assistanceFeedbackSection;
+
+  /// No description provided for @assistanceServiceStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'État du service'**
+  String get assistanceServiceStatus;
+
+  /// No description provided for @helpCenterTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Centre d\'aide'**
+  String get helpCenterTitle;
+
+  /// No description provided for @helpCenterQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment pouvons-nous vous aider ?'**
+  String get helpCenterQuestion;
+
+  /// No description provided for @helpInstitutionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter mon institution'**
+  String get helpInstitutionTitle;
+
+  /// No description provided for @helpInstitutionBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une question concernant votre ticket ou le service de l\'agence.'**
+  String get helpInstitutionBody;
+
+  /// No description provided for @helpInstitutionAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler l\'institution'**
+  String get helpInstitutionAction;
+
+  /// No description provided for @helpTondeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter TONDE'**
+  String get helpTondeTitle;
+
+  /// No description provided for @helpTondeBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un problème technique avec l\'application ou votre compte.'**
+  String get helpTondeBody;
+
+  /// No description provided for @helpTondeAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter le support'**
+  String get helpTondeAction;
+
+  /// No description provided for @helpFaqBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consultez les réponses aux questions courantes.'**
+  String get helpFaqBody;
+
+  /// No description provided for @helpFaqAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consulter la FAQ'**
+  String get helpFaqAction;
+
+  /// No description provided for @helpFeedbackTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre avis compte'**
+  String get helpFeedbackTitle;
+
+  /// No description provided for @helpFeedbackBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dites-nous ce que vous voulez voir s\'améliorer dans TONDE.'**
+  String get helpFeedbackBody;
+
+  /// No description provided for @supportTondeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Support technique de l\'application'**
+  String get supportTondeSubtitle;
+
+  /// No description provided for @supportAlwaysOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible 24 h/24, 7 j/7'**
+  String get supportAlwaysOpen;
+
+  /// No description provided for @supportChooseInstitution.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir mon institution'**
+  String get supportChooseInstitution;
+
+  /// No description provided for @supportInstitutionEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune institution liée à votre compte.'**
+  String get supportInstitutionEmpty;
+
+  /// No description provided for @supportInstitutionEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prenez un ticket ou parcourez les institutions pour trouver leurs coordonnées.'**
+  String get supportInstitutionEmptyBody;
+
+  /// No description provided for @supportBrowseInstitutions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parcourir les institutions'**
+  String get supportBrowseInstitutions;
+
+  /// No description provided for @supportInstitutionNoChannel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette institution n\'a pas publié de coordonnées.'**
+  String get supportInstitutionNoChannel;
+
+  /// No description provided for @supportInstitutionNoChannelBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Présentez-vous à l\'agence : le personnel vous répondra sur place.'**
+  String get supportInstitutionNoChannelBody;
+
+  /// No description provided for @supportCallInstitution.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler l\'institution'**
+  String get supportCallInstitution;
+
+  /// No description provided for @supportLoadFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les coordonnées.'**
+  String get supportLoadFailed;
+
+  /// No description provided for @supportClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get supportClose;
+
+  /// No description provided for @faqIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les réponses aux questions qu\'on nous pose le plus.'**
+  String get faqIntro;
+
+  /// No description provided for @feedbackIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dites-nous ce qui marche, ce qui bloque, ou ce qui manque.'**
+  String get feedbackIntro;
+
+  /// No description provided for @feedbackThanksTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci !'**
+  String get feedbackThanksTitle;
+
+  /// No description provided for @feedbackThanksBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message est bien arrivé. Nous le lisons tous les jours.'**
+  String get feedbackThanksBody;
+
+  /// No description provided for @serviceReachable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Service joignable'**
+  String get serviceReachable;
+
+  /// No description provided for @serviceUnreachable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Service injoignable'**
+  String get serviceUnreachable;
+
+  /// No description provided for @faqTakeTicketTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment prendre un ticket ?'**
+  String get faqTakeTicketTitle;
+
+  /// No description provided for @faqTakeTicketBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez l\'accueil, choisissez l\'organisation, l\'agence et le service, puis confirmez. Votre ticket apparaît aussitôt avec votre position.'**
+  String get faqTakeTicketBody;
+
+  /// No description provided for @faqAbsentTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je n\'ai pas entendu mon appel, que faire ?'**
+  String get faqAbsentTitle;
+
+  /// No description provided for @faqAbsentBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre ticket passe en « absent » mais garde sa place un moment. Depuis l\'accueil, appuyez sur « Reprendre mon ticket » avant l\'heure affichée : vous retrouvez la file, à la fin de votre priorité.'**
+  String get faqAbsentBody;
+
+  /// No description provided for @faqExpiredTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon ticket a expiré'**
+  String get faqExpiredTitle;
+
+  /// No description provided for @faqExpiredBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un ticket non réclamé à temps quitte la file. Prenez-en un nouveau : votre position sera calculée sur la file du moment.'**
+  String get faqExpiredBody;
+
+  /// No description provided for @faqPausedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le guichet est en pause'**
+  String get faqPausedTitle;
+
+  /// No description provided for @faqPausedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'heure de reprise s\'affiche sous le nom du guichet. Votre position ne bouge pas pendant la pause : seul le temps d\'attente estimé est reporté.'**
+  String get faqPausedBody;
+
+  /// No description provided for @faqNotificationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je ne reçois pas de notifications'**
+  String get faqNotificationsTitle;
+
+  /// No description provided for @faqNotificationsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez que les notifications sont autorisées pour TONDE dans les réglages du téléphone, et que le mode silencieux n\'est pas actif. L\'application reste utilisable sans elles : le suivi s\'affiche à l\'écran.'**
+  String get faqNotificationsBody;
+
+  /// No description provided for @faqTwoTicketsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Puis-je prendre deux tickets ?'**
+  String get faqTwoTicketsTitle;
+
+  /// No description provided for @faqTwoTicketsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non. Un seul ticket actif par compte, toutes organisations confondues : c\'est ce qui garantit que la file reste honnête pour tout le monde.'**
+  String get faqTwoTicketsBody;
+
+  /// No description provided for @feedbackReviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donner mon avis'**
+  String get feedbackReviewTitle;
+
+  /// No description provided for @feedbackBugTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler un problème'**
+  String get feedbackBugTitle;
+
+  /// No description provided for @feedbackCategory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get feedbackCategory;
+
+  /// No description provided for @feedbackCategoryReview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis'**
+  String get feedbackCategoryReview;
+
+  /// No description provided for @feedbackCategoryBug.
+  ///
+  /// In fr, this message translates to:
+  /// **'Problème'**
+  String get feedbackCategoryBug;
+
+  /// No description provided for @feedbackCategorySuggestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggestion'**
+  String get feedbackCategorySuggestion;
+
+  /// No description provided for @feedbackRating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre note'**
+  String get feedbackRating;
+
+  /// No description provided for @feedbackRatingHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facultatif'**
+  String get feedbackRatingHint;
+
+  /// No description provided for @feedbackMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message'**
+  String get feedbackMessage;
+
+  /// No description provided for @feedbackMessageHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décrivez ce qui s\'est passé, en quelques phrases.'**
+  String get feedbackMessageHint;
+
+  /// No description provided for @feedbackMessageCounter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count}/1000'**
+  String feedbackMessageCounter(int count);
+
+  /// No description provided for @feedbackMessageTooShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Encore {count} caractères.'**
+  String feedbackMessageTooShort(int count);
+
+  /// No description provided for @feedbackSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get feedbackSubmit;
+
+  /// No description provided for @feedbackSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci, votre retour est envoyé.'**
+  String get feedbackSent;
+
+  /// No description provided for @feedbackRateLimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez envoyé plusieurs retours récemment. Réessayez dans une heure.'**
+  String get feedbackRateLimited;
+
+  /// No description provided for @feedbackAlreadySent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà signalé ce ticket dans cette catégorie.'**
+  String get feedbackAlreadySent;
+
+  /// No description provided for @feedbackFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'envoi a échoué. Réessayez.'**
+  String get feedbackFailed;
+
+  /// No description provided for @feedbackPrivacyNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre retour est associé à votre compte et n\'est jamais publié.'**
+  String get feedbackPrivacyNote;
+
+  /// No description provided for @feedbackHistoryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes retours'**
+  String get feedbackHistoryTitle;
+
+  /// No description provided for @feedbackHistoryEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun retour envoyé'**
+  String get feedbackHistoryEmpty;
+
+  /// No description provided for @feedbackHistoryEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos avis et signalements apparaîtront ici, avec leur état de traitement.'**
+  String get feedbackHistoryEmptyBody;
+
+  /// No description provided for @feedbackStatusReceived.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reçu'**
+  String get feedbackStatusReceived;
+
+  /// No description provided for @feedbackStatusRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lu'**
+  String get feedbackStatusRead;
+
+  /// No description provided for @feedbackStatusResolved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traité'**
+  String get feedbackStatusResolved;
+
+  /// No description provided for @contactWhatsApp.
+  ///
+  /// In fr, this message translates to:
+  /// **'WhatsApp'**
+  String get contactWhatsApp;
+
+  /// No description provided for @contactCall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler'**
+  String get contactCall;
+
+  /// No description provided for @contactEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail'**
+  String get contactEmail;
+
+  /// No description provided for @contactNoChannel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun moyen de contact n\'est configuré pour cette organisation.'**
+  String get contactNoChannel;
+
+  /// No description provided for @contactOpenFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir cette application.'**
+  String get contactOpenFailed;
+
+  /// No description provided for @errOfflineDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez votre connexion, puis réessayez. Rien n\'a été perdu.'**
+  String get errOfflineDetail;
+
+  /// No description provided for @errTicketActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà un ticket en cours.'**
+  String get errTicketActive;
+
+  /// No description provided for @errTicketActiveDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un seul ticket à la fois. Suivez celui-ci, ou annulez-le avant d\'en prendre un autre.'**
+  String get errTicketActiveDetail;
+
+  /// No description provided for @errBranchClosed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette agence est fermée.'**
+  String get errBranchClosed;
+
+  /// No description provided for @errBranchClosedDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les tickets ne peuvent être pris que pendant les heures d\'ouverture.'**
+  String get errBranchClosedDetail;
+
+  /// No description provided for @errDailyLimit.
+  ///
+  /// In fr, this message translates to:
+  /// **'La limite de tickets du jour est atteinte.'**
+  String get errDailyLimit;
+
+  /// No description provided for @errDailyLimitDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayez demain, ou choisissez une autre agence.'**
+  String get errDailyLimitDetail;
+
+  /// No description provided for @errRateLimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives.'**
+  String get errRateLimited;
+
+  /// No description provided for @errRateLimitedDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patientez un instant avant de réessayer.'**
+  String get errRateLimitedDetail;
+
+  /// No description provided for @errGracePeriod.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre ticket n\'est pas encore reprenable.'**
+  String get errGracePeriod;
+
+  /// No description provided for @errGracePeriodDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le guichet vient de vous appeler. Attendez la fin du délai, puis réessayez.'**
+  String get errGracePeriodDetail;
+
+  /// No description provided for @errTicketGone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce ticket n\'existe plus.'**
+  String get errTicketGone;
+
+  /// No description provided for @errTicketGoneDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il a peut-être été clôturé entre-temps. Prenez-en un nouveau si besoin.'**
+  String get errTicketGoneDetail;
+
+  /// No description provided for @errServer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service a rencontré un problème.'**
+  String get errServer;
+
+  /// No description provided for @errServerDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce n\'est pas de votre fait. Réessayez dans un instant.'**
+  String get errServerDetail;
+
+  /// No description provided for @errValidation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certaines informations sont invalides.'**
+  String get errValidation;
+
+  /// No description provided for @errForbidden.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action n\'est pas autorisée pour votre compte.'**
+  String get errForbidden;
+
+  /// No description provided for @errUnexpected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur inattendue est survenue.'**
+  String get errUnexpected;
+
+  /// No description provided for @errUnexpectedDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayez. Si cela persiste, signalez-le depuis l\'assistance.'**
+  String get errUnexpectedDetail;
+
+  /// No description provided for @errInProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une demande identique est déjà en cours.'**
+  String get errInProgress;
+
+  /// No description provided for @errTechnicalDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails techniques'**
+  String get errTechnicalDetails;
+
+  /// No description provided for @actionChooseService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un service'**
+  String get actionChooseService;
+
+  /// No description provided for @actionTakeNewTicket.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre un ticket'**
+  String get actionTakeNewTicket;
+
+  /// No description provided for @actionWait.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patientez'**
+  String get actionWait;
+
+  /// No description provided for @errRateLimitedSeconds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives. Patientez {seconds} secondes.'**
+  String errRateLimitedSeconds(int seconds);
+
+  /// No description provided for @errIncident.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence : {id}'**
+  String errIncident(String id);
+
+  /// Titre du widget d'écran d'accueil quand aucun ticket n'est actif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ticket'**
+  String get widgetEmptyTitle;
+
+  /// Invitation du widget d'écran d'accueil quand aucun ticket n'est actif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez pour en prendre un'**
+  String get widgetEmptyBody;
+
+  /// Position dans la file, telle qu'affichée par le widget d'écran d'accueil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position {position}'**
+  String widgetPosition(int position);
+
+  /// Attente estimée, telle qu'affichée par le widget d'écran d'accueil.
+  ///
+  /// In fr, this message translates to:
+  /// **'≈ {minutes} min'**
+  String widgetEta(int minutes);
+
+  /// Heure de dernière mise à jour du widget d'écran d'accueil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mis à jour à {time}'**
+  String widgetUpdated(String time);
+
+  /// Widget : un guichet de la file est en pause, heure de reprise inconnue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Guichet en pause'**
+  String get widgetCounterPaused;
+
+  /// Widget : un guichet de la file est en pause jusqu'à une heure connue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause jusqu\'à {time}'**
+  String widgetCounterPausedUntil(String time);
+
+  /// Entrée de menu qui propose d'épingler le widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Widget d\'écran d\'accueil'**
+  String get moreHomeWidget;
+
+  /// Sous-titre de l'entrée de menu du widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre ticket visible sans ouvrir l\'application'**
+  String get moreHomeWidgetSubtitle;
+
+  /// Message affiché après une demande d'épinglage du widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez l\'ajout dans la fenêtre du lanceur.'**
+  String get homeWidgetPinConfirm;
+
+  /// Message affiché quand le lanceur refuse l'épinglage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre lanceur ne permet pas d\'ajouter le widget depuis l\'application. Ajoutez-le depuis l\'écran d\'accueil.'**
+  String get homeWidgetPinUnsupported;
+
+  /// Titre de la proposition d'épingler le widget, sur l'écran de confirmation d'un ticket.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivez votre position depuis l\'accueil'**
+  String get homeWidgetInviteTitle;
+
+  /// Corps de la proposition d'épingler le widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez le widget TONDE pour voir votre numéro, votre position et l\'attente sans ouvrir l\'application.'**
+  String get homeWidgetInviteBody;
+
+  /// Bouton qui demande l'épinglage du widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter le widget'**
+  String get homeWidgetInviteAccept;
+
+  /// Bouton qui écarte la proposition d'épingler le widget.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get homeWidgetInviteLater;
 }
 
 class _AppLocalizationsDelegate

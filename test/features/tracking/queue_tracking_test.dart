@@ -214,14 +214,28 @@ void main() {
         tick: const Duration(milliseconds: 20),
       );
       final updates = <QueueUpdate>[];
-      final subscription = service.watch(_ticket).listen(updates.add);
+      // On attend le premier événement lui-même, pas un délai fixe : sous
+      // charge (suite complète), un `Future.delayed(5 ms)` peut dépasser le
+      // tick de 20 ms et laisser passer deux mises à jour. Le test échouait
+      // alors sans qu'aucune règle ne soit cassée.
+      final firstUpdate = Completer<void>();
+      final subscription = service.watch(_ticket).listen((update) {
+        updates.add(update);
+        if (!firstUpdate.isCompleted) {
+          firstUpdate.complete();
+        }
+      });
 
-      await Future<void>.delayed(const Duration(milliseconds: 5));
+      await firstUpdate.future;
       expect(updates, hasLength(1));
       expect(updates.first.snapshot.position, 3);
       expect(updates.first.source, QueueFeedSource.live);
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+      // Attendre la suivante, sans supposer qu'elle arrive dans un délai fixe.
+      final deadline = DateTime.now().add(const Duration(seconds: 2));
+      while (updates.length < 2 && DateTime.now().isBefore(deadline)) {
+        await Future<void>.delayed(const Duration(milliseconds: 5));
+      }
       expect(updates.last.snapshot.position, lessThan(3));
 
       await subscription.cancel();
@@ -534,6 +548,43 @@ void main() {
       expect(find.text('T-9997'), findsOneWidget);
       expect(find.text('Guichet 3'), findsOneWidget);
       expect(find.byType(QrImageView), findsOneWidget);
+    });
+
+    testWidgets('sans prévision fiable, annonce l’attente au lieu de 0 min', (
+      tester,
+    ) async {
+      // L'ETA adaptatif renvoie null quand il n'a pas assez de mesures : ce
+      // n'est pas « zéro minute ». Afficher 0 ferait croire au client que son
+      // tour est immédiat.
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            ticketServiceProvider.overrideWithValue(
+              FakeTicketService(ticket: _ticket),
+            ),
+            queueTrackingServiceProvider.overrideWithValue(
+              _StaticTrackingService(
+                QueueSnapshot(
+                  ticketNumber: 'T-9999',
+                  position: 3,
+                  estimatedMinutes: null,
+                  status: QueueStatus.waiting,
+                  updatedAt: DateTime(2026, 11, 13, 10, 30),
+                ),
+              ),
+            ),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const QueueTrackingPage(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Estimating…'), findsWidgets);
+      expect(find.text('0 min'), findsNothing);
     });
 
     testWidgets('le bouton « See my position » ouvre le suivi', (tester) async {

@@ -33,8 +33,16 @@ class OrganizationCard extends StatelessWidget {
         title: Text(
           organization.name,
           style: const TextStyle(fontWeight: FontWeight.w600),
+          // Une raison sociale longue occupe sinon trois lignes en grille et
+          // déborde de la hauteur réservée à la fiche.
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(organization.type.label(l10n)),
+        subtitle: Text(
+          organization.type.label(l10n),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         trailing: const Icon(Icons.chevron_right),
       ),
     );

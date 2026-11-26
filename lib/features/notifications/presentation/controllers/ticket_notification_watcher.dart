@@ -81,8 +81,8 @@ final class TicketNotificationWatcher {
     }
 
     // La fin de prise en charge ne vient pas du flux : elle est décidée par le
-    // contrôleur de ticket, qui libère la place pour un ticket suivant.
-    if (ticket.served) {
+    // contrôleur de ticket, qui enregistre le statut reçu du serveur.
+    if (ticket.isClosed) {
       _emit(
         TondeNotificationKind.served,
         urgent: false,

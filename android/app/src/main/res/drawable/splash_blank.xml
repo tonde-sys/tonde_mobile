@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Icône volontairement vide : Android 12+ afficherait sinon la pastille de
-     l'application, seule sur fond noir, avant l'écran de marque TONDE. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@android:color/transparent" />
-</shape>

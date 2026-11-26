@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 12+ impose son propre écran de démarrage. On lui donne le fond
-         de TONDE et une icône vide : plus de pastille isolée sur fond noir,
-         l'écran de marque Flutter prend le relais sans coupure visible. -->
+    <!-- Android 12+ impose son propre écran de démarrage : impossible d'en
+         changer la disposition, seulement le fond et l'icône — laquelle est
+         toujours centrée.
+
+         On lui donne donc le logo TONDE sur le fond de la marque. C'est la
+         même image, à la même place et à la même taille que sur l'écran de
+         marque Flutter qui prend le relais : l'utilisateur ne voit plus un
+         aplat de couleur suivi d'une animation, mais une seule marque qui
+         s'installe. -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowSplashScreenBackground">@color/tonde_splash_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_blank</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/tonde_splash_icon</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/tonde_splash_background</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>

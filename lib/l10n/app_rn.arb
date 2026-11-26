@@ -48,6 +48,18 @@
   "peopleAhead": "bantu imbere yawe",
   "estimatedTime": "Igihe giteganyijwe: iminota {minutes}",
   "seePosition": "Raba umwanya wanje",
+  "heroTitleActive": "Uri mu murongo",
+  "heroBodyActive": "Umwanya wawe urahinduka uko igihe kigenda. Guma hafi y'idirishya.",
+  "resumeTicket": "Ongera ufate itike yawe",
+  "resumeSuccess": "Itike yawe yasubiye mu murongo.",
+  "resumeWindowExpired": "Igihe co gusubiza gishize. Fata itike nshasha.",
+  "resumeMaxMissed": "Wabuze inshuro nyinshi: ntushobora gusubiza. Fata itike nshasha.",
+  "resumeFailed": "Gusubiza ntibishobotse. Gerageza kandi ako kanya.",
+  "ticketAbsentNote": "Ntiwabonetse. Ongera ufate itike yawe imbere ya {time}.",
+  "ticketClosedServedTitle": "Itike yawe yarangiye",
+  "ticketClosedServedBody": "Idirishya ryarangiye itike {number}. Ushobora gufata irindi igihe cose ushakiye.",
+  "ticketClosedExpiredTitle": "Itike yawe yashize",
+  "ticketClosedExpiredBody": "Itike {number} ntikiri mu murongo. Fata itike nshasha kugira uhamagarwe.",
   "myOrganizations": "Amashirahamwe yanje",
   "viewAll": "Raba vyose",
   "needHelp": "Ukeneye ubufasha?",
@@ -197,6 +209,8 @@
   "notifCenterEmptyBody": "Uzomenyeshwa mu ntambwe zose z’umurongo wawe.",
   "moreNotifications": "Amatangazo",
   "moreNotificationsSubtitle": "Amatangazo y’umurongo n’uhamagarwa ku guichet",
+  "moreCallSound": "Ijwi iyo uhamagariwe",
+  "moreCallSoundSubtitle": "Ijwi ryumvikana iyo nimero yawe ihamagariwe",
   "notifDelete": "Siba iyi nkuru",
   "notifUnreadCount": "{count, plural, =0{Nta nkuru itarasomwa} =1{1 itarasomwa} other{{count} zitarasomwa}}",
   "profilePhotoTitle": "Ifoto y'umusomyi",
@@ -216,5 +230,206 @@
   "accountDisabled": "Iyi konti yahagaritswe. Vugana n'umuryango wawe.",
   "accountLocked": "Ugerageje kenshi. Ongera ugerageze nyuma y'iminota mike.",
   "authErrorGeneric": "Kwinjira ntibishobotse. Ongera ugerageze.",
-  "passwordTooShort": "Ijambobanga rigomba kuba rifise nibura inyuguti 8."
+  "passwordTooShort": "Ijambobanga rigomba kuba rifise nibura inyuguti 8.",
+  "assistanceMyTicket": "Itike yanje",
+  "assistanceFaq": "Ibibazo bibazwa kenshi",
+  "assistanceContact": "Tuvugane",
+  "assistanceGiveFeedback": "Tanga ivyiyumviro vyawe",
+  "assistanceGiveFeedbackBody": "Tubwire uko vyagenda ku biro.",
+  "assistanceReportBug": "Menyesha ikibazo",
+  "assistanceReportBugBody": "Hari ikidashira? Sobanura.",
+  "assistanceMyFeedback": "Ivyo wantanze",
+  "assistanceMyFeedbackBody": "Kurikirana ivyo watwohereje.",
+  "assistanceFeedbackSection": "Ivyiyumviro n'ibibazo",
+  "assistanceServiceStatus": "Uko serivisi ihagaze",
+  "helpCenterTitle": "Ikigo c'ubufasha",
+  "helpCenterQuestion": "Twoshobora kubafasha gute?",
+  "helpInstitutionTitle": "Vugana n'umuryango wawe",
+  "helpInstitutionBody": "Ikibazo ku itike yawe canke ku murimo w'ibiro.",
+  "helpInstitutionAction": "Hamagara umuryango",
+  "helpTondeTitle": "Vugana na TONDE",
+  "helpTondeBody": "Ikibazo ku porogarama canke kuri konti yawe.",
+  "helpTondeAction": "Vugana n'ubufasha",
+  "helpFaqBody": "Raba inyishu z'ibibazo bibazwa kenshi.",
+  "helpFaqAction": "Raba FAQ",
+  "helpFeedbackTitle": "Ivyiyumviro vyawe ni vy'ingirakamaro",
+  "helpFeedbackBody": "Tubwire ivyo ushaka ko TONDE itunganya.",
+  "supportTondeSubtitle": "Ubufasha bwa tekiniki bw'iyi porogarama",
+  "supportAlwaysOpen": "Iraboneka amasaha 24 kuri 24, imisi 7 kuri 7",
+  "supportChooseInstitution": "Hitamo umuryango wawe",
+  "supportInstitutionEmpty": "Nta muryango wometse kuri konti yawe.",
+  "supportInstitutionEmptyBody": "Fata itike canke raba amashirahamwe kugira ubone aho avugira.",
+  "supportBrowseInstitutions": "Raba amashirahamwe",
+  "supportInstitutionNoChannel": "Uyu muryango ntuwereka aho uvugira.",
+  "supportInstitutionNoChannelBody": "Ja ku biro: abakozi bazokwishura aho.",
+  "supportCallInstitution": "Hamagara umuryango",
+  "supportLoadFailed": "Ntivyashobotse kuronka aho bavugira.",
+  "supportClose": "Funga",
+  "faqIntro": "Inyishu z'ibibazo bibazwa kenshi.",
+  "feedbackIntro": "Tubwire ivyiza, ividashira, canke ivyobura.",
+  "feedbackThanksTitle": "Urakoze cane!",
+  "feedbackThanksBody": "Ubutumwa bwawe bwageze. Turawusoma imisi yose.",
+  "serviceReachable": "Serivisi iraboneka",
+  "serviceUnreachable": "Serivisi ntiboneka",
+  "faqTakeTicketTitle": "Nofata gute itike?",
+  "faqTakeTicketBody": "Fungura ahabanza, uhitemwo ishirahamwe, ishami na serivisi, hanyuma wemeze. Itike yawe irahita iboneka hamwe n'umwanya wawe.",
+  "faqAbsentTitle": "Sinumvise aho nahamagarirwa, nkore iki?",
+  "faqAbsentBody": "Itike yawe ihinduka « ntaboneka » ariko igumana umwanya wayo akanya. Ku rupapuro rw'ahabanza, kanda « Ongera ufate itike yawe » imbere y'isaha yerekanywe: usubira mu murongo, ku mpera y'urwego rwawe.",
+  "faqExpiredTitle": "Itike yanje yarangiye",
+  "faqExpiredBody": "Itike itasavwe ku gihe irakuka mu murongo. Fata indi nshasha: umwanya wawe uzobarwa ku murongo wo kuri uwo mwanya.",
+  "faqPausedTitle": "Ibiro biri mu kiruhuko",
+  "faqPausedBody": "Isaha yo gusubira iraboneka munsi y'izina ry'ibiro. Umwanya wawe ntuhinduka mu kiruhuko: igihe utegereje gusa ni co kijanjagurwa.",
+  "faqNotificationsTitle": "Sinkirabwa n'imenyesha",
+  "faqNotificationsBody": "Raba ko imenyesha yemererwa kuri TONDE mu ma settings y'telefone, kandi ko mode idahumye itari gukora. Porogaramu irakora nta zo: ukurikiranira ku rupapuro.",
+  "faqTwoTicketsTitle": "Noshobora gufata itike zibiri?",
+  "faqTwoTicketsBody": "Oya. Itike imwe gusa ikora kuri konti imwe, mu mashirahamwe yose: ni co gituma umurongo uguma ari uwo ukuri ku bose.",
+  "feedbackReviewTitle": "Tanga ivyiyumviro vyawe",
+  "feedbackBugTitle": "Menyesha ikibazo",
+  "feedbackCategory": "Icyiciro",
+  "feedbackCategoryReview": "Ivyiyumviro",
+  "feedbackCategoryBug": "Ikibazo",
+  "feedbackCategorySuggestion": "Inama",
+  "feedbackRating": "Amanota yawe",
+  "feedbackRatingHint": "Si ngombwa",
+  "feedbackMessage": "Ubutumwa bwawe",
+  "feedbackMessageHint": "Sobanura ivyabaye mu nteruro nke.",
+  "feedbackMessageCounter": "{count}/1000",
+  "feedbackMessageTooShort": "Harasigaye inyuguti {count}.",
+  "feedbackSubmit": "Rungika",
+  "feedbackSent": "Urakoze, ivyiyumviro vyawe vyarungitswe.",
+  "feedbackRateLimited": "Warungitse ivyiyumviro vyinshi vuba. Ongera ugerageze mu saha imwe.",
+  "feedbackAlreadySent": "Wamaze kumenyesha iyi tike muri iki cyiciro.",
+  "feedbackFailed": "Kurungika ntibishobotse. Ongera ugerageze.",
+  "feedbackPrivacyNote": "Ivyiyumviro vyawe bifitanye isano na konti yawe, ntibisohoka ahabona.",
+  "feedbackHistoryTitle": "Ivyo wantanze",
+  "feedbackHistoryEmpty": "Nta kintu warungitse",
+  "feedbackHistoryEmptyBody": "Ivyiyumviro n'ibibazo watanze bizoboneka ngaha, hamwe n'uko biriko birakorwa.",
+  "feedbackStatusReceived": "Byakiriwe",
+  "feedbackStatusRead": "Byasomwe",
+  "feedbackStatusResolved": "Byakorewe",
+  "contactWhatsApp": "WhatsApp",
+  "contactCall": "Hamagara",
+  "contactEmail": "Imeyili",
+  "contactNoChannel": "Nta nzira yo kuvugana yashizweho kuri iri shirahamwe.",
+  "contactOpenFailed": "Ntibishobotse kufungura iyi porogaramu.",
+  "errOfflineDetail": "Raba umurongo wawe, hanyuma ugerageze ubundi. Nta kintu catakaye.",
+  "errTicketActive": "Ufise itike iriho.",
+  "errTicketActiveDetail": "Itike imwe gusa icyarimwe. Kurikirana iyi, canke uyihagarike imbere yo gufata indi.",
+  "errBranchClosed": "Iri shami ryafunze.",
+  "errBranchClosedDetail": "Itike zifatwa gusa mu ma saha yo gufungura.",
+  "errDailyLimit": "Umusozo w'amatike y'uyu munsi wageze.",
+  "errDailyLimitDetail": "Ongera ugerageze ejo, canke uhitemwo irindi shami.",
+  "errRateLimited": "Wagerageje kenshi.",
+  "errRateLimitedDetail": "Tegereza akanya imbere yo kongera ugerageza.",
+  "errGracePeriod": "Itike yawe ntirashobora gufatwa ubundi.",
+  "errGracePeriodDetail": "Ibiro biherutse kuguhamagara. Tegereza ko igihe kirangira, hanyuma ugerageze ubundi.",
+  "errTicketGone": "Iyi tike ntisubira kuboneka.",
+  "errTicketGoneDetail": "Hashobora kuba yarafunzwe hagati. Fata indi niba bikenewe.",
+  "errServer": "Serivisi yahuye n'ikibazo.",
+  "errServerDetail": "Si amakosa yawe. Ongera ugerageze akanya gato.",
+  "errValidation": "Hari amakuru adakwiye.",
+  "errForbidden": "Iki gikorwa ntikwemererwa kuri konti yawe.",
+  "errUnexpected": "Habaye ikibazo kitateganijwe.",
+  "errUnexpectedDetail": "Ongera ugerageze. Niba biguma, bimenyeshe ku rupapuro rw'ubufasha.",
+  "errInProgress": "Hari ikindi gisabwa kimwe kiriko kirakorwa.",
+  "errTechnicalDetails": "Amatariki y'ubuhinga",
+  "actionChooseService": "Hitamo serivisi",
+  "actionTakeNewTicket": "Fata itike",
+  "actionWait": "Tegereza",
+  "errRateLimitedSeconds": "Wagerageje kenshi. Tegereza amasegonda {seconds}.",
+  "@errRateLimitedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "errIncident": "Inomero: {id}",
+  "@errIncident": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetEmptyTitle": "Nta tike",
+  "@widgetEmptyTitle": {
+    "description": "Titre du widget d'écran d'accueil quand aucun ticket n'est actif."
+  },
+  "widgetEmptyBody": "Kanda ufate itike",
+  "@widgetEmptyBody": {
+    "description": "Invitation du widget d'écran d'accueil quand aucun ticket n'est actif."
+  },
+  "widgetPosition": "Umwanya {position}",
+  "@widgetPosition": {
+    "description": "Position dans la file, telle qu'affichée par le widget d'écran d'accueil.",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetEta": "≈ {minutes} min",
+  "@widgetEta": {
+    "description": "Attente estimée, telle qu'affichée par le widget d'écran d'accueil.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetUpdated": "Byavuguruwe saa {time}",
+  "@widgetUpdated": {
+    "description": "Heure de dernière mise à jour du widget d'écran d'accueil.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetCounterPaused": "Icyumba kirahagaze",
+  "@widgetCounterPaused": {
+    "description": "Widget : un guichet de la file est en pause, heure de reprise inconnue."
+  },
+  "widgetCounterPausedUntil": "Bihagaze kugeza {time}",
+  "@widgetCounterPausedUntil": {
+    "description": "Widget : un guichet de la file est en pause jusqu'à une heure connue.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "moreHomeWidget": "Widgeti y'ecran y'itangiriro",
+  "@moreHomeWidget": {
+    "description": "Entrée de menu qui propose d'épingler le widget."
+  },
+  "moreHomeWidgetSubtitle": "Itike yawe iragaragara utarinjiye muri porogaramu",
+  "@moreHomeWidgetSubtitle": {
+    "description": "Sous-titre de l'entrée de menu du widget."
+  },
+  "homeWidgetPinConfirm": "Emeza ko wongeyeko widgeti.",
+  "@homeWidgetPinConfirm": {
+    "description": "Message affiché après une demande d'épinglage du widget."
+  },
+  "homeWidgetPinUnsupported": "Ecran yawe ntishobora kwongerako widgeti uhereye muri porogaramu. Yongeza ku ecran y'itangiriro.",
+  "@homeWidgetPinUnsupported": {
+    "description": "Message affiché quand le lanceur refuse l'épinglage."
+  },
+  "homeWidgetInviteTitle": "Kurikirana ikibanza cawe kuva ku ecran y'itangiriro",
+  "@homeWidgetInviteTitle": {
+    "description": "Titre de la proposition d'épingler le widget, sur l'écran de confirmation d'un ticket."
+  },
+  "homeWidgetInviteBody": "Ongeraho widgeti TONDE kugira ngo ubone inomero, ikibanza n'igihe gisigaye utarinze gufungura porogaramu.",
+  "@homeWidgetInviteBody": {
+    "description": "Corps de la proposition d'épingler le widget."
+  },
+  "homeWidgetInviteAccept": "Ongeraho widgeti",
+  "@homeWidgetInviteAccept": {
+    "description": "Bouton qui demande l'épinglage du widget."
+  },
+  "homeWidgetInviteLater": "Nyuma",
+  "@homeWidgetInviteLater": {
+    "description": "Bouton qui écarte la proposition d'épingler le widget."
+  }
 }

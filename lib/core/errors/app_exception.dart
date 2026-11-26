@@ -56,6 +56,7 @@ final class ApiException extends AppException {
     required this.statusCode,
     this.code,
     this.serverMessage,
+    this.retryAfterSeconds,
     super.message = 'Réponse du serveur inattendue.',
     super.cause,
   });
@@ -69,6 +70,14 @@ final class ApiException extends AppException {
   /// l'appelant : le backend répond en français, l'application parle trois
   /// langues. Utilisez [code] pour choisir un libellé traduit.
   final String? serverMessage;
+
+  /// Délai d'attente imposé par le serveur, en secondes (429 surtout).
+  ///
+  /// Le backend le transmet dans le corps (`retry_after`, `retry_after_seconds`)
+  /// et dans l'en-tête `Retry-After`. Sans lui, l'écran ne pouvait dire que
+  /// « trop de tentatives » : l'utilisateur réessayait aussitôt, échouait, et
+  /// concluait que l'application était cassée.
+  final int? retryAfterSeconds;
 
   /// Vrai quand le serveur refuse la session (jeton absent, invalide, expiré).
   bool get isUnauthenticated => statusCode == 401;

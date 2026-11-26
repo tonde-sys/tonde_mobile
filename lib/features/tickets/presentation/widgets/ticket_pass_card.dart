@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tonde/features/dashboard/presentation/widgets/pending_sync_chip.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/presentation/ticket_status_display.dart';
 import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/features/tracking/presentation/controllers/queue_tracking_controller.dart';
 import 'package:tonde/features/tracking/presentation/widgets/queue_status_badge.dart';
@@ -47,19 +48,25 @@ class _TicketPassCardState extends ConsumerState<TicketPassCard>
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final updateAsync = ref.watch(queueTrackingProvider(widget.ticket));
+    final updateAsync = ref.watch(
+      queueTrackingProvider(QueueTrackingKey(widget.ticket)),
+    );
 
     // Le flux peut être indisponible (hors ligne, ticket en attente de
-    // synchronisation) : la carte retombe alors sur les valeurs du ticket,
-    // jamais sur un écran vide.
+    // synchronisation) : la carte retombe alors sur l'état enregistré du
+    // ticket, jamais sur « en attente » par défaut — un client absent verrait
+    // sa carte lui dire qu'il fait la queue.
     final snapshot = updateAsync.value?.snapshot;
-    final status = snapshot?.status ?? QueueStatus.waiting;
+    final status = snapshot?.status ?? queueStatusOf(widget.ticket.status);
     final position = snapshot?.position ?? widget.ticket.position;
     final minutes =
         snapshot?.estimatedMinutes ?? widget.ticket.estimatedMinutes;
     final counter = snapshot?.counterLabel;
 
-    ref.listen(queueTrackingProvider(widget.ticket), (previous, next) {
+    ref.listen(queueTrackingProvider(QueueTrackingKey(widget.ticket)), (
+      previous,
+      next,
+    ) {
       final before = previous?.value?.snapshot;
       final after = next.value?.snapshot;
       if (after == null) {
@@ -155,7 +162,13 @@ class _TicketPassCardState extends ConsumerState<TicketPassCard>
                               child: _PassMetric(
                                 icon: Icons.schedule,
                                 label: l10n.trackingWaitTime,
-                                value: l10n.trackingMinutesValue(minutes),
+                                // Null = aucune prévision fiable (ETA
+                                // adaptatif) : on écrit « Estimation en
+                                // cours » plutôt qu'un 0 min qui ferait croire
+                                // à une place immédiate.
+                                value: minutes == null
+                                    ? l10n.trackingEtaUnavailable
+                                    : l10n.trackingMinutesValue(minutes),
                               ),
                             ),
                           ],
@@ -277,7 +290,7 @@ class _PassHeader extends StatelessWidget {
           const SizedBox(width: 8),
           if (ticket.pendingSync)
             const PendingSyncChip()
-          else if (ticket.served)
+          else if (ticket.isClosed)
             const _ServedChip()
           else
             QueueStatusBadge(status: status),
@@ -441,30 +454,12 @@ class _PassFooter extends StatelessWidget {
             ),
           const SizedBox(width: 14),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pendingSync ? l10n.passPendingQr : l10n.trackingQrHint,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    height: 1.35,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      l10n.seePosition,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Icon(Icons.chevron_right, size: 16, color: scheme.primary),
-                  ],
-                ),
-              ],
+            child: Text(
+              pendingSync ? l10n.passPendingQr : l10n.trackingQrHint,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                height: 1.35,
+              ),
             ),
           ),
         ],
@@ -500,9 +495,11 @@ Widget _counterPauseLabel(
       ? l10n.trackingCounterPaused(pause.name)
       : l10n.trackingCounterPausedUntil(
           pause.name,
-          MaterialLocalizations.of(context).formatTimeOfDay(
-            TimeOfDay.fromDateTime(until),
-          ),
+          MaterialLocalizations.of(
+            context,
+            // `paused_until` arrive en UTC : sans `toLocal()`, Bujumbura
+            // (UTC+2) annonçait une reprise deux heures trop tôt.
+          ).formatTimeOfDay(TimeOfDay.fromDateTime(until.toLocal())),
         );
   final color = Theme.of(context).colorScheme.tertiary;
   return Row(

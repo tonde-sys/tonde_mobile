@@ -28,6 +28,9 @@ class AppConfig {
     required this.environment,
     required this.apiBaseUrl,
     required this.enableHttpLogging,
+    required this.supportWhatsApp,
+    required this.supportPhone,
+    required this.supportEmail,
   });
 
   factory AppConfig.fromEnvironment() {
@@ -41,6 +44,14 @@ class AppConfig {
         'TONDE_HTTP_LOGGING',
         defaultValue: false,
       ),
+      // Aucune valeur par défaut : un numéro de support inventé vaudrait moins
+      // que pas de numéro du tout, parce qu'il enverrait les gens appeler
+      // quelqu'un qui n'a rien à voir avec TONDE.
+      supportWhatsAppRaw: const String.fromEnvironment(
+        'TONDE_SUPPORT_WHATSAPP',
+      ),
+      supportPhoneRaw: const String.fromEnvironment('TONDE_SUPPORT_PHONE'),
+      supportEmailRaw: const String.fromEnvironment('TONDE_SUPPORT_EMAIL'),
     );
   }
 
@@ -49,6 +60,9 @@ class AppConfig {
     required String environmentName,
     required String apiBaseUrlRaw,
     required bool enableHttpLogging,
+    String supportWhatsAppRaw = '',
+    String supportPhoneRaw = '',
+    String supportEmailRaw = '',
   }) {
     final environment = AppEnvironment.fromName(environmentName);
     Uri? apiBaseUrl;
@@ -76,6 +90,9 @@ class AppConfig {
       environment: environment,
       apiBaseUrl: apiBaseUrl,
       enableHttpLogging: enableHttpLogging,
+      supportWhatsApp: _digitsOrEmpty(supportWhatsAppRaw),
+      supportPhone: _digitsOrEmpty(supportPhoneRaw),
+      supportEmail: supportEmailRaw.trim(),
     );
   }
 
@@ -85,6 +102,21 @@ class AppConfig {
   final Uri? apiBaseUrl;
 
   final bool enableHttpLogging;
+
+  /// Numéro WhatsApp du support, chiffres seuls (`257…`), vide si non configuré.
+  final String supportWhatsApp;
+
+  /// Numéro de téléphone du support, vide si non configuré.
+  final String supportPhone;
+
+  /// Adresse e-mail du support, vide si non configurée.
+  final String supportEmail;
+
+  /// Vrai dès qu'au moins un canal de contact est configuré.
+  bool get hasSupportContact =>
+      supportWhatsApp.isNotEmpty ||
+      supportPhone.isNotEmpty ||
+      supportEmail.isNotEmpty;
 
   bool get isApiConfigured => apiBaseUrl != null;
 
@@ -104,4 +136,11 @@ class AppConfig {
         : base.path;
     return base.replace(path: '$prefix/api/v1');
   }
+}
+
+/// Ne garde que les chiffres d'un numéro saisi avec des espaces, des tirets ou
+/// un `+`. Les liens `tel:` et `wa.me` n'acceptent rien d'autre.
+String _digitsOrEmpty(String raw) {
+  final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+  return digits;
 }

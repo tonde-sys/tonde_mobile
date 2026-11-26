@@ -4,6 +4,8 @@ import 'package:tonde/app/bootstrap.dart';
 import 'package:tonde/core/offline/local_cache.dart';
 import 'package:tonde/core/offline/local_cache_provider.dart';
 import 'package:tonde/features/notifications/data/local_notification_service.dart';
+import 'package:tonde/features/notifications/data/push_registrar.dart';
+import 'package:tonde/features/notifications/data/push_service.dart';
 import 'package:tonde/features/notifications/presentation/controllers/notification_providers.dart';
 import 'package:tonde/features/profile/data/local_profile_photo_picker.dart';
 import 'package:tonde/features/profile/presentation/controllers/profile_photo_providers.dart';
@@ -32,11 +34,30 @@ Future<void> main() async {
     );
   }
 
+  // Firebase est préparé avant le premier écran : `onBackgroundMessage` doit
+  // être enregistré tôt, sinon un push reçu application fermée ne réveille
+  // pas l'isolate prévu. Un échec n'est pas fatal — sans configuration, le
+  // service retombe en mode inerte et l'application démarre sans push.
+  final push = FirebasePushService();
+  try {
+    await push.initialize();
+  } on Object catch (error, stackTrace) {
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: error,
+        stack: stackTrace,
+        library: 'tonde',
+        context: ErrorDescription('initialisation des notifications push'),
+      ),
+    );
+  }
+
   runApp(
     ProviderScope(
       overrides: [
         localCacheProvider.overrideWithValue(cache),
         notificationServiceProvider.overrideWithValue(notifications),
+        pushServiceProvider.overrideWithValue(push),
         // Le sélecteur natif n'a besoin d'aucune initialisation : il est
         // branché ici pour que les tests gardent un sélecteur inerte.
         profilePhotoPickerProvider.overrideWithValue(LocalProfilePhotoPicker()),

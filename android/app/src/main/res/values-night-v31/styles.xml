@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Même écran de démarrage que la variante claire : la marque ne dépend
+         pas du thème du téléphone, et le fond est identique dans les deux cas. -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowSplashScreenBackground">@color/tonde_splash_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_blank</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/tonde_splash_icon</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/tonde_splash_background</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>

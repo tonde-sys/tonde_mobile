@@ -69,14 +69,24 @@ Organization? _organizationFrom(Object? document) {
   if (id is! String || id.isEmpty || name is! String || name.isEmpty) {
     return null;
   }
+  final support = document['support'];
+  final supportMap = support is Map ? support : const <String, Object?>{};
   return Organization(
     id: id,
     name: name,
     // `sector` est une chaîne libre côté serveur : tout ce qui n'est ni « bank »
     // ni « health » tombe sur `other` au lieu d'être présenté comme une banque.
     type: OrganizationType.fromSector(document['sector']),
+    supportPhone: _digits(_asString(supportMap['phone'])),
+    supportWhatsapp: _digits(_asString(supportMap['whatsapp'])),
+    supportEmail: _asString(supportMap['email']),
+    supportHours: _asString(supportMap['hours']),
   );
 }
+
+/// Ne garde que les chiffres d'un numéro saisi avec `+`, espaces ou tirets :
+/// `tel:` et `wa.me` n'acceptent rien d'autre.
+String _digits(String raw) => raw.replaceAll(RegExp(r'[^0-9]'), '');
 
 Agency? _agencyFrom(Object? document) {
   if (document is! Map) {

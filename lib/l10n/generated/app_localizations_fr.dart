@@ -175,6 +175,52 @@ class AppLocalizationsFr extends AppLocalizations {
   String get seePosition => 'Voir ma position';
 
   @override
+  String get heroTitleActive => 'Vous êtes dans la file';
+
+  @override
+  String get heroBodyActive =>
+      'Votre position se met à jour en temps réel. Restez à portée de voix du guichet.';
+
+  @override
+  String get resumeTicket => 'Reprendre mon ticket';
+
+  @override
+  String get resumeSuccess => 'Votre ticket est de retour dans la file.';
+
+  @override
+  String get resumeWindowExpired =>
+      'Le délai de reprise est écoulé. Prenez un nouveau ticket.';
+
+  @override
+  String get resumeMaxMissed =>
+      'Trop d\'absences : la reprise n\'est plus possible. Prenez un nouveau ticket.';
+
+  @override
+  String get resumeFailed =>
+      'La reprise n\'a pas abouti. Réessayez dans un instant.';
+
+  @override
+  String ticketAbsentNote(String time) {
+    return 'Vous ne vous êtes pas présenté. Reprenez votre ticket avant $time.';
+  }
+
+  @override
+  String get ticketClosedServedTitle => 'Votre passage est terminé';
+
+  @override
+  String ticketClosedServedBody(String number) {
+    return 'Le guichet a clôturé le ticket $number. Vous pouvez en reprendre un quand vous voulez.';
+  }
+
+  @override
+  String get ticketClosedExpiredTitle => 'Votre ticket a expiré';
+
+  @override
+  String ticketClosedExpiredBody(String number) {
+    return 'Le ticket $number n\'est plus dans la file. Reprenez un ticket pour être rappelé.';
+  }
+
+  @override
   String get myOrganizations => 'Mes organisations';
 
   @override
@@ -341,8 +387,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get trackingWaitTime => 'Attente estimée';
 
   @override
-  String trackingMinutesValue(int? minutes) {
-    if (minutes == null) return trackingEtaUnavailable;
+  String trackingMinutesValue(int minutes) {
     return '$minutes min';
   }
 
@@ -350,13 +395,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get trackingEtaUnavailable => 'Estimation en cours';
 
   @override
-  String trackingCounterPaused(String counter) {
+  String trackingCounterPaused(Object counter) {
     return '$counter est en pause.';
   }
 
   @override
-  String trackingCounterPausedUntil(String counter, String time) {
-    return "$counter est en pause jusqu'à $time.";
+  String trackingCounterPausedUntil(Object counter, Object time) {
+    return '$counter est en pause jusqu\'à $time.';
   }
 
   @override
@@ -611,8 +656,8 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String notifProgressBodyNoEta(int count) {
-    return 'Encore $count personnes avant votre tour. Préparez vos documents.';
+  String notifProgressBodyNoEta(Object count) {
+    return 'Encore $count personnes avant vous. Préparez vos documents.';
   }
 
   @override
@@ -685,6 +730,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Alertes de file d’attente et appels au guichet';
 
   @override
+  String get moreCallSound => 'Son à l’appel';
+
+  @override
+  String get moreCallSoundSubtitle =>
+      'Fait sonner le téléphone quand votre numéro est appelé';
+
+  @override
   String get notifDelete => 'Supprimer la notification';
 
   @override
@@ -750,4 +802,422 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get passwordTooShort =>
       'Le mot de passe doit contenir au moins 8 caractères.';
+
+  @override
+  String get assistanceMyTicket => 'Mon ticket';
+
+  @override
+  String get assistanceFaq => 'Questions fréquentes';
+
+  @override
+  String get assistanceContact => 'Nous contacter';
+
+  @override
+  String get assistanceGiveFeedback => 'Donner mon avis';
+
+  @override
+  String get assistanceGiveFeedbackBody =>
+      'Dites-nous comment s\'est passé votre passage.';
+
+  @override
+  String get assistanceReportBug => 'Signaler un problème';
+
+  @override
+  String get assistanceReportBugBody =>
+      'Quelque chose ne fonctionne pas ? Décrivez-le.';
+
+  @override
+  String get assistanceMyFeedback => 'Mes retours';
+
+  @override
+  String get assistanceMyFeedbackBody => 'Suivez ce que vous nous avez envoyé.';
+
+  @override
+  String get assistanceFeedbackSection => 'Avis et retours';
+
+  @override
+  String get assistanceServiceStatus => 'État du service';
+
+  @override
+  String get helpCenterTitle => 'Centre d\'aide';
+
+  @override
+  String get helpCenterQuestion => 'Comment pouvons-nous vous aider ?';
+
+  @override
+  String get helpInstitutionTitle => 'Contacter mon institution';
+
+  @override
+  String get helpInstitutionBody =>
+      'Une question concernant votre ticket ou le service de l\'agence.';
+
+  @override
+  String get helpInstitutionAction => 'Appeler l\'institution';
+
+  @override
+  String get helpTondeTitle => 'Contacter TONDE';
+
+  @override
+  String get helpTondeBody =>
+      'Un problème technique avec l\'application ou votre compte.';
+
+  @override
+  String get helpTondeAction => 'Contacter le support';
+
+  @override
+  String get helpFaqBody => 'Consultez les réponses aux questions courantes.';
+
+  @override
+  String get helpFaqAction => 'Consulter la FAQ';
+
+  @override
+  String get helpFeedbackTitle => 'Votre avis compte';
+
+  @override
+  String get helpFeedbackBody =>
+      'Dites-nous ce que vous voulez voir s\'améliorer dans TONDE.';
+
+  @override
+  String get supportTondeSubtitle => 'Support technique de l\'application';
+
+  @override
+  String get supportAlwaysOpen => 'Disponible 24 h/24, 7 j/7';
+
+  @override
+  String get supportChooseInstitution => 'Choisir mon institution';
+
+  @override
+  String get supportInstitutionEmpty =>
+      'Aucune institution liée à votre compte.';
+
+  @override
+  String get supportInstitutionEmptyBody =>
+      'Prenez un ticket ou parcourez les institutions pour trouver leurs coordonnées.';
+
+  @override
+  String get supportBrowseInstitutions => 'Parcourir les institutions';
+
+  @override
+  String get supportInstitutionNoChannel =>
+      'Cette institution n\'a pas publié de coordonnées.';
+
+  @override
+  String get supportInstitutionNoChannelBody =>
+      'Présentez-vous à l\'agence : le personnel vous répondra sur place.';
+
+  @override
+  String get supportCallInstitution => 'Appeler l\'institution';
+
+  @override
+  String get supportLoadFailed => 'Impossible de charger les coordonnées.';
+
+  @override
+  String get supportClose => 'Fermer';
+
+  @override
+  String get faqIntro => 'Les réponses aux questions qu\'on nous pose le plus.';
+
+  @override
+  String get feedbackIntro =>
+      'Dites-nous ce qui marche, ce qui bloque, ou ce qui manque.';
+
+  @override
+  String get feedbackThanksTitle => 'Merci !';
+
+  @override
+  String get feedbackThanksBody =>
+      'Votre message est bien arrivé. Nous le lisons tous les jours.';
+
+  @override
+  String get serviceReachable => 'Service joignable';
+
+  @override
+  String get serviceUnreachable => 'Service injoignable';
+
+  @override
+  String get faqTakeTicketTitle => 'Comment prendre un ticket ?';
+
+  @override
+  String get faqTakeTicketBody =>
+      'Ouvrez l\'accueil, choisissez l\'organisation, l\'agence et le service, puis confirmez. Votre ticket apparaît aussitôt avec votre position.';
+
+  @override
+  String get faqAbsentTitle => 'Je n\'ai pas entendu mon appel, que faire ?';
+
+  @override
+  String get faqAbsentBody =>
+      'Votre ticket passe en « absent » mais garde sa place un moment. Depuis l\'accueil, appuyez sur « Reprendre mon ticket » avant l\'heure affichée : vous retrouvez la file, à la fin de votre priorité.';
+
+  @override
+  String get faqExpiredTitle => 'Mon ticket a expiré';
+
+  @override
+  String get faqExpiredBody =>
+      'Un ticket non réclamé à temps quitte la file. Prenez-en un nouveau : votre position sera calculée sur la file du moment.';
+
+  @override
+  String get faqPausedTitle => 'Le guichet est en pause';
+
+  @override
+  String get faqPausedBody =>
+      'L\'heure de reprise s\'affiche sous le nom du guichet. Votre position ne bouge pas pendant la pause : seul le temps d\'attente estimé est reporté.';
+
+  @override
+  String get faqNotificationsTitle => 'Je ne reçois pas de notifications';
+
+  @override
+  String get faqNotificationsBody =>
+      'Vérifiez que les notifications sont autorisées pour TONDE dans les réglages du téléphone, et que le mode silencieux n\'est pas actif. L\'application reste utilisable sans elles : le suivi s\'affiche à l\'écran.';
+
+  @override
+  String get faqTwoTicketsTitle => 'Puis-je prendre deux tickets ?';
+
+  @override
+  String get faqTwoTicketsBody =>
+      'Non. Un seul ticket actif par compte, toutes organisations confondues : c\'est ce qui garantit que la file reste honnête pour tout le monde.';
+
+  @override
+  String get feedbackReviewTitle => 'Donner mon avis';
+
+  @override
+  String get feedbackBugTitle => 'Signaler un problème';
+
+  @override
+  String get feedbackCategory => 'Catégorie';
+
+  @override
+  String get feedbackCategoryReview => 'Avis';
+
+  @override
+  String get feedbackCategoryBug => 'Problème';
+
+  @override
+  String get feedbackCategorySuggestion => 'Suggestion';
+
+  @override
+  String get feedbackRating => 'Votre note';
+
+  @override
+  String get feedbackRatingHint => 'Facultatif';
+
+  @override
+  String get feedbackMessage => 'Votre message';
+
+  @override
+  String get feedbackMessageHint =>
+      'Décrivez ce qui s\'est passé, en quelques phrases.';
+
+  @override
+  String feedbackMessageCounter(int count) {
+    return '$count/1000';
+  }
+
+  @override
+  String feedbackMessageTooShort(int count) {
+    return 'Encore $count caractères.';
+  }
+
+  @override
+  String get feedbackSubmit => 'Envoyer';
+
+  @override
+  String get feedbackSent => 'Merci, votre retour est envoyé.';
+
+  @override
+  String get feedbackRateLimited =>
+      'Vous avez envoyé plusieurs retours récemment. Réessayez dans une heure.';
+
+  @override
+  String get feedbackAlreadySent =>
+      'Vous avez déjà signalé ce ticket dans cette catégorie.';
+
+  @override
+  String get feedbackFailed => 'L\'envoi a échoué. Réessayez.';
+
+  @override
+  String get feedbackPrivacyNote =>
+      'Votre retour est associé à votre compte et n\'est jamais publié.';
+
+  @override
+  String get feedbackHistoryTitle => 'Mes retours';
+
+  @override
+  String get feedbackHistoryEmpty => 'Aucun retour envoyé';
+
+  @override
+  String get feedbackHistoryEmptyBody =>
+      'Vos avis et signalements apparaîtront ici, avec leur état de traitement.';
+
+  @override
+  String get feedbackStatusReceived => 'Reçu';
+
+  @override
+  String get feedbackStatusRead => 'Lu';
+
+  @override
+  String get feedbackStatusResolved => 'Traité';
+
+  @override
+  String get contactWhatsApp => 'WhatsApp';
+
+  @override
+  String get contactCall => 'Appeler';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactNoChannel =>
+      'Aucun moyen de contact n\'est configuré pour cette organisation.';
+
+  @override
+  String get contactOpenFailed => 'Impossible d\'ouvrir cette application.';
+
+  @override
+  String get errOfflineDetail =>
+      'Vérifiez votre connexion, puis réessayez. Rien n\'a été perdu.';
+
+  @override
+  String get errTicketActive => 'Vous avez déjà un ticket en cours.';
+
+  @override
+  String get errTicketActiveDetail =>
+      'Un seul ticket à la fois. Suivez celui-ci, ou annulez-le avant d\'en prendre un autre.';
+
+  @override
+  String get errBranchClosed => 'Cette agence est fermée.';
+
+  @override
+  String get errBranchClosedDetail =>
+      'Les tickets ne peuvent être pris que pendant les heures d\'ouverture.';
+
+  @override
+  String get errDailyLimit => 'La limite de tickets du jour est atteinte.';
+
+  @override
+  String get errDailyLimitDetail =>
+      'Réessayez demain, ou choisissez une autre agence.';
+
+  @override
+  String get errRateLimited => 'Trop de tentatives.';
+
+  @override
+  String get errRateLimitedDetail => 'Patientez un instant avant de réessayer.';
+
+  @override
+  String get errGracePeriod => 'Votre ticket n\'est pas encore reprenable.';
+
+  @override
+  String get errGracePeriodDetail =>
+      'Le guichet vient de vous appeler. Attendez la fin du délai, puis réessayez.';
+
+  @override
+  String get errTicketGone => 'Ce ticket n\'existe plus.';
+
+  @override
+  String get errTicketGoneDetail =>
+      'Il a peut-être été clôturé entre-temps. Prenez-en un nouveau si besoin.';
+
+  @override
+  String get errServer => 'Le service a rencontré un problème.';
+
+  @override
+  String get errServerDetail =>
+      'Ce n\'est pas de votre fait. Réessayez dans un instant.';
+
+  @override
+  String get errValidation => 'Certaines informations sont invalides.';
+
+  @override
+  String get errForbidden =>
+      'Cette action n\'est pas autorisée pour votre compte.';
+
+  @override
+  String get errUnexpected => 'Une erreur inattendue est survenue.';
+
+  @override
+  String get errUnexpectedDetail =>
+      'Réessayez. Si cela persiste, signalez-le depuis l\'assistance.';
+
+  @override
+  String get errInProgress => 'Une demande identique est déjà en cours.';
+
+  @override
+  String get errTechnicalDetails => 'Détails techniques';
+
+  @override
+  String get actionChooseService => 'Choisir un service';
+
+  @override
+  String get actionTakeNewTicket => 'Prendre un ticket';
+
+  @override
+  String get actionWait => 'Patientez';
+
+  @override
+  String errRateLimitedSeconds(int seconds) {
+    return 'Trop de tentatives. Patientez $seconds secondes.';
+  }
+
+  @override
+  String errIncident(String id) {
+    return 'Référence : $id';
+  }
+
+  @override
+  String get widgetEmptyTitle => 'Aucun ticket';
+
+  @override
+  String get widgetEmptyBody => 'Touchez pour en prendre un';
+
+  @override
+  String widgetPosition(int position) {
+    return 'Position $position';
+  }
+
+  @override
+  String widgetEta(int minutes) {
+    return '≈ $minutes min';
+  }
+
+  @override
+  String widgetUpdated(String time) {
+    return 'Mis à jour à $time';
+  }
+
+  @override
+  String get widgetCounterPaused => 'Guichet en pause';
+
+  @override
+  String widgetCounterPausedUntil(String time) {
+    return 'Pause jusqu\'à $time';
+  }
+
+  @override
+  String get moreHomeWidget => 'Widget d\'écran d\'accueil';
+
+  @override
+  String get moreHomeWidgetSubtitle =>
+      'Votre ticket visible sans ouvrir l\'application';
+
+  @override
+  String get homeWidgetPinConfirm =>
+      'Confirmez l\'ajout dans la fenêtre du lanceur.';
+
+  @override
+  String get homeWidgetPinUnsupported =>
+      'Votre lanceur ne permet pas d\'ajouter le widget depuis l\'application. Ajoutez-le depuis l\'écran d\'accueil.';
+
+  @override
+  String get homeWidgetInviteTitle => 'Suivez votre position depuis l\'accueil';
+
+  @override
+  String get homeWidgetInviteBody =>
+      'Ajoutez le widget TONDE pour voir votre numéro, votre position et l\'attente sans ouvrir l\'application.';
+
+  @override
+  String get homeWidgetInviteAccept => 'Ajouter le widget';
+
+  @override
+  String get homeWidgetInviteLater => 'Plus tard';
 }

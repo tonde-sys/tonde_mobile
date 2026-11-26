@@ -6,14 +6,8 @@ import 'package:tonde/features/organizations/domain/entities/agency.dart';
 import 'package:tonde/features/organizations/domain/entities/agency_service.dart';
 import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tickets/domain/ticket_service.dart';
-
-/// Statuts qui n'empêchent PAS de prendre un nouveau ticket.
-///
-/// Miroir de `ACTIVE_STATUSES` côté serveur : tout le reste (`done`,
-/// `cancelled`) libère le client. ABSENT et INCOMPLETE n'en font pas partie —
-/// un client absent peut revenir en file, son ticket est donc encore actif.
-const Set<String> _closedStatuses = {'done', 'cancelled'};
 
 /// Client de tickets adossé au backend.
 ///
@@ -77,14 +71,21 @@ final class ApiTicketService implements TicketService {
     }
   }
 
-  /// Le client ne clôture jamais son propre ticket.
+  /// Le client ne modifie jamais l'état de son propre ticket.
   ///
-  /// Seul le guichet termine un service (`POST /tickets/{id}/done` est réservé
-  /// aux agents). Le mobile apprend la clôture par le WebSocket, puis met à
-  /// jour son cache : cet appel n'a donc rien à envoyer. Le laisser lever une
-  /// erreur ferait croire à un échec de synchronisation.
+  /// Seul le guichet fait avancer la machine à états (`POST /tickets/{id}/done`
+  /// est réservé aux agents) ; le mobile apprend les transitions par le
+  /// WebSocket. Cet appel n'a donc rien à envoyer : lever une erreur ferait
+  /// croire à un échec de synchronisation alors que le cache local est le seul
+  /// à devoir être mis à jour.
   @override
-  Future<void> markServed(Ticket ticket) async {}
+  Future<void> saveStatus(Ticket ticket) async {}
+
+  /// Le serveur ne garde aucune mémoire de ce que le client a vu : il ne sait
+  /// dire que « un ticket » ou « aucun ticket ». C'est donc le cache local qui
+  /// répond, et cette implémentation n'a rien à ajouter.
+  @override
+  Future<Ticket?> lastClosedTicket() async => null;
 
   @override
   Future<void> cancelTicket() async {
@@ -98,6 +99,34 @@ final class ApiTicketService implements TicketService {
       return;
     }
     await _client.delete('/tickets/$id');
+  }
+
+  @override
+  Future<Ticket> resumeTicket(Ticket ticket) async {
+    final id = ticket.id;
+    if (id == null) {
+      throw const UnexpectedException(
+        message: 'Un ticket non confirmé ne peut pas revenir en file.',
+      );
+    }
+    // Le serveur répond `{success, ticket_id, queue_degraded, …}` : il ne
+    // renvoie pas le ticket complet. On relit donc le ticket actif pour
+    // récupérer la nouvelle position — le retour en fin de tranche la change,
+    // et c'est justement ce que le client veut voir.
+    await _client.post('/tickets/$id/return');
+    try {
+      final refreshed = await activeTicket();
+      if (refreshed != null) {
+        return refreshed;
+      }
+    } on Object {
+      // La reprise a réussi mais la relecture a échoué : mieux vaut un état
+      // local approximatif qu'un message d'erreur sur une action réussie.
+    }
+    return ticket.copyWith(
+      status: TicketStatus.waiting,
+      clearRecoveryExpiresAt: true,
+    );
   }
 
   /// Identifiant d'idempotence conforme au format attendu par le serveur
@@ -126,7 +155,6 @@ Ticket? ticketFromBackend(Object? document) {
   if (id is! String || id.isEmpty || number is! String || number.isEmpty) {
     return null;
   }
-  final status = document['status'];
   return Ticket(
     id: id,
     number: number,
@@ -139,8 +167,15 @@ Ticket? ticketFromBackend(Object? document) {
     serviceId: _asNullableString(document['service_id']),
     serviceName: _asNullableString(document['service_name']),
     qrToken: _asNullableString(document['qr_token']),
-    // Le serveur décide seul si le ticket bloque encore la prise d'un nouveau.
-    served: status is String && _closedStatuses.contains(status),
+    // Le statut vient du serveur, sans interprétation : c'est lui qui décide
+    // si le ticket bloque encore la prise d'un nouveau, et qui distingue un
+    // client appelé d'un client absent.
+    status: TicketStatus.fromWire(document['status']),
+    counterLabel: _asNullableString(document['counter_name']),
+    totalInQueue: _asNullableInt(document['total_in_queue']),
+    recoveryExpiresAt: _asDate(document['recovery_expires_at']),
+    missedCount: _asInt(document['missed_count']),
+    queueDegraded: document['queue_degraded'] == true,
     issuedAt: _asDate(document['created_at']),
   );
 }

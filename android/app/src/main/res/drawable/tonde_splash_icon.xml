@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icône de démarrage TONDE, sur un canevas de 192 dp.
+
+     Le logo occupe 116 dp au centre — exactement la taille et la position que
+     lui donne l'écran de marque Flutter. Les 38 dp de marge de chaque côté ne
+     sont pas décoratifs : Android 12+ dessine l'icône de démarrage dans une
+     fenêtre de 192 dp, et certains constructeurs la redimensionnent pour la
+     remplir. En gardant le logo minoritaire dans son canevas, il retombe sur
+     116 dp dans les deux cas — que le système respecte la taille intrinsèque
+     ou qu'il mette l'icône à l'échelle. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="38dp">
+    <bitmap
+        android:src="@drawable/tonde_splash_logo"
+        android:gravity="fill" />
+</inset>

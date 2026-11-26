@@ -7,6 +7,7 @@ import 'package:tonde/features/auth/presentation/controllers/auth_controller.dar
 import 'package:tonde/features/dashboard/presentation/widgets/profile_widgets.dart';
 import 'package:tonde/features/dashboard/presentation/widgets/settings_sheets.dart';
 import 'package:tonde/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:tonde/features/tickets/presentation/controllers/home_widget_driver.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
 /// Onglet Plus : accès au profil, préférences d'affichage et déconnexion.
@@ -48,6 +49,16 @@ class MoreTab extends ConsumerWidget {
                       .select(value),
                 ),
                 const Divider(height: 1),
+                SwitchListTile(
+                  secondary: const Icon(Icons.volume_up_outlined),
+                  title: Text(l10n.moreCallSound),
+                  subtitle: Text(l10n.moreCallSoundSubtitle),
+                  value: ref.watch(callSoundEnabledProvider),
+                  onChanged: (value) => ref
+                      .read(callSoundEnabledProvider.notifier)
+                      .select(value),
+                ),
+                const Divider(height: 1),
                 _MenuTile(
                   icon: Icons.translate,
                   title: l10n.moreLanguage,
@@ -62,6 +73,15 @@ class MoreTab extends ConsumerWidget {
                   onTap: () => showThemeSheet(context),
                 ),
                 const Divider(height: 1),
+                // L'entrée n'apparaît que là où elle mène quelque part : sur
+                // iOS il n'y a pas de widget d'écran d'accueil Android, et
+                // certains lanceurs refusent l'épinglage depuis une
+                // application. Un bouton qui explique ensuite qu'il ne peut
+                // rien faire est pire que pas de bouton.
+                if (ref.watch(homeWidgetPinSupportedProvider).value ?? false) ...[
+                  const _WidgetTile(),
+                  const Divider(height: 1),
+                ],
                 _MenuTile(
                   icon: Icons.info_outline,
                   title: l10n.aboutTitle,
@@ -147,6 +167,40 @@ class _AccountTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Entrée qui propose d'épingler le widget d'écran d'accueil.
+///
+/// Le lanceur ouvre sa propre boîte de dialogue : on ne peut ni savoir à
+/// l'avance si l'utilisateur acceptera, ni repeindre le widget depuis ici. Le
+/// message se contente donc de dire ce qui vient de se passer.
+class _WidgetTile extends ConsumerWidget {
+  const _WidgetTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
+    return _MenuTile(
+      icon: Icons.widgets_outlined,
+      title: l10n.moreHomeWidget,
+      value: l10n.moreHomeWidgetSubtitle,
+      onTap: () async {
+        // Capturé avant l'attente : après, le contexte peut avoir été démonté.
+        final messenger = ScaffoldMessenger.of(context);
+        final requested = await ref
+            .read(homeWidgetBridgeProvider)
+            .requestPin();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              requested ? l10n.homeWidgetPinConfirm : l10n.homeWidgetPinUnsupported,
+            ),
+          ),
+        );
+      },
     );
   }
 }

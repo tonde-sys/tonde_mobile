@@ -4,6 +4,7 @@ import 'package:tonde/features/organizations/domain/entities/agency_service.dart
 import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/tickets/data/ticket_codec.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tickets/domain/ticket_service.dart';
 
 /// Service fictif approuvé par Vizane (2026-11-09) pour la démo.
@@ -47,8 +48,8 @@ final class MockTicketService implements TicketService {
   }) async {
     await _wait();
     final existing = await _current();
-    // Un ticket déjà servi ne bloque plus : le client peut en reprendre un.
-    if (existing != null && !existing.served) {
+    // Un ticket encore actif bloque la prise ; un ticket clos non.
+    if (existing != null && !existing.isClosed) {
       throw TicketAlreadyActiveException(existing);
     }
     final sequence = ++_sequence;
@@ -73,13 +74,12 @@ final class MockTicketService implements TicketService {
   }
 
   @override
-  Future<void> markServed(Ticket ticket) async {
+  Future<void> saveStatus(Ticket ticket) async {
     await _wait();
-    // Le service fait foi : marquer un ticket déjà servi ne change rien, et
-    // marquer un ticket en attente le libère. L'appelant n'a pas à y penser.
-    final served = ticket.copyWith(served: true);
-    _active = served;
-    await _store?.write(ticketKey, ticketToJson(served));
+    // Le service fait foi : enregistrer un état déjà courant ne change rien,
+    // et enregistrer un ticket clos le libère. L'appelant n'a pas à y penser.
+    _active = ticket;
+    await _store?.write(ticketKey, ticketToJson(ticket));
   }
 
   @override
@@ -87,6 +87,24 @@ final class MockTicketService implements TicketService {
     await _wait();
     _active = null;
     await _store?.write(ticketKey, null);
+  }
+
+  @override
+  Future<Ticket?> lastClosedTicket() async => null;
+
+  @override
+  Future<Ticket> resumeTicket(Ticket ticket) async {
+    await _wait();
+    // Le vrai serveur replace le ticket en fin de tranche ; la démo se
+    // contente de le remettre dans la file à la position qu'il occupait.
+    final resumed = ticket.copyWith(
+      status: TicketStatus.waiting,
+      clearRecoveryExpiresAt: true,
+      position: ticket.position > 0 ? ticket.position : 1,
+    );
+    _active = resumed;
+    await _store?.write(ticketKey, ticketToJson(resumed));
+    return resumed;
   }
 
   /// Ticket courant du « serveur », restauré depuis le cache au besoin.

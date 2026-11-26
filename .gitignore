@@ -50,3 +50,17 @@ app.*.map.json
 # Agent skill junctions: .agents/skills is the source of truth
 .claude/skills/
 
+
+# ── Firebase ──────────────────────────────────────────────────────────────
+# google-services.json et GoogleService-Info.plist sont VOLONTAIREMENT suivis :
+# ils ne contiennent aucun secret (l'API key est restreinte par package / bundle
+# et par empreinte de signature) et une CI en a besoin pour compiler.
+#
+# La clé de compte de service, elle, donne un accès complet au projet Firebase :
+# elle ne doit jamais entrer dans le dépôt, ni dans un build mobile.
+firebase-service-account*.json
+*service-account*.json
+*.p8
+
+# Agent skills (outillage local, pas du produit)
+.agents/

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "344689943913",
+    "project_id": "gen-lang-client-0973714506",
+    "storage_bucket": "gen-lang-client-0973714506.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344689943913:android:1f9f495606403d810fc9f8",
+        "android_client_info": {
+          "package_name": "app.tonde"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344689943913-pqm5nla8c6tgu8e7j40csm6hjrm2oh20.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF_l_0PtoPpGsrDEYBv47KGjePPlrjl68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344689943913-pqm5nla8c6tgu8e7j40csm6hjrm2oh20.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

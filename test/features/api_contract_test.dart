@@ -15,6 +15,7 @@ import 'package:tonde/features/organizations/domain/entities/agency_service.dart
 import 'package:tonde/features/organizations/domain/entities/organization.dart';
 import 'package:tonde/features/tickets/data/api_ticket_service.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tickets/domain/ticket_service.dart';
 
 /// Adaptateur HTTP piloté par le test : aucune socket n'est ouverte.
@@ -169,10 +170,10 @@ void main() {
       expect(ticket.agencyName, 'Agence Centre');
       expect(ticket.serviceName, 'Dépôt');
       expect(ticket.qrToken, 'qr-abc');
-      expect(ticket.served, isFalse);
+      expect(ticket.status, TicketStatus.waiting);
     });
 
-    test('un ticket clôturé est marqué servi', () async {
+    test('un ticket clôturé porte le statut done', () async {
       final setup = _setup(
         (_) async => _json({
           'success': true,
@@ -183,8 +184,8 @@ void main() {
 
       final ticket = await ApiTicketService(client: setup.client).activeTicket();
 
-      // C'est ce drapeau qui autorise la prise d'un nouveau ticket.
-      expect(ticket!.served, isTrue);
+      // C'est ce statut qui autorise la prise d'un nouveau ticket.
+      expect(ticket!.status, TicketStatus.done);
       // La position 0 n'est pas corrigée : le client n'est plus dans la file.
       expect(ticket.position, 0);
     });
@@ -308,7 +309,7 @@ void main() {
         agencyId: 'ag-1',
         agencyName: 'Agence Centre',
       );
-      await ApiTicketService(client: setup.client).markServed(ticket);
+      await ApiTicketService(client: setup.client).saveStatus(ticket);
 
       // Aucun appel : seul le guichet termine un service. Lever une erreur ici
       // ferait croire à un échec de synchronisation côté écran.

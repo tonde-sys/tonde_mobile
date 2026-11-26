@@ -13,6 +13,7 @@ import 'package:tonde/core/offline/local_cache_provider.dart';
 const String _themeKey = 'settings.theme';
 const String _localeKey = 'settings.locale';
 const String _notificationsKey = 'settings.notifications';
+const String _callSoundKey = 'settings.call_sound';
 
 /// Langues proposées à l'utilisateur, dans l'ordre d'affichage.
 const Map<String, Locale> supportedAppLocales = <String, Locale>{
@@ -113,5 +114,37 @@ class NotificationsEnabledNotifier extends Notifier<bool> {
   Future<void> select(bool enabled) async {
     state = enabled;
     await ref.read(localCacheProvider).write(_notificationsKey, enabled);
+  }
+}
+
+/// Alerte sonore à l'appel du ticket.
+///
+/// Distinct de [notificationsEnabledProvider] : un client peut vouloir la
+/// bannière et l'historique sans une sonnerie qui insiste trois fois. Le
+/// réglage ne coupe que le son et la vibration de l'alerte — la notification,
+/// elle, reste affichée.
+final callSoundEnabledProvider =
+    NotifierProvider<CallSoundEnabledNotifier, bool>(
+      CallSoundEnabledNotifier.new,
+    );
+
+class CallSoundEnabledNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    unawaited(_restore());
+    return true;
+  }
+
+  Future<void> _restore() async {
+    final raw = await ref.read(localCacheProvider).read(_callSoundKey);
+    if (!ref.mounted || raw is! bool) {
+      return;
+    }
+    state = raw;
+  }
+
+  Future<void> select(bool enabled) async {
+    state = enabled;
+    await ref.read(localCacheProvider).write(_callSoundKey, enabled);
   }
 }

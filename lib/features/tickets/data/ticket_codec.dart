@@ -1,4 +1,5 @@
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 
 /// Sérialisation du ticket pour le cache local.
 ///
@@ -19,7 +20,12 @@ Map<String, Object?> ticketToJson(Ticket ticket) {
     'serviceName': ticket.serviceName,
     'qrToken': ticket.qrToken,
     'pendingSync': ticket.pendingSync,
-    'served': ticket.served,
+    'status': ticket.status.wire,
+    'counterLabel': ticket.counterLabel,
+    'totalInQueue': ticket.totalInQueue,
+    'recoveryExpiresAt': ticket.recoveryExpiresAt?.toIso8601String(),
+    'missedCount': ticket.missedCount,
+    'queueDegraded': ticket.queueDegraded,
     'issuedAt': ticket.issuedAt?.toIso8601String(),
   };
 }
@@ -49,9 +55,27 @@ Ticket? ticketFromJson(Object? document) {
     serviceName: _asNullableString(document['serviceName']),
     qrToken: _asNullableString(document['qrToken']),
     pendingSync: document['pendingSync'] == true,
-    served: document['served'] == true,
+    status: _status(document),
+    counterLabel: _asNullableString(document['counterLabel']),
+    totalInQueue: _asNullableInt(document['totalInQueue']),
+    recoveryExpiresAt: _asDate(document['recoveryExpiresAt']),
+    missedCount: _asInt(document['missedCount']),
+    queueDegraded: document['queueDegraded'] == true,
     issuedAt: _asDate(document['issuedAt']),
   );
+}
+
+/// Statut relu, avec repli sur l'ancien booléen `served`.
+///
+/// Un cache écrit avant l'introduction de [TicketStatus] ne porte que
+/// `served` : le relire en `done` évite qu'un ticket terminé réapparaisse
+/// comme actif après une mise à jour de l'application.
+TicketStatus _status(Map document) {
+  final raw = document['status'];
+  if (raw is String && raw.isNotEmpty) {
+    return TicketStatus.fromWire(raw);
+  }
+  return document['served'] == true ? TicketStatus.done : TicketStatus.waiting;
 }
 
 DateTime? _asDate(Object? value) =>

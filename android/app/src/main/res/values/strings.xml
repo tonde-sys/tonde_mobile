@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nom du widget dans le sélecteur d'écran d'accueil. Le préfixe « TONDE »
+         est indispensable : le sélecteur n'affiche que ce libellé, et un
+         utilisateur qui a plusieurs applications de file d'attente doit
+         reconnaître la nôtre sans l'ouvrir. -->
+    <string name="tonde_widget_label">TONDE — Mon ticket</string>
+
+    <!-- Description lue par TalkBack et par le sélecteur (Android 12+). -->
+    <string name="tonde_widget_description">Votre ticket en cours, votre position dans la file et l\'attente estimée.</string>
+</resources>

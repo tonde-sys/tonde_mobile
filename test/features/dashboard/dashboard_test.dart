@@ -8,6 +8,7 @@ import 'package:tonde/features/auth/domain/user.dart';
 import 'package:tonde/features/dashboard/presentation/pages/home_tab.dart';
 import 'package:tonde/features/dashboard/presentation/pages/notifications_tab.dart';
 import 'package:tonde/features/dashboard/presentation/pages/tickets_tab.dart';
+import 'package:tonde/features/dashboard/presentation/widgets/tonde_navigation_bar.dart';
 import 'package:tonde/features/organizations/data/repositories/mock_organization_repository.dart';
 import 'package:tonde/features/organizations/data/repositories/organization_repository_provider.dart';
 import 'package:tonde/features/tickets/data/ticket_service_provider.dart';
@@ -15,6 +16,7 @@ import 'package:tonde/features/tickets/domain/entities/ticket.dart';
 import 'package:tonde/features/tracking/data/queue_tracking_service_provider.dart';
 
 import '../../helpers/fakes.dart';
+import '../../helpers/screen.dart';
 
 const _user = User(
   id: 'u-jospin',
@@ -52,10 +54,17 @@ Finder _inTickets(Finder matching) =>
     find.descendant(of: find.byType(TicketsTab), matching: matching);
 Finder _inNotifications(Finder matching) =>
     find.descendant(of: find.byType(NotificationsTab), matching: matching);
-Finder _navDestination(String label) =>
-    find.descendant(of: find.byType(NavigationBar), matching: find.text(label));
+Finder _navDestination(String label) => find.descendant(
+  of: find.byType(TondeNavigationBar),
+  matching: find.text(label),
+);
 
 void main() {
+  // Surface de téléphone : la taille par défaut de flutter_test (800×600)
+  // fait basculer la coquille sur un rail latéral, et ces tests naviguent
+  // dans la barre basse.
+  setUp(usePhoneSurfaceForEachTest);
+
   testWidgets('affiche le ticket actif et les organisations sur l\'accueil', (
     tester,
   ) async {
@@ -67,7 +76,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Manage your queue easily'), findsOneWidget);
+    // Avec un ticket actif, la bannière ne vante plus la prise de ticket :
+    // elle situe le client dans la file et propose d'en suivre la position.
+    expect(find.text("You're in the queue"), findsOneWidget);
     expect(_inHome(find.text('Waiting')), findsOneWidget);
     expect(_inHome(find.text('T-9999')), findsOneWidget);
     expect(_inHome(find.text('People ahead of you')), findsOneWidget);
@@ -100,8 +111,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_inHome(find.text('No active ticket')), findsOneWidget);
-    // Bannière d'accueil + carte d'état vide.
-    expect(_inHome(find.text('Take a ticket')), findsNWidgets(2));
+    // Un seul bouton : celui de la bannière. La carte d'état vide explique la
+    // situation sans répéter l'action juste en dessous.
+    expect(_inHome(find.text('Take a ticket')), findsOneWidget);
   });
 
   testWidgets('les onglets Tickets et Notifications sont navigables', (

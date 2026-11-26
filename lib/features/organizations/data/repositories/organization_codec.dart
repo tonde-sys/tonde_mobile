@@ -9,6 +9,13 @@ Map<String, Object?> organizationToJson(Organization organization) {
     'id': organization.id,
     'name': organization.name,
     'type': organization.type.name,
+    // Les canaux de support sont mis en cache comme le reste : sans eux, un
+    // client hors ligne ouvrirait un centre d'aide vide alors qu'il a déjà
+    // téléchargé les coordonnées de son institution.
+    'supportPhone': organization.supportPhone,
+    'supportWhatsapp': organization.supportWhatsapp,
+    'supportEmail': organization.supportEmail,
+    'supportHours': organization.supportHours,
   };
 }
 
@@ -25,8 +32,14 @@ Organization? organizationFromJson(Object? document) {
     id: id,
     name: name,
     type: _typeFromName(document['type']),
+    supportPhone: _stringOrEmpty(document['supportPhone']),
+    supportWhatsapp: _stringOrEmpty(document['supportWhatsapp']),
+    supportEmail: _stringOrEmpty(document['supportEmail']),
+    supportHours: _stringOrEmpty(document['supportHours']),
   );
 }
+
+String _stringOrEmpty(Object? value) => value is String ? value : '';
 
 Map<String, Object?> agencyToJson(Agency agency) {
   return <String, Object?>{

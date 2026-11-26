@@ -5,16 +5,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tonde/app/app.dart';
 import 'package:tonde/core/offline/local_cache.dart';
 import 'package:tonde/core/offline/local_cache_provider.dart';
+import 'package:tonde/core/platform/home_widget_bridge.dart';
 import 'package:tonde/core/settings/settings_providers.dart';
 import 'package:tonde/features/auth/data/auth_service_provider.dart';
 import 'package:tonde/features/auth/domain/user.dart';
 import 'package:tonde/features/dashboard/presentation/pages/more_tab.dart';
+import 'package:tonde/features/dashboard/presentation/widgets/tonde_navigation_bar.dart';
 import 'package:tonde/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:tonde/features/organizations/data/repositories/mock_organization_repository.dart';
 import 'package:tonde/features/organizations/data/repositories/organization_repository_provider.dart';
 import 'package:tonde/features/tickets/data/ticket_service_provider.dart';
+import 'package:tonde/features/tickets/presentation/controllers/home_widget_driver.dart';
 
 import '../../helpers/fakes.dart';
+import '../../helpers/screen.dart';
 
 const _user = User(
   id: 'u-jospin',
@@ -26,27 +30,56 @@ const _user = User(
   createdAt: '2026-01-15',
 );
 
-List<Override> _overrides({LocalCache? cache}) => [
+List<Override> _overrides({LocalCache? cache, HomeWidgetBridge? homeWidget}) => [
   organizationRepositoryProvider.overrideWithValue(
     const MockOrganizationRepository(latency: Duration.zero),
   ),
   authServiceProvider.overrideWithValue(FakeAuthService(current: _user)),
   ticketServiceProvider.overrideWithValue(FakeTicketService()),
   if (cache != null) localCacheProvider.overrideWithValue(cache),
+  if (homeWidget != null)
+    homeWidgetBridgeProvider.overrideWithValue(homeWidget),
 ];
 
+/// Passerelle de test qui accepte ou refuse l'épinglage du widget.
+class _FakeHomeWidgetBridge implements HomeWidgetBridge {
+  _FakeHomeWidgetBridge({this.pinSupported = false});
+
+  final bool pinSupported;
+  int pinRequests = 0;
+
+  @override
+  Future<void> update(HomeWidgetState state) async {}
+
+  @override
+  Future<void> clear() async {}
+
+  @override
+  Future<bool> isPinSupported() async => pinSupported;
+
+  @override
+  Future<bool> requestPin() async {
+    pinRequests++;
+    return pinSupported;
+  }
+}
+
 /// Ouvre l'application puis sélectionne l'onglet « Plus ».
-Future<void> _openMoreTab(WidgetTester tester, {LocalCache? cache}) async {
+Future<void> _openMoreTab(
+  WidgetTester tester, {
+  LocalCache? cache,
+  HomeWidgetBridge? homeWidget,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _overrides(cache: cache),
+      overrides: _overrides(cache: cache, homeWidget: homeWidget),
       child: const TondeApp(),
     ),
   );
   await tester.pumpAndSettle();
   await tester.tap(
     find.descendant(
-      of: find.byType(NavigationBar),
+      of: find.byType(TondeNavigationBar),
       matching: find.text('More'),
     ),
   );
@@ -63,6 +96,8 @@ Finder _inSheet(Finder matching) =>
     find.descendant(of: find.byType(BottomSheet), matching: matching);
 
 void main() {
+  setUp(usePhoneSurfaceForEachTest);
+
   group('Onglet Plus', () {
     testWidgets('ne montre aucune donnée personnelle', (tester) async {
       await _openMoreTab(tester);
@@ -214,6 +249,37 @@ void main() {
 
       expect(container.read(localeProvider), isNull);
       expect(container.read(themeModeProvider), ThemeMode.system);
+    });
+  });
+
+  group('Widget d\'écran d\'accueil', () {
+    testWidgets('l\'entrée reste cachée si le lanceur ne sait pas épingler', (
+      tester,
+    ) async {
+      // Passerelle par défaut : aucun canal natif dans les tests, donc le
+      // lanceur est réputé incompatible. C'est aussi le cas d'iOS.
+      await _openMoreTab(tester);
+
+      expect(_inMore(find.text('Home screen widget')), findsNothing);
+    });
+
+    testWidgets('l\'entrée demande l\'épinglage et confirme', (tester) async {
+      final bridge = _FakeHomeWidgetBridge(pinSupported: true);
+      await _openMoreTab(tester, homeWidget: bridge);
+
+      final tile = _inMore(find.text('Home screen widget'));
+      expect(tile, findsOneWidget);
+
+      await tester.tap(tile);
+      await tester.pumpAndSettle();
+
+      expect(bridge.pinRequests, 1);
+      // Le lanceur ouvre sa propre boîte de dialogue : l'application ne peut
+      // que dire ce qu'elle a demandé.
+      expect(
+        find.text("Confirm the addition in your launcher's dialog."),
+        findsOneWidget,
+      );
     });
   });
 }

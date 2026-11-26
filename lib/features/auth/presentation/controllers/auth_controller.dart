@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tonde/features/auth/data/auth_service_provider.dart';
 import 'package:tonde/features/auth/domain/user.dart';
+import 'package:tonde/features/notifications/data/push_registrar.dart';
 
 /// Utilisateur connecté (null si personne n'est connecté).
 final authControllerProvider = AsyncNotifierProvider<AuthNotifier, User?>(
@@ -81,6 +82,11 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> logout() async {
+    // Le jeton push est coupé AVANT la fermeture de session : l'endpoint
+    // d'enregistrement exige un accès valide. Sans cet ordre, l'appareil
+    // garderait le jeton du compte déconnecté et continuerait à recevoir ses
+    // appels au guichet — visible par le prochain utilisateur du téléphone.
+    await ref.read(pushRegistrarProvider).unregister();
     await ref.read(authServiceProvider).logout();
     state = const AsyncData(null);
   }

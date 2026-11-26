@@ -176,6 +176,52 @@ class AppLocalizationsRn extends AppLocalizations {
   String get seePosition => 'Raba umwanya wanje';
 
   @override
+  String get heroTitleActive => 'Uri mu murongo';
+
+  @override
+  String get heroBodyActive =>
+      'Umwanya wawe urahinduka uko igihe kigenda. Guma hafi y\'idirishya.';
+
+  @override
+  String get resumeTicket => 'Ongera ufate itike yawe';
+
+  @override
+  String get resumeSuccess => 'Itike yawe yasubiye mu murongo.';
+
+  @override
+  String get resumeWindowExpired =>
+      'Igihe co gusubiza gishize. Fata itike nshasha.';
+
+  @override
+  String get resumeMaxMissed =>
+      'Wabuze inshuro nyinshi: ntushobora gusubiza. Fata itike nshasha.';
+
+  @override
+  String get resumeFailed =>
+      'Gusubiza ntibishobotse. Gerageza kandi ako kanya.';
+
+  @override
+  String ticketAbsentNote(String time) {
+    return 'Ntiwabonetse. Ongera ufate itike yawe imbere ya $time.';
+  }
+
+  @override
+  String get ticketClosedServedTitle => 'Itike yawe yarangiye';
+
+  @override
+  String ticketClosedServedBody(String number) {
+    return 'Idirishya ryarangiye itike $number. Ushobora gufata irindi igihe cose ushakiye.';
+  }
+
+  @override
+  String get ticketClosedExpiredTitle => 'Itike yawe yashize';
+
+  @override
+  String ticketClosedExpiredBody(String number) {
+    return 'Itike $number ntikiri mu murongo. Fata itike nshasha kugira uhamagarwe.';
+  }
+
+  @override
   String get myOrganizations => 'Amashirahamwe yanje';
 
   @override
@@ -340,8 +386,7 @@ class AppLocalizationsRn extends AppLocalizations {
   String get trackingWaitTime => 'Igihe giteganyijwe';
 
   @override
-  String trackingMinutesValue(int? minutes) {
-    if (minutes == null) return trackingEtaUnavailable;
+  String trackingMinutesValue(int minutes) {
     return 'iminota $minutes';
   }
 
@@ -349,12 +394,12 @@ class AppLocalizationsRn extends AppLocalizations {
   String get trackingEtaUnavailable => 'Igihe kirategurwa';
 
   @override
-  String trackingCounterPaused(String counter) {
+  String trackingCounterPaused(Object counter) {
     return '$counter iri mu kuruhuka.';
   }
 
   @override
-  String trackingCounterPausedUntil(String counter, String time) {
+  String trackingCounterPausedUntil(Object counter, Object time) {
     return '$counter iri mu kuruhuka kugeza saa $time.';
   }
 
@@ -608,7 +653,7 @@ class AppLocalizationsRn extends AppLocalizations {
   }
 
   @override
-  String notifProgressBodyNoEta(int count) {
+  String notifProgressBodyNoEta(Object count) {
     return 'Harasigaye abantu $count imbere yawe. Tegura inyandiko zawe.';
   }
 
@@ -682,6 +727,13 @@ class AppLocalizationsRn extends AppLocalizations {
       'Amatangazo y’umurongo n’uhamagarwa ku guichet';
 
   @override
+  String get moreCallSound => 'Ijwi iyo uhamagariwe';
+
+  @override
+  String get moreCallSoundSubtitle =>
+      'Ijwi ryumvikana iyo nimero yawe ihamagariwe';
+
+  @override
   String get notifDelete => 'Siba iyi nkuru';
 
   @override
@@ -747,4 +799,416 @@ class AppLocalizationsRn extends AppLocalizations {
   @override
   String get passwordTooShort =>
       'Ijambobanga rigomba kuba rifise nibura inyuguti 8.';
+
+  @override
+  String get assistanceMyTicket => 'Itike yanje';
+
+  @override
+  String get assistanceFaq => 'Ibibazo bibazwa kenshi';
+
+  @override
+  String get assistanceContact => 'Tuvugane';
+
+  @override
+  String get assistanceGiveFeedback => 'Tanga ivyiyumviro vyawe';
+
+  @override
+  String get assistanceGiveFeedbackBody => 'Tubwire uko vyagenda ku biro.';
+
+  @override
+  String get assistanceReportBug => 'Menyesha ikibazo';
+
+  @override
+  String get assistanceReportBugBody => 'Hari ikidashira? Sobanura.';
+
+  @override
+  String get assistanceMyFeedback => 'Ivyo wantanze';
+
+  @override
+  String get assistanceMyFeedbackBody => 'Kurikirana ivyo watwohereje.';
+
+  @override
+  String get assistanceFeedbackSection => 'Ivyiyumviro n\'ibibazo';
+
+  @override
+  String get assistanceServiceStatus => 'Uko serivisi ihagaze';
+
+  @override
+  String get helpCenterTitle => 'Ikigo c\'ubufasha';
+
+  @override
+  String get helpCenterQuestion => 'Twoshobora kubafasha gute?';
+
+  @override
+  String get helpInstitutionTitle => 'Vugana n\'umuryango wawe';
+
+  @override
+  String get helpInstitutionBody =>
+      'Ikibazo ku itike yawe canke ku murimo w\'ibiro.';
+
+  @override
+  String get helpInstitutionAction => 'Hamagara umuryango';
+
+  @override
+  String get helpTondeTitle => 'Vugana na TONDE';
+
+  @override
+  String get helpTondeBody => 'Ikibazo ku porogarama canke kuri konti yawe.';
+
+  @override
+  String get helpTondeAction => 'Vugana n\'ubufasha';
+
+  @override
+  String get helpFaqBody => 'Raba inyishu z\'ibibazo bibazwa kenshi.';
+
+  @override
+  String get helpFaqAction => 'Raba FAQ';
+
+  @override
+  String get helpFeedbackTitle => 'Ivyiyumviro vyawe ni vy\'ingirakamaro';
+
+  @override
+  String get helpFeedbackBody => 'Tubwire ivyo ushaka ko TONDE itunganya.';
+
+  @override
+  String get supportTondeSubtitle => 'Ubufasha bwa tekiniki bw\'iyi porogarama';
+
+  @override
+  String get supportAlwaysOpen =>
+      'Iraboneka amasaha 24 kuri 24, imisi 7 kuri 7';
+
+  @override
+  String get supportChooseInstitution => 'Hitamo umuryango wawe';
+
+  @override
+  String get supportInstitutionEmpty => 'Nta muryango wometse kuri konti yawe.';
+
+  @override
+  String get supportInstitutionEmptyBody =>
+      'Fata itike canke raba amashirahamwe kugira ubone aho avugira.';
+
+  @override
+  String get supportBrowseInstitutions => 'Raba amashirahamwe';
+
+  @override
+  String get supportInstitutionNoChannel =>
+      'Uyu muryango ntuwereka aho uvugira.';
+
+  @override
+  String get supportInstitutionNoChannelBody =>
+      'Ja ku biro: abakozi bazokwishura aho.';
+
+  @override
+  String get supportCallInstitution => 'Hamagara umuryango';
+
+  @override
+  String get supportLoadFailed => 'Ntivyashobotse kuronka aho bavugira.';
+
+  @override
+  String get supportClose => 'Funga';
+
+  @override
+  String get faqIntro => 'Inyishu z\'ibibazo bibazwa kenshi.';
+
+  @override
+  String get feedbackIntro => 'Tubwire ivyiza, ividashira, canke ivyobura.';
+
+  @override
+  String get feedbackThanksTitle => 'Urakoze cane!';
+
+  @override
+  String get feedbackThanksBody =>
+      'Ubutumwa bwawe bwageze. Turawusoma imisi yose.';
+
+  @override
+  String get serviceReachable => 'Serivisi iraboneka';
+
+  @override
+  String get serviceUnreachable => 'Serivisi ntiboneka';
+
+  @override
+  String get faqTakeTicketTitle => 'Nofata gute itike?';
+
+  @override
+  String get faqTakeTicketBody =>
+      'Fungura ahabanza, uhitemwo ishirahamwe, ishami na serivisi, hanyuma wemeze. Itike yawe irahita iboneka hamwe n\'umwanya wawe.';
+
+  @override
+  String get faqAbsentTitle => 'Sinumvise aho nahamagarirwa, nkore iki?';
+
+  @override
+  String get faqAbsentBody =>
+      'Itike yawe ihinduka « ntaboneka » ariko igumana umwanya wayo akanya. Ku rupapuro rw\'ahabanza, kanda « Ongera ufate itike yawe » imbere y\'isaha yerekanywe: usubira mu murongo, ku mpera y\'urwego rwawe.';
+
+  @override
+  String get faqExpiredTitle => 'Itike yanje yarangiye';
+
+  @override
+  String get faqExpiredBody =>
+      'Itike itasavwe ku gihe irakuka mu murongo. Fata indi nshasha: umwanya wawe uzobarwa ku murongo wo kuri uwo mwanya.';
+
+  @override
+  String get faqPausedTitle => 'Ibiro biri mu kiruhuko';
+
+  @override
+  String get faqPausedBody =>
+      'Isaha yo gusubira iraboneka munsi y\'izina ry\'ibiro. Umwanya wawe ntuhinduka mu kiruhuko: igihe utegereje gusa ni co kijanjagurwa.';
+
+  @override
+  String get faqNotificationsTitle => 'Sinkirabwa n\'imenyesha';
+
+  @override
+  String get faqNotificationsBody =>
+      'Raba ko imenyesha yemererwa kuri TONDE mu ma settings y\'telefone, kandi ko mode idahumye itari gukora. Porogaramu irakora nta zo: ukurikiranira ku rupapuro.';
+
+  @override
+  String get faqTwoTicketsTitle => 'Noshobora gufata itike zibiri?';
+
+  @override
+  String get faqTwoTicketsBody =>
+      'Oya. Itike imwe gusa ikora kuri konti imwe, mu mashirahamwe yose: ni co gituma umurongo uguma ari uwo ukuri ku bose.';
+
+  @override
+  String get feedbackReviewTitle => 'Tanga ivyiyumviro vyawe';
+
+  @override
+  String get feedbackBugTitle => 'Menyesha ikibazo';
+
+  @override
+  String get feedbackCategory => 'Icyiciro';
+
+  @override
+  String get feedbackCategoryReview => 'Ivyiyumviro';
+
+  @override
+  String get feedbackCategoryBug => 'Ikibazo';
+
+  @override
+  String get feedbackCategorySuggestion => 'Inama';
+
+  @override
+  String get feedbackRating => 'Amanota yawe';
+
+  @override
+  String get feedbackRatingHint => 'Si ngombwa';
+
+  @override
+  String get feedbackMessage => 'Ubutumwa bwawe';
+
+  @override
+  String get feedbackMessageHint => 'Sobanura ivyabaye mu nteruro nke.';
+
+  @override
+  String feedbackMessageCounter(int count) {
+    return '$count/1000';
+  }
+
+  @override
+  String feedbackMessageTooShort(int count) {
+    return 'Harasigaye inyuguti $count.';
+  }
+
+  @override
+  String get feedbackSubmit => 'Rungika';
+
+  @override
+  String get feedbackSent => 'Urakoze, ivyiyumviro vyawe vyarungitswe.';
+
+  @override
+  String get feedbackRateLimited =>
+      'Warungitse ivyiyumviro vyinshi vuba. Ongera ugerageze mu saha imwe.';
+
+  @override
+  String get feedbackAlreadySent =>
+      'Wamaze kumenyesha iyi tike muri iki cyiciro.';
+
+  @override
+  String get feedbackFailed => 'Kurungika ntibishobotse. Ongera ugerageze.';
+
+  @override
+  String get feedbackPrivacyNote =>
+      'Ivyiyumviro vyawe bifitanye isano na konti yawe, ntibisohoka ahabona.';
+
+  @override
+  String get feedbackHistoryTitle => 'Ivyo wantanze';
+
+  @override
+  String get feedbackHistoryEmpty => 'Nta kintu warungitse';
+
+  @override
+  String get feedbackHistoryEmptyBody =>
+      'Ivyiyumviro n\'ibibazo watanze bizoboneka ngaha, hamwe n\'uko biriko birakorwa.';
+
+  @override
+  String get feedbackStatusReceived => 'Byakiriwe';
+
+  @override
+  String get feedbackStatusRead => 'Byasomwe';
+
+  @override
+  String get feedbackStatusResolved => 'Byakorewe';
+
+  @override
+  String get contactWhatsApp => 'WhatsApp';
+
+  @override
+  String get contactCall => 'Hamagara';
+
+  @override
+  String get contactEmail => 'Imeyili';
+
+  @override
+  String get contactNoChannel =>
+      'Nta nzira yo kuvugana yashizweho kuri iri shirahamwe.';
+
+  @override
+  String get contactOpenFailed => 'Ntibishobotse kufungura iyi porogaramu.';
+
+  @override
+  String get errOfflineDetail =>
+      'Raba umurongo wawe, hanyuma ugerageze ubundi. Nta kintu catakaye.';
+
+  @override
+  String get errTicketActive => 'Ufise itike iriho.';
+
+  @override
+  String get errTicketActiveDetail =>
+      'Itike imwe gusa icyarimwe. Kurikirana iyi, canke uyihagarike imbere yo gufata indi.';
+
+  @override
+  String get errBranchClosed => 'Iri shami ryafunze.';
+
+  @override
+  String get errBranchClosedDetail =>
+      'Itike zifatwa gusa mu ma saha yo gufungura.';
+
+  @override
+  String get errDailyLimit => 'Umusozo w\'amatike y\'uyu munsi wageze.';
+
+  @override
+  String get errDailyLimitDetail =>
+      'Ongera ugerageze ejo, canke uhitemwo irindi shami.';
+
+  @override
+  String get errRateLimited => 'Wagerageje kenshi.';
+
+  @override
+  String get errRateLimitedDetail =>
+      'Tegereza akanya imbere yo kongera ugerageza.';
+
+  @override
+  String get errGracePeriod => 'Itike yawe ntirashobora gufatwa ubundi.';
+
+  @override
+  String get errGracePeriodDetail =>
+      'Ibiro biherutse kuguhamagara. Tegereza ko igihe kirangira, hanyuma ugerageze ubundi.';
+
+  @override
+  String get errTicketGone => 'Iyi tike ntisubira kuboneka.';
+
+  @override
+  String get errTicketGoneDetail =>
+      'Hashobora kuba yarafunzwe hagati. Fata indi niba bikenewe.';
+
+  @override
+  String get errServer => 'Serivisi yahuye n\'ikibazo.';
+
+  @override
+  String get errServerDetail =>
+      'Si amakosa yawe. Ongera ugerageze akanya gato.';
+
+  @override
+  String get errValidation => 'Hari amakuru adakwiye.';
+
+  @override
+  String get errForbidden => 'Iki gikorwa ntikwemererwa kuri konti yawe.';
+
+  @override
+  String get errUnexpected => 'Habaye ikibazo kitateganijwe.';
+
+  @override
+  String get errUnexpectedDetail =>
+      'Ongera ugerageze. Niba biguma, bimenyeshe ku rupapuro rw\'ubufasha.';
+
+  @override
+  String get errInProgress => 'Hari ikindi gisabwa kimwe kiriko kirakorwa.';
+
+  @override
+  String get errTechnicalDetails => 'Amatariki y\'ubuhinga';
+
+  @override
+  String get actionChooseService => 'Hitamo serivisi';
+
+  @override
+  String get actionTakeNewTicket => 'Fata itike';
+
+  @override
+  String get actionWait => 'Tegereza';
+
+  @override
+  String errRateLimitedSeconds(int seconds) {
+    return 'Wagerageje kenshi. Tegereza amasegonda $seconds.';
+  }
+
+  @override
+  String errIncident(String id) {
+    return 'Inomero: $id';
+  }
+
+  @override
+  String get widgetEmptyTitle => 'Nta tike';
+
+  @override
+  String get widgetEmptyBody => 'Kanda ufate itike';
+
+  @override
+  String widgetPosition(int position) {
+    return 'Umwanya $position';
+  }
+
+  @override
+  String widgetEta(int minutes) {
+    return '≈ $minutes min';
+  }
+
+  @override
+  String widgetUpdated(String time) {
+    return 'Byavuguruwe saa $time';
+  }
+
+  @override
+  String get widgetCounterPaused => 'Icyumba kirahagaze';
+
+  @override
+  String widgetCounterPausedUntil(String time) {
+    return 'Bihagaze kugeza $time';
+  }
+
+  @override
+  String get moreHomeWidget => 'Widgeti y\'ecran y\'itangiriro';
+
+  @override
+  String get moreHomeWidgetSubtitle =>
+      'Itike yawe iragaragara utarinjiye muri porogaramu';
+
+  @override
+  String get homeWidgetPinConfirm => 'Emeza ko wongeyeko widgeti.';
+
+  @override
+  String get homeWidgetPinUnsupported =>
+      'Ecran yawe ntishobora kwongerako widgeti uhereye muri porogaramu. Yongeza ku ecran y\'itangiriro.';
+
+  @override
+  String get homeWidgetInviteTitle =>
+      'Kurikirana ikibanza cawe kuva ku ecran y\'itangiriro';
+
+  @override
+  String get homeWidgetInviteBody =>
+      'Ongeraho widgeti TONDE kugira ngo ubone inomero, ikibanza n\'igihe gisigaye utarinze gufungura porogaramu.';
+
+  @override
+  String get homeWidgetInviteAccept => 'Ongeraho widgeti';
+
+  @override
+  String get homeWidgetInviteLater => 'Nyuma';
 }

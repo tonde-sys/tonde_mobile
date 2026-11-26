@@ -99,8 +99,10 @@ void main() {
       repository: _FailingOrganizationRepository(),
     );
 
+    // Depuis L7, une coupure réseau n'affiche plus le message générique
+    // « impossible de charger » : elle dit ce qui se passe réellement.
     expect(
-      find.text('Unable to load data. Check your connection and try again.'),
+      find.text('Server unreachable. Check your connection.'),
       findsOneWidget,
     );
     expect(find.text('Retry'), findsOneWidget);

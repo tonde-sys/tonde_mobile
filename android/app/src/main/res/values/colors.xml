@@ -3,4 +3,20 @@
     <!-- Fond de l'écran de démarrage natif : identique au fond de l'écran de
          marque Flutter, pour que la transition ne se voie pas. -->
     <color name="tonde_splash_background">#FF1E293B</color>
+
+    <!-- Teinte de la marque, appliquée par le système au liséré de la
+         notification. Doit rester alignée sur BRAND_COLOR côté backend
+         (app/services/fcm_gateway.py) pour que le push et la notification
+         locale aient exactement la même couleur. -->
+    <color name="tonde_brand">#FF1E293B</color>
+
+    <!-- Widget d'écran d'accueil. Le fond est volontairement opaque : un widget
+         translucide laisse voir le papier peint, et le numéro de ticket — la
+         seule information qui compte à trois mètres du guichet — devient
+         illisible sur un fond clair. -->
+    <color name="tonde_widget_background">#FF1E293B</color>
+    <color name="tonde_widget_text_primary">#FFF8FAFC</color>
+    <color name="tonde_widget_text_secondary">#FF94A3B8</color>
+    <color name="tonde_widget_text_muted">#FF64748B</color>
+    <color name="tonde_widget_accent">#FFFBBF24</color>
 </resources>

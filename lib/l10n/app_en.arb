@@ -48,6 +48,18 @@
   "peopleAhead": "people ahead of you",
   "estimatedTime": "Estimated time: {minutes} min",
   "seePosition": "See my position",
+  "heroTitleActive": "You're in the queue",
+  "heroBodyActive": "Your position updates in real time. Stay within earshot of the counter.",
+  "resumeTicket": "Resume my ticket",
+  "resumeSuccess": "Your ticket is back in the queue.",
+  "resumeWindowExpired": "The recovery window has closed. Take a new ticket.",
+  "resumeMaxMissed": "Too many missed calls: you can no longer resume. Take a new ticket.",
+  "resumeFailed": "The ticket could not be resumed. Try again in a moment.",
+  "ticketAbsentNote": "You didn't show up. Resume your ticket before {time}.",
+  "ticketClosedServedTitle": "Your visit is complete",
+  "ticketClosedServedBody": "The counter closed ticket {number}. You can take another one whenever you like.",
+  "ticketClosedExpiredTitle": "Your ticket has expired",
+  "ticketClosedExpiredBody": "Ticket {number} is no longer in the queue. Take a new ticket to be called again.",
   "myOrganizations": "My organizations",
   "viewAll": "View all",
   "needHelp": "Need help?",
@@ -197,6 +209,8 @@
   "notifCenterEmptyBody": "You’ll be notified at every step of your queue.",
   "moreNotifications": "Notifications",
   "moreNotificationsSubtitle": "Queue alerts and counter calls",
+  "moreCallSound": "Call sound",
+  "moreCallSoundSubtitle": "Rings when your number is called",
   "notifDelete": "Delete notification",
   "notifUnreadCount": "{count, plural, =0{None unread} =1{1 unread} other{{count} unread}}",
   "profilePhotoTitle": "Profile photo",
@@ -216,5 +230,206 @@
   "accountDisabled": "This account has been disabled. Contact your organization.",
   "accountLocked": "Too many attempts. Try again in a few minutes.",
   "authErrorGeneric": "Sign-in failed. Try again.",
-  "passwordTooShort": "The password must be at least 8 characters long."
+  "passwordTooShort": "The password must be at least 8 characters long.",
+  "assistanceMyTicket": "My ticket",
+  "assistanceFaq": "Frequently asked questions",
+  "assistanceContact": "Contact us",
+  "assistanceGiveFeedback": "Give feedback",
+  "assistanceGiveFeedbackBody": "Tell us how your visit went.",
+  "assistanceReportBug": "Report a problem",
+  "assistanceReportBugBody": "Something not working? Describe it.",
+  "assistanceMyFeedback": "My feedback",
+  "assistanceMyFeedbackBody": "Track what you have sent us.",
+  "assistanceFeedbackSection": "Reviews and feedback",
+  "assistanceServiceStatus": "Service status",
+  "helpCenterTitle": "Help center",
+  "helpCenterQuestion": "How can we help you?",
+  "helpInstitutionTitle": "Contact my institution",
+  "helpInstitutionBody": "A question about your ticket or the agency's service.",
+  "helpInstitutionAction": "Call the institution",
+  "helpTondeTitle": "Contact TONDE",
+  "helpTondeBody": "A technical problem with the app or your account.",
+  "helpTondeAction": "Contact support",
+  "helpFaqBody": "Read the answers to common questions.",
+  "helpFaqAction": "Read the FAQ",
+  "helpFeedbackTitle": "Your feedback matters",
+  "helpFeedbackBody": "Tell us what you would like to see improved in TONDE.",
+  "supportTondeSubtitle": "App technical support",
+  "supportAlwaysOpen": "Available 24/7",
+  "supportChooseInstitution": "Choose my institution",
+  "supportInstitutionEmpty": "No institution is linked to your account.",
+  "supportInstitutionEmptyBody": "Take a ticket or browse the institutions to find their contact details.",
+  "supportBrowseInstitutions": "Browse institutions",
+  "supportInstitutionNoChannel": "This institution has not published contact details.",
+  "supportInstitutionNoChannelBody": "Go to the agency: the staff will answer you on site.",
+  "supportCallInstitution": "Call the institution",
+  "supportLoadFailed": "Could not load the contact details.",
+  "supportClose": "Close",
+  "faqIntro": "The answers to the questions we get most often.",
+  "feedbackIntro": "Tell us what works, what is broken, or what is missing.",
+  "feedbackThanksTitle": "Thank you!",
+  "feedbackThanksBody": "Your message has arrived. We read them every day.",
+  "serviceReachable": "Service reachable",
+  "serviceUnreachable": "Service unreachable",
+  "faqTakeTicketTitle": "How do I take a ticket?",
+  "faqTakeTicketBody": "Open the home screen, pick the organisation, the branch and the service, then confirm. Your ticket appears right away with your position.",
+  "faqAbsentTitle": "I missed my call, what now?",
+  "faqAbsentBody": "Your ticket switches to \"absent\" but keeps its place for a while. From the home screen, tap \"Resume my ticket\" before the time shown: you rejoin the queue at the end of your priority band.",
+  "faqExpiredTitle": "My ticket expired",
+  "faqExpiredBody": "A ticket nobody claims in time leaves the queue. Take a new one: your position will be computed from the queue at that moment.",
+  "faqPausedTitle": "The counter is paused",
+  "faqPausedBody": "The resumption time is shown under the counter name. Your position does not move during the pause: only the estimated wait is pushed back.",
+  "faqNotificationsTitle": "I am not getting notifications",
+  "faqNotificationsBody": "Check that notifications are allowed for TONDE in your phone settings, and that silent mode is off. The app works without them: tracking stays on screen.",
+  "faqTwoTicketsTitle": "Can I take two tickets?",
+  "faqTwoTicketsBody": "No. One active ticket per account, across all organisations: that is what keeps the queue honest for everyone.",
+  "feedbackReviewTitle": "Give feedback",
+  "feedbackBugTitle": "Report a problem",
+  "feedbackCategory": "Category",
+  "feedbackCategoryReview": "Review",
+  "feedbackCategoryBug": "Problem",
+  "feedbackCategorySuggestion": "Suggestion",
+  "feedbackRating": "Your rating",
+  "feedbackRatingHint": "Optional",
+  "feedbackMessage": "Your message",
+  "feedbackMessageHint": "Describe what happened, in a few sentences.",
+  "feedbackMessageCounter": "{count}/1000",
+  "feedbackMessageTooShort": "{count} characters to go.",
+  "feedbackSubmit": "Send",
+  "feedbackSent": "Thank you, your feedback has been sent.",
+  "feedbackRateLimited": "You have sent several reports recently. Try again in an hour.",
+  "feedbackAlreadySent": "You already reported this ticket in this category.",
+  "feedbackFailed": "Sending failed. Try again.",
+  "feedbackPrivacyNote": "Your feedback is tied to your account and is never published.",
+  "feedbackHistoryTitle": "My feedback",
+  "feedbackHistoryEmpty": "No feedback sent",
+  "feedbackHistoryEmptyBody": "Your reviews and reports will appear here, with how they are being handled.",
+  "feedbackStatusReceived": "Received",
+  "feedbackStatusRead": "Read",
+  "feedbackStatusResolved": "Resolved",
+  "contactWhatsApp": "WhatsApp",
+  "contactCall": "Call",
+  "contactEmail": "Email",
+  "contactNoChannel": "No contact method is configured for this organisation.",
+  "contactOpenFailed": "Could not open that app.",
+  "errOfflineDetail": "Check your connection, then try again. Nothing was lost.",
+  "errTicketActive": "You already have a ticket in progress.",
+  "errTicketActiveDetail": "One ticket at a time. Track this one, or cancel it before taking another.",
+  "errBranchClosed": "This branch is closed.",
+  "errBranchClosedDetail": "Tickets can only be taken during opening hours.",
+  "errDailyLimit": "Today's ticket limit has been reached.",
+  "errDailyLimitDetail": "Try again tomorrow, or choose another branch.",
+  "errRateLimited": "Too many attempts.",
+  "errRateLimitedDetail": "Wait a moment before trying again.",
+  "errGracePeriod": "Your ticket cannot be resumed yet.",
+  "errGracePeriodDetail": "The counter has just called you. Wait until the delay ends, then try again.",
+  "errTicketGone": "That ticket no longer exists.",
+  "errTicketGoneDetail": "It may have been closed in the meantime. Take a new one if needed.",
+  "errServer": "The service ran into a problem.",
+  "errServerDetail": "This is not your fault. Try again in a moment.",
+  "errValidation": "Some information is invalid.",
+  "errForbidden": "This action is not allowed for your account.",
+  "errUnexpected": "An unexpected error occurred.",
+  "errUnexpectedDetail": "Try again. If it persists, report it from the help tab.",
+  "errInProgress": "An identical request is already in progress.",
+  "errTechnicalDetails": "Technical details",
+  "actionChooseService": "Choose a service",
+  "actionTakeNewTicket": "Take a ticket",
+  "actionWait": "Please wait",
+  "errRateLimitedSeconds": "Too many attempts. Wait {seconds} seconds.",
+  "@errRateLimitedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "errIncident": "Reference: {id}",
+  "@errIncident": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetEmptyTitle": "No ticket",
+  "@widgetEmptyTitle": {
+    "description": "Home-screen widget title when no ticket is active."
+  },
+  "widgetEmptyBody": "Tap to get one",
+  "@widgetEmptyBody": {
+    "description": "Home-screen widget invitation when no ticket is active."
+  },
+  "widgetPosition": "Position {position}",
+  "@widgetPosition": {
+    "description": "Queue position shown by the home-screen widget.",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetEta": "≈ {minutes} min",
+  "@widgetEta": {
+    "description": "Estimated wait shown by the home-screen widget.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetUpdated": "Updated at {time}",
+  "@widgetUpdated": {
+    "description": "Last refresh time of the home-screen widget.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetCounterPaused": "Desk paused",
+  "@widgetCounterPaused": {
+    "description": "Widget: a counter in the queue is paused, resume time unknown."
+  },
+  "widgetCounterPausedUntil": "Paused until {time}",
+  "@widgetCounterPausedUntil": {
+    "description": "Widget: a counter in the queue is paused until a known time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "moreHomeWidget": "Home screen widget",
+  "@moreHomeWidget": {
+    "description": "Menu entry that offers to pin the widget."
+  },
+  "moreHomeWidgetSubtitle": "Your ticket at a glance, without opening the app",
+  "@moreHomeWidgetSubtitle": {
+    "description": "Subtitle of the widget menu entry."
+  },
+  "homeWidgetPinConfirm": "Confirm the addition in your launcher's dialog.",
+  "@homeWidgetPinConfirm": {
+    "description": "Message shown after requesting to pin the widget."
+  },
+  "homeWidgetPinUnsupported": "Your launcher doesn't allow adding the widget from the app. Add it from your home screen.",
+  "@homeWidgetPinUnsupported": {
+    "description": "Message shown when the launcher refuses pinning."
+  },
+  "homeWidgetInviteTitle": "Follow your place from your home screen",
+  "@homeWidgetInviteTitle": {
+    "description": "Title of the widget pin invitation on the ticket confirmation screen."
+  },
+  "homeWidgetInviteBody": "Add the TONDE widget to see your number, your place and the wait without opening the app.",
+  "@homeWidgetInviteBody": {
+    "description": "Body of the widget pin invitation."
+  },
+  "homeWidgetInviteAccept": "Add the widget",
+  "@homeWidgetInviteAccept": {
+    "description": "Button that requests pinning the widget."
+  },
+  "homeWidgetInviteLater": "Later",
+  "@homeWidgetInviteLater": {
+    "description": "Button that dismisses the widget pin invitation."
+  }
 }

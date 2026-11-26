@@ -202,6 +202,69 @@
     }
   },
   "seePosition": "Voir ma position",
+  "heroTitleActive": "Vous êtes dans la file",
+  "@heroTitleActive": {
+    "description": "Titre de la bannière d'accueil quand un ticket est actif."
+  },
+  "heroBodyActive": "Votre position se met à jour en temps réel. Restez à portée de voix du guichet.",
+  "@heroBodyActive": {
+    "description": "Texte de la bannière d'accueil quand un ticket est actif."
+  },
+  "resumeTicket": "Reprendre mon ticket",
+  "@resumeTicket": {
+    "description": "Bouton de reprise après une absence au guichet."
+  },
+  "resumeSuccess": "Votre ticket est de retour dans la file.",
+  "@resumeSuccess": {
+    "description": "Confirmation après une reprise de ticket réussie."
+  },
+  "resumeWindowExpired": "Le délai de reprise est écoulé. Prenez un nouveau ticket.",
+  "@resumeWindowExpired": {
+    "description": "Refus serveur RECOVERY_WINDOW_EXPIRED."
+  },
+  "resumeMaxMissed": "Trop d'absences : la reprise n'est plus possible. Prenez un nouveau ticket.",
+  "@resumeMaxMissed": {
+    "description": "Refus serveur MAX_MISSED_COUNT_REACHED."
+  },
+  "resumeFailed": "La reprise n'a pas abouti. Réessayez dans un instant.",
+  "@resumeFailed": {
+    "description": "Échec générique d'une reprise de ticket."
+  },
+  "ticketAbsentNote": "Vous ne vous êtes pas présenté. Reprenez votre ticket avant {time}.",
+  "@ticketAbsentNote": {
+    "description": "Rappel affiché sous un ticket absent, avec l'heure limite de reprise.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketClosedServedTitle": "Votre passage est terminé",
+  "@ticketClosedServedTitle": {
+    "description": "Titre affiché quand le ticket a été appelé puis clôturé au guichet."
+  },
+  "ticketClosedServedBody": "Le guichet a clôturé le ticket {number}. Vous pouvez en reprendre un quand vous voulez.",
+  "@ticketClosedServedBody": {
+    "description": "Explication affichée sous le titre, pour un ticket servi.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketClosedExpiredTitle": "Votre ticket a expiré",
+  "@ticketClosedExpiredTitle": {
+    "description": "Titre affiché quand le ticket a quitté la file sans avoir été appelé."
+  },
+  "ticketClosedExpiredBody": "Le ticket {number} n'est plus dans la file. Reprenez un ticket pour être rappelé.",
+  "@ticketClosedExpiredBody": {
+    "description": "Explication affichée sous le titre, pour un ticket expiré ou retiré de la file.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "@seePosition": {
     "description": "Bouton qui mène à la position dans la file."
   },
@@ -514,7 +577,6 @@
   },
   "appVersion": "Version {version}",
   "@appVersion": {
-    "description": "Numéro de version affiché dans la fenêtre À propos.",
     "placeholders": {
       "version": {
         "type": "String"
@@ -763,6 +825,8 @@
   "notifCenterEmptyBody": "Vous serez prévenu à chaque étape de votre file d’attente.",
   "moreNotifications": "Notifications",
   "moreNotificationsSubtitle": "Alertes de file d’attente et appels au guichet",
+  "moreCallSound": "Son à l’appel",
+  "moreCallSoundSubtitle": "Fait sonner le téléphone quand votre numéro est appelé",
   "@notifTicketConfirmedTitle": {
     "placeholders": {
       "number": {
@@ -865,5 +929,220 @@
   "accountDisabled": "Ce compte a été désactivé. Contactez votre organisation.",
   "accountLocked": "Trop de tentatives. Réessayez dans quelques minutes.",
   "authErrorGeneric": "La connexion a échoué. Réessayez.",
-  "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères."
+  "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+  "assistanceMyTicket": "Mon ticket",
+  "assistanceFaq": "Questions fréquentes",
+  "assistanceContact": "Nous contacter",
+  "assistanceGiveFeedback": "Donner mon avis",
+  "assistanceGiveFeedbackBody": "Dites-nous comment s'est passé votre passage.",
+  "assistanceReportBug": "Signaler un problème",
+  "assistanceReportBugBody": "Quelque chose ne fonctionne pas ? Décrivez-le.",
+  "assistanceMyFeedback": "Mes retours",
+  "assistanceMyFeedbackBody": "Suivez ce que vous nous avez envoyé.",
+  "assistanceFeedbackSection": "Avis et retours",
+  "assistanceServiceStatus": "État du service",
+  "helpCenterTitle": "Centre d'aide",
+  "helpCenterQuestion": "Comment pouvons-nous vous aider ?",
+  "helpInstitutionTitle": "Contacter mon institution",
+  "helpInstitutionBody": "Une question concernant votre ticket ou le service de l'agence.",
+  "helpInstitutionAction": "Appeler l'institution",
+  "helpTondeTitle": "Contacter TONDE",
+  "helpTondeBody": "Un problème technique avec l'application ou votre compte.",
+  "helpTondeAction": "Contacter le support",
+  "helpFaqBody": "Consultez les réponses aux questions courantes.",
+  "helpFaqAction": "Consulter la FAQ",
+  "helpFeedbackTitle": "Votre avis compte",
+  "helpFeedbackBody": "Dites-nous ce que vous voulez voir s'améliorer dans TONDE.",
+  "supportTondeSubtitle": "Support technique de l'application",
+  "supportAlwaysOpen": "Disponible 24 h/24, 7 j/7",
+  "supportChooseInstitution": "Choisir mon institution",
+  "supportInstitutionEmpty": "Aucune institution liée à votre compte.",
+  "supportInstitutionEmptyBody": "Prenez un ticket ou parcourez les institutions pour trouver leurs coordonnées.",
+  "supportBrowseInstitutions": "Parcourir les institutions",
+  "supportInstitutionNoChannel": "Cette institution n'a pas publié de coordonnées.",
+  "supportInstitutionNoChannelBody": "Présentez-vous à l'agence : le personnel vous répondra sur place.",
+  "supportCallInstitution": "Appeler l'institution",
+  "supportLoadFailed": "Impossible de charger les coordonnées.",
+  "supportClose": "Fermer",
+  "faqIntro": "Les réponses aux questions qu'on nous pose le plus.",
+  "feedbackIntro": "Dites-nous ce qui marche, ce qui bloque, ou ce qui manque.",
+  "feedbackThanksTitle": "Merci !",
+  "feedbackThanksBody": "Votre message est bien arrivé. Nous le lisons tous les jours.",
+  "serviceReachable": "Service joignable",
+  "serviceUnreachable": "Service injoignable",
+  "faqTakeTicketTitle": "Comment prendre un ticket ?",
+  "faqTakeTicketBody": "Ouvrez l'accueil, choisissez l'organisation, l'agence et le service, puis confirmez. Votre ticket apparaît aussitôt avec votre position.",
+  "faqAbsentTitle": "Je n'ai pas entendu mon appel, que faire ?",
+  "faqAbsentBody": "Votre ticket passe en « absent » mais garde sa place un moment. Depuis l'accueil, appuyez sur « Reprendre mon ticket » avant l'heure affichée : vous retrouvez la file, à la fin de votre priorité.",
+  "faqExpiredTitle": "Mon ticket a expiré",
+  "faqExpiredBody": "Un ticket non réclamé à temps quitte la file. Prenez-en un nouveau : votre position sera calculée sur la file du moment.",
+  "faqPausedTitle": "Le guichet est en pause",
+  "faqPausedBody": "L'heure de reprise s'affiche sous le nom du guichet. Votre position ne bouge pas pendant la pause : seul le temps d'attente estimé est reporté.",
+  "faqNotificationsTitle": "Je ne reçois pas de notifications",
+  "faqNotificationsBody": "Vérifiez que les notifications sont autorisées pour TONDE dans les réglages du téléphone, et que le mode silencieux n'est pas actif. L'application reste utilisable sans elles : le suivi s'affiche à l'écran.",
+  "faqTwoTicketsTitle": "Puis-je prendre deux tickets ?",
+  "faqTwoTicketsBody": "Non. Un seul ticket actif par compte, toutes organisations confondues : c'est ce qui garantit que la file reste honnête pour tout le monde.",
+  "feedbackReviewTitle": "Donner mon avis",
+  "feedbackBugTitle": "Signaler un problème",
+  "feedbackCategory": "Catégorie",
+  "feedbackCategoryReview": "Avis",
+  "feedbackCategoryBug": "Problème",
+  "feedbackCategorySuggestion": "Suggestion",
+  "feedbackRating": "Votre note",
+  "feedbackRatingHint": "Facultatif",
+  "feedbackMessage": "Votre message",
+  "feedbackMessageHint": "Décrivez ce qui s'est passé, en quelques phrases.",
+  "feedbackMessageCounter": "{count}/1000",
+  "@feedbackMessageCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "feedbackMessageTooShort": "Encore {count} caractères.",
+  "@feedbackMessageTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "feedbackSubmit": "Envoyer",
+  "feedbackSent": "Merci, votre retour est envoyé.",
+  "feedbackRateLimited": "Vous avez envoyé plusieurs retours récemment. Réessayez dans une heure.",
+  "feedbackAlreadySent": "Vous avez déjà signalé ce ticket dans cette catégorie.",
+  "feedbackFailed": "L'envoi a échoué. Réessayez.",
+  "feedbackPrivacyNote": "Votre retour est associé à votre compte et n'est jamais publié.",
+  "feedbackHistoryTitle": "Mes retours",
+  "feedbackHistoryEmpty": "Aucun retour envoyé",
+  "feedbackHistoryEmptyBody": "Vos avis et signalements apparaîtront ici, avec leur état de traitement.",
+  "feedbackStatusReceived": "Reçu",
+  "feedbackStatusRead": "Lu",
+  "feedbackStatusResolved": "Traité",
+  "contactWhatsApp": "WhatsApp",
+  "contactCall": "Appeler",
+  "contactEmail": "E-mail",
+  "contactNoChannel": "Aucun moyen de contact n'est configuré pour cette organisation.",
+  "contactOpenFailed": "Impossible d'ouvrir cette application.",
+  "errOfflineDetail": "Vérifiez votre connexion, puis réessayez. Rien n'a été perdu.",
+  "errTicketActive": "Vous avez déjà un ticket en cours.",
+  "errTicketActiveDetail": "Un seul ticket à la fois. Suivez celui-ci, ou annulez-le avant d'en prendre un autre.",
+  "errBranchClosed": "Cette agence est fermée.",
+  "errBranchClosedDetail": "Les tickets ne peuvent être pris que pendant les heures d'ouverture.",
+  "errDailyLimit": "La limite de tickets du jour est atteinte.",
+  "errDailyLimitDetail": "Réessayez demain, ou choisissez une autre agence.",
+  "errRateLimited": "Trop de tentatives.",
+  "errRateLimitedDetail": "Patientez un instant avant de réessayer.",
+  "errGracePeriod": "Votre ticket n'est pas encore reprenable.",
+  "errGracePeriodDetail": "Le guichet vient de vous appeler. Attendez la fin du délai, puis réessayez.",
+  "errTicketGone": "Ce ticket n'existe plus.",
+  "errTicketGoneDetail": "Il a peut-être été clôturé entre-temps. Prenez-en un nouveau si besoin.",
+  "errServer": "Le service a rencontré un problème.",
+  "errServerDetail": "Ce n'est pas de votre fait. Réessayez dans un instant.",
+  "errValidation": "Certaines informations sont invalides.",
+  "errForbidden": "Cette action n'est pas autorisée pour votre compte.",
+  "errUnexpected": "Une erreur inattendue est survenue.",
+  "errUnexpectedDetail": "Réessayez. Si cela persiste, signalez-le depuis l'assistance.",
+  "errInProgress": "Une demande identique est déjà en cours.",
+  "errTechnicalDetails": "Détails techniques",
+  "actionChooseService": "Choisir un service",
+  "actionTakeNewTicket": "Prendre un ticket",
+  "actionWait": "Patientez",
+  "errRateLimitedSeconds": "Trop de tentatives. Patientez {seconds} secondes.",
+  "@errRateLimitedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "errIncident": "Référence : {id}",
+  "@errIncident": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetEmptyTitle": "Aucun ticket",
+  "@widgetEmptyTitle": {
+    "description": "Titre du widget d'écran d'accueil quand aucun ticket n'est actif."
+  },
+  "widgetEmptyBody": "Touchez pour en prendre un",
+  "@widgetEmptyBody": {
+    "description": "Invitation du widget d'écran d'accueil quand aucun ticket n'est actif."
+  },
+  "widgetPosition": "Position {position}",
+  "@widgetPosition": {
+    "description": "Position dans la file, telle qu'affichée par le widget d'écran d'accueil.",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetEta": "≈ {minutes} min",
+  "@widgetEta": {
+    "description": "Attente estimée, telle qu'affichée par le widget d'écran d'accueil.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetUpdated": "Mis à jour à {time}",
+  "@widgetUpdated": {
+    "description": "Heure de dernière mise à jour du widget d'écran d'accueil.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetCounterPaused": "Guichet en pause",
+  "@widgetCounterPaused": {
+    "description": "Widget : un guichet de la file est en pause, heure de reprise inconnue."
+  },
+  "widgetCounterPausedUntil": "Pause jusqu'à {time}",
+  "@widgetCounterPausedUntil": {
+    "description": "Widget : un guichet de la file est en pause jusqu'à une heure connue.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "moreHomeWidget": "Widget d'écran d'accueil",
+  "@moreHomeWidget": {
+    "description": "Entrée de menu qui propose d'épingler le widget."
+  },
+  "moreHomeWidgetSubtitle": "Votre ticket visible sans ouvrir l'application",
+  "@moreHomeWidgetSubtitle": {
+    "description": "Sous-titre de l'entrée de menu du widget."
+  },
+  "homeWidgetPinConfirm": "Confirmez l'ajout dans la fenêtre du lanceur.",
+  "@homeWidgetPinConfirm": {
+    "description": "Message affiché après une demande d'épinglage du widget."
+  },
+  "homeWidgetPinUnsupported": "Votre lanceur ne permet pas d'ajouter le widget depuis l'application. Ajoutez-le depuis l'écran d'accueil.",
+  "@homeWidgetPinUnsupported": {
+    "description": "Message affiché quand le lanceur refuse l'épinglage."
+  },
+  "homeWidgetInviteTitle": "Suivez votre position depuis l'accueil",
+  "@homeWidgetInviteTitle": {
+    "description": "Titre de la proposition d'épingler le widget, sur l'écran de confirmation d'un ticket."
+  },
+  "homeWidgetInviteBody": "Ajoutez le widget TONDE pour voir votre numéro, votre position et l'attente sans ouvrir l'application.",
+  "@homeWidgetInviteBody": {
+    "description": "Corps de la proposition d'épingler le widget."
+  },
+  "homeWidgetInviteAccept": "Ajouter le widget",
+  "@homeWidgetInviteAccept": {
+    "description": "Bouton qui demande l'épinglage du widget."
+  },
+  "homeWidgetInviteLater": "Plus tard",
+  "@homeWidgetInviteLater": {
+    "description": "Bouton qui écarte la proposition d'épingler le widget."
+  }
 }

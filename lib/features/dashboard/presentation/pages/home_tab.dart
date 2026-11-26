@@ -9,7 +9,9 @@ import 'package:tonde/features/notifications/presentation/controllers/notificati
 import 'package:tonde/features/organizations/presentation/widgets/async_error_view.dart';
 import 'package:tonde/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
+import 'package:tonde/features/tickets/domain/entities/ticket_status.dart';
 import 'package:tonde/features/tickets/presentation/controllers/ticket_controller.dart';
+import 'package:tonde/features/tickets/presentation/ticket_error_message.dart';
 import 'package:tonde/features/tickets/presentation/widgets/ticket_pass_card.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 import 'package:tonde/features/organizations/presentation/organization_type_style.dart';
@@ -51,44 +53,47 @@ class HomeTab extends ConsumerWidget {
               children: [
                 _HeroBanner(
                   onTakeTicket: () => context.push(AppRoutes.organizations),
+                  onViewPosition: () => context.push(AppRoutes.queueTracking),
                 ),
                 const SizedBox(height: 20),
                 ticketAsync.when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stackTrace) => AsyncErrorView(
+                    error: error,
                     onRetry: () => ref.invalidate(activeTicketProvider),
                   ),
-                  data: (ticket) => ticket == null
-                      ? _NoTicketCard(
-                          onTakeTicket: () =>
-                              context.push(AppRoutes.organizations),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TicketPassCard(
-                              ticket: ticket,
-                              onTap: () =>
-                                  context.push(AppRoutes.queueTracking),
-                            ),
-                            const SizedBox(height: 6),
-                            // Un ticket déjà servi ne bloque plus : on propose
-                            // directement d'en reprendre un.
-                            if (ticket.served)
-                              FilledButton.tonalIcon(
-                                onPressed: () =>
-                                    context.push(AppRoutes.organizations),
-                                icon: const Icon(
-                                  Icons.confirmation_number_outlined,
-                                  size: 18,
-                                ),
-                                label: Text(l10n.heroCta),
-                              )
-                            else
-                              _CancelTicketButton(ticket: ticket),
-                          ],
+                  data: (ticket) {
+                    if (ticket == null) {
+                      // La note de clôture n'existe qu'après la disparition
+                      // d'un ticket ; le service l'efface dès qu'un nouveau
+                      // ticket est actif, et au bout d'un jour.
+                      return _NoTicketCard(
+                        closed: ref.watch(lastClosedTicketProvider).value,
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TicketPassCard(
+                          ticket: ticket,
+                          onTap: () => context.push(AppRoutes.queueTracking),
                         ),
+                        // Un client absent doit savoir jusqu'à quand il peut
+                        // revenir : sans cette échéance, il découvre le refus
+                        // au moment où il appuie sur « Reprendre ».
+                        if (ticket.canResume) ...[
+                          const SizedBox(height: 8),
+                          _AbsentNotice(ticket: ticket),
+                        ],
+                        const SizedBox(height: 6),
+                        // Un ticket clos ne bloque plus : c'est la bannière
+                        // qui propose d'en reprendre un, un seul bouton suffit.
+                        if (!ticket.isClosed)
+                          _CancelTicketButton(ticket: ticket),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
                 const _OrganizationsSection(),
@@ -184,15 +189,75 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _HeroBanner extends StatelessWidget {
-  const _HeroBanner({required this.onTakeTicket});
+/// Bannière d'accueil, dont l'action suit l'état réel du client.
+///
+/// Trois situations, trois boutons : sans ticket on en prend un, avec un ticket
+/// actif on va voir sa position, avec un ticket absent on le reprend. Un
+/// « Prendre un ticket » figé obligeait le client à retenter une prise que le
+/// serveur refusait ensuite — l'invariant « un seul ticket actif » se
+/// découvrait donc sous forme d'erreur.
+class _HeroBanner extends ConsumerStatefulWidget {
+  const _HeroBanner({required this.onTakeTicket, required this.onViewPosition});
 
   final VoidCallback onTakeTicket;
+  final VoidCallback onViewPosition;
+
+  @override
+  ConsumerState<_HeroBanner> createState() => _HeroBannerState();
+}
+
+class _HeroBannerState extends ConsumerState<_HeroBanner> {
+  bool _resuming = false;
+
+  Future<void> _resume() async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _resuming = true);
+    try {
+      await ref.read(activeTicketProvider.notifier).resumeTicket();
+      if (!mounted) {
+        return;
+      }
+      messenger.showSnackBar(SnackBar(content: Text(l10n.resumeSuccess)));
+    } on Object catch (error) {
+      if (!mounted) {
+        return;
+      }
+      messenger.showSnackBar(
+        SnackBar(content: Text(resumeErrorMessage(l10n, error))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _resuming = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final ticket = ref.watch(activeTicketProvider).value;
+
+    final canResume = ticket != null && ticket.canResume;
+    final hasActive = ticket != null && !ticket.isClosed;
+
+    final String label;
+    final IconData icon;
+    final VoidCallback onPressed;
+    if (canResume) {
+      label = l10n.resumeTicket;
+      icon = Icons.restart_alt;
+      onPressed = _resume;
+    } else if (hasActive) {
+      label = l10n.seePosition;
+      icon = Icons.visibility_outlined;
+      onPressed = widget.onViewPosition;
+    } else {
+      label = l10n.heroCta;
+      icon = Icons.confirmation_number_outlined;
+      onPressed = widget.onTakeTicket;
+    }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
@@ -225,13 +290,15 @@ class _HeroBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
-                    Icons.groups_rounded,
+                    hasActive
+                        ? Icons.confirmation_number_outlined
+                        : Icons.groups_rounded,
                     size: 48,
                     color: colorScheme.onPrimary.withValues(alpha: 0.9),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    l10n.heroTitle,
+                    hasActive ? l10n.heroTitleActive : l10n.heroTitle,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.w700,
@@ -239,7 +306,7 @@ class _HeroBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    l10n.heroBody,
+                    hasActive ? l10n.heroBodyActive : l10n.heroBody,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onPrimary.withValues(alpha: 0.9),
                     ),
@@ -250,9 +317,18 @@ class _HeroBanner extends StatelessWidget {
                       backgroundColor: colorScheme.onPrimary,
                       foregroundColor: colorScheme.primary,
                     ),
-                    onPressed: onTakeTicket,
-                    icon: const Icon(Icons.confirmation_number_outlined),
-                    label: Text(l10n.heroCta),
+                    onPressed: _resuming ? null : onPressed,
+                    icon: _resuming
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.primary,
+                            ),
+                          )
+                        : Icon(icon),
+                    label: Text(label),
                   ),
                 ],
               ),
@@ -264,15 +340,91 @@ class _HeroBanner extends StatelessWidget {
   }
 }
 
-class _NoTicketCard extends StatelessWidget {
-  const _NoTicketCard({required this.onTakeTicket});
+/// Rappel de la fenêtre de reprise d'un ticket absent.
+class _AbsentNotice extends StatelessWidget {
+  const _AbsentNotice({required this.ticket});
 
-  final VoidCallback onTakeTicket;
+  final Ticket ticket;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final deadline = ticket.recoveryExpiresAt;
+    // L'échéance arrive en UTC : sans conversion, un client de Bujumbura
+    // lirait une heure décalée de deux heures et se présenterait trop tard.
+    final text = deadline == null
+        ? l10n.trackingStatusAbsent
+        : l10n.ticketAbsentNote(
+            MaterialLocalizations.of(
+              context,
+            ).formatTimeOfDay(TimeOfDay.fromDateTime(deadline.toLocal())),
+          );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: scheme.error.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.person_off_outlined, size: 18, color: scheme.error),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onErrorContainer,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Carte affichée quand aucun ticket n'est actif.
+///
+/// Deux situations très différentes se ressemblent ici : le client n'a jamais
+/// pris de ticket, ou son ticket vient de quitter la file. La seconde mérite
+/// une explication — sans elle, il découvre la carte d'un nouvel arrivant et
+/// croit avoir perdu sa place à cause d'un défaut de l'application.
+///
+/// Le bouton reste dans la bannière : cette carte informe, elle n'agit pas.
+class _NoTicketCard extends StatelessWidget {
+  const _NoTicketCard({this.closed});
+
+  /// Ticket qui vient de cesser d'être actif, s'il y en a un.
+  final Ticket? closed;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final closed = this.closed;
+
+    // Un ticket arrivé au guichet a été servi : il n'a pas « expiré ». Les
+    // deux cas ne peuvent pas partager le même mot, c'est la seule chose que
+    // le client retiendra.
+    final wasServed =
+        closed != null &&
+        (closed.status == TicketStatus.serving ||
+            closed.status == TicketStatus.done);
+
+    final title = closed == null
+        ? l10n.noActiveTicket
+        : wasServed
+        ? l10n.ticketClosedServedTitle
+        : l10n.ticketClosedExpiredTitle;
+    final body = closed == null
+        ? l10n.noActiveTicketBody
+        : wasServed
+        ? l10n.ticketClosedServedBody(closed.number)
+        : l10n.ticketClosedExpiredBody(closed.number);
 
     return Card(
       margin: EdgeInsets.zero,
@@ -281,30 +433,31 @@ class _NoTicketCard extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-              Icons.confirmation_number_outlined,
+              closed == null
+                  ? Icons.confirmation_number_outlined
+                  : wasServed
+                  ? Icons.task_alt
+                  : Icons.hourglass_disabled_outlined,
               size: 40,
-              color: colorScheme.primary,
+              color: closed == null
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 12),
             Text(
-              l10n.noActiveTicket,
+              title,
+              textAlign: TextAlign.center,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 4),
             Text(
-              l10n.noActiveTicketBody,
+              body,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: onTakeTicket,
-              icon: const Icon(Icons.confirmation_number_outlined),
-              label: Text(l10n.heroCta),
             ),
           ],
         ),
@@ -420,6 +573,7 @@ class _OrganizationsSection extends ConsumerWidget {
         organizationsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => AsyncErrorView(
+            error: error,
             onRetry: () => ref.invalidate(organizationsProvider),
           ),
           data: (organizations) => SizedBox(

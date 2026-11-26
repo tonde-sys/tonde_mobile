@@ -82,6 +82,26 @@ final class ApiClient {
     );
   }
 
+  /// `PUT` idempotent.
+  ///
+  /// Distinct de [patch] parce que le serveur l'exige : `PUT /auth/me/fcm-token`
+  /// remplace la valeur entière, et rejouer l'appel après une coupure réseau
+  /// doit donner le même résultat — ce que `PATCH` ne garantit pas.
+  Future<Map<String, dynamic>> put(
+    String path, {
+    Object? body,
+    bool authenticated = true,
+  }) {
+    return _execute(
+      (headers) => _dio.put<dynamic>(
+        path,
+        data: body,
+        options: Options(headers: headers),
+      ),
+      authenticated: authenticated,
+    );
+  }
+
   Future<Map<String, dynamic>> delete(
     String path, {
     bool authenticated = true,

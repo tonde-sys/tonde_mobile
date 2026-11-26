@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tonde/features/tickets/presentation/ticket_status_display.dart';
 import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
@@ -30,15 +31,8 @@ class QueueStatusBadge extends StatefulWidget {
     };
   }
 
-  static String labelFor(AppLocalizations l10n, QueueStatus status) {
-    return switch (status) {
-      QueueStatus.waiting => l10n.trackingStatusWaiting,
-      QueueStatus.called => l10n.trackingStatusCalled,
-      QueueStatus.inService => l10n.trackingStatusInService,
-      QueueStatus.absent => l10n.trackingStatusAbsent,
-      QueueStatus.done => l10n.trackingStatusDone,
-    };
-  }
+  static String labelFor(AppLocalizations l10n, QueueStatus status) =>
+      queueStatusLabelOf(l10n, status);
 
   @override
   State<QueueStatusBadge> createState() => _QueueStatusBadgeState();

@@ -14,6 +14,21 @@ final class LocalNotificationService implements NotificationService {
   static const String progressChannelId = 'tonde_queue_progress';
   static const String urgentChannelId = 'tonde_queue_urgent';
 
+  /// Petite icône de la barre d'état.
+  ///
+  /// Android n'affiche que le canal alpha de cette icône : elle est donc
+  /// dérivée du tracé du logo TONDE (le chemin et ses trois nœuds), pas de
+  /// l'icône de lancement — cette dernière, colorée, serait rendue en aplat
+  /// blanc, c'est-à-dire un carré.
+  ///
+  /// Le nom doit rester identique à `fcm_gateway.SMALL_ICON` côté backend :
+  /// c'est le serveur qui désigne l'icône des push reçus application fermée.
+  static const String smallIcon = 'ic_stat_tonde';
+
+  /// Grande icône, affichée dans la notification dépliée : le logo complet,
+  /// en couleur.
+  static const String largeIcon = 'tonde_logo';
+
   final FlutterLocalNotificationsPlugin _plugin;
 
   bool _initialized = false;
@@ -29,7 +44,7 @@ final class LocalNotificationService implements NotificationService {
 
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings(smallIcon),
       ),
     );
 
@@ -92,6 +107,8 @@ final class LocalNotificationService implements NotificationService {
           notification.urgent ? urgentChannelId : progressChannelId,
           notification.urgent ? 'Appel au guichet' : 'Suivi de la file',
           channelDescription: 'Notifications de votre file d’attente TONDE.',
+          icon: smallIcon,
+          largeIcon: const DrawableResourceAndroidBitmap(largeIcon),
           importance: notification.urgent
               ? Importance.max
               : Importance.defaultImportance,

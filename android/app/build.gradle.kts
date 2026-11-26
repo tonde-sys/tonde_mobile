@@ -5,6 +5,24 @@
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Le plugin google-services lit android/app/google-services.json et génère les
+// ressources FirebaseOptions. Il ne peut pas être listé dans `plugins { }` :
+// ce bloc est évalué avant que l'on puisse tester la présence du fichier, et le
+// plugin fait échouer la configuration quand il manque.
+//
+// L'appliquer conditionnellement laisse le dépôt compilable pour un contributeur
+// sans accès au projet Firebase — l'application démarre alors sans push, ce que
+// le code Dart gère explicitement (voir FirebasePushService.initialize, qui
+// renvoie false quand la configuration manque).
+val googleServicesConfig = file("google-services.json")
+if (googleServicesConfig.exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.lifecycle(
+        "google-services.json absent : notifications push désactivées dans ce build."
+    )
+}
+
 android {
     namespace = "app.tonde"
     compileSdk = flutter.compileSdkVersion

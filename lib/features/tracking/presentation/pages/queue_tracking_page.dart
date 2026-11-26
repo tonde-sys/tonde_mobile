@@ -7,6 +7,7 @@ import 'package:tonde/app/router/app_routes.dart';
 import 'package:tonde/features/organizations/presentation/widgets/async_error_view.dart';
 import 'package:tonde/features/tickets/domain/entities/ticket.dart';
 import 'package:tonde/features/tickets/presentation/controllers/ticket_controller.dart';
+import 'package:tonde/features/tickets/presentation/ticket_error_message.dart';
 import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/features/tracking/domain/queue_tracking_service.dart';
 import 'package:tonde/features/tracking/presentation/controllers/queue_tracking_controller.dart';
@@ -33,7 +34,7 @@ class QueueTrackingPage extends ConsumerWidget {
       body: ticketAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) =>
-            AsyncErrorView(onRetry: () => ref.invalidate(activeTicketProvider)),
+            AsyncErrorView(error: error, onRetry: () => ref.invalidate(activeTicketProvider)),
         data: (ticket) {
           if (ticket == null) {
             return _NoTicket(
@@ -60,12 +61,16 @@ class _DetailsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final updateAsync = ref.watch(queueTrackingProvider(ticket));
+    final updateAsync = ref.watch(
+      queueTrackingProvider(QueueTrackingKey(ticket)),
+    );
 
     return updateAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => AsyncErrorView(
-        onRetry: () => ref.invalidate(queueTrackingProvider(ticket)),
+        error: error,
+        onRetry: () =>
+            ref.invalidate(queueTrackingProvider(QueueTrackingKey(ticket))),
       ),
       data: (update) => _DetailsContent(ticket: ticket, update: update),
     );
@@ -84,6 +89,7 @@ class _DetailsContent extends ConsumerStatefulWidget {
 
 class _DetailsContentState extends ConsumerState<_DetailsContent> {
   bool _cancelling = false;
+  bool _resuming = false;
 
   Ticket get _ticket => widget.ticket;
   QueueSnapshot get _snapshot => widget.update.snapshot;
@@ -91,7 +97,37 @@ class _DetailsContentState extends ConsumerState<_DetailsContent> {
   Future<void> _refresh() async {
     // Reconstruit le flux : la nouvelle connexion renvoie immédiatement un
     // instantané, l'écran n'a donc pas besoin d'état de chargement local.
-    ref.invalidate(queueTrackingProvider(_ticket));
+    ref.invalidate(queueTrackingProvider(QueueTrackingKey(_ticket)));
+  }
+
+  /// Reprend le ticket après une absence.
+  ///
+  /// L'action vit ici, et pas seulement sur l'accueil : c'est sur cet écran que
+  /// le client découvre qu'il est absent, et le faire revenir en arrière pour
+  /// retrouver le bouton serait une étape de trop.
+  Future<void> _resumeTicket() async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _resuming = true);
+    try {
+      await ref.read(activeTicketProvider.notifier).resumeTicket();
+      if (!mounted) {
+        return;
+      }
+      messenger.showSnackBar(SnackBar(content: Text(l10n.resumeSuccess)));
+      _refresh();
+    } on Object catch (error) {
+      if (!mounted) {
+        return;
+      }
+      messenger.showSnackBar(
+        SnackBar(content: Text(resumeErrorMessage(l10n, error))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _resuming = false);
+      }
+    }
   }
 
   Future<void> _cancelTicket() async {
@@ -163,6 +199,22 @@ class _DetailsContentState extends ConsumerState<_DetailsContent> {
             _CalledBanner(counterLabel: snapshot.counterLabel),
           ],
           const SizedBox(height: 20),
+          // Le ticket vivant, pas celui capturé à l'ouverture de l'écran : la
+          // reprise n'est proposée que si le serveur la permet encore.
+          if (ref.watch(activeTicketProvider).value?.canResume ?? false) ...[
+            FilledButton.icon(
+              onPressed: _resuming ? null : _resumeTicket,
+              icon: _resuming
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.restart_alt, size: 18),
+              label: Text(l10n.resumeTicket),
+            ),
+            const SizedBox(height: 8),
+          ],
           FilledButton.icon(
             onPressed: _cancelling ? null : _refresh,
             icon: const Icon(Icons.refresh, size: 18),
@@ -234,7 +286,9 @@ class _TicketPaper extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.55)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.55),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.22),
@@ -319,7 +373,11 @@ class _TicketPaper extends StatelessWidget {
             if (snapshot.pausedCounters.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-                child: _counterPauseNotice(context, l10n, snapshot.pausedCounters.first),
+                child: _counterPauseNotice(
+                  context,
+                  l10n,
+                  snapshot.pausedCounters.first,
+                ),
               ),
             _PaperSection(
               title: l10n.detailsQueue,
@@ -341,7 +399,12 @@ class _TicketPaper extends StatelessWidget {
                 ),
                 _DetailRow(
                   label: l10n.trackingWaitTime,
-                  value: l10n.trackingMinutesValue(snapshot.estimatedMinutes),
+                  // `estimatedMinutes` est nullable depuis l'ETA adaptatif :
+                  // null signifie « aucune prévision fiable », pas « zéro
+                  // minute ». On l'annonce comme telle.
+                  value: snapshot.estimatedMinutes == null
+                      ? l10n.trackingEtaUnavailable
+                      : l10n.trackingMinutesValue(snapshot.estimatedMinutes!),
                 ),
                 _DetailRow(
                   label: l10n.detailsCounter,
@@ -356,7 +419,10 @@ class _TicketPaper extends StatelessWidget {
               children: [
                 if (service != null && service.isNotEmpty)
                   _DetailRow(label: l10n.detailsService, value: service),
-                _DetailRow(label: l10n.detailsName, value: ticket.organizationName),
+                _DetailRow(
+                  label: l10n.detailsName,
+                  value: ticket.organizationName,
+                ),
                 _DetailRow(label: l10n.detailsAgency, value: ticket.agencyName),
               ],
             ),
@@ -841,13 +907,15 @@ Widget _counterPauseNotice(
   CounterPauseInfo pause,
 ) {
   final until = pause.pausedUntil;
+  // L'échéance arrive en UTC : sans conversion, un client de Bujumbura lirait
+  // « jusqu'à 12:45 » pour une reprise à 14:45 et se présenterait trop tard.
   final text = until == null
       ? l10n.trackingCounterPaused(pause.name)
       : l10n.trackingCounterPausedUntil(
           pause.name,
-          MaterialLocalizations.of(context).formatTimeOfDay(
-            TimeOfDay.fromDateTime(until),
-          ),
+          MaterialLocalizations.of(
+            context,
+          ).formatTimeOfDay(TimeOfDay.fromDateTime(until.toLocal())),
         );
   final color = Theme.of(context).colorScheme.tertiary;
   return Container(

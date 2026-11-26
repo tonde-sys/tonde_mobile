@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Mise en page du widget d'écran d'accueil.
+
+  RemoteViews n'accepte qu'une poignée de conteneurs : LinearLayout, FrameLayout,
+  RelativeLayout et GridLayout. Pas de ConstraintLayout, pas de style hérité —
+  d'où les attributs répétés.
+
+  Toutes les chaînes sont écrites par Dart (voir HomeWidgetSync) et non
+  composées ici : la traduction, le pluriel et le format d'heure vivent dans les
+  fichiers ARB, un seul endroit pour les trois langues. Le widget ne fait que
+  les poser.
+
+  Hauteur : environ 114 dp de contenu pour les 110 dp d'un widget 4×2. C'est
+  serré à dessein — chaque ligne ajoutée se paie en bas du cadre, et un widget
+  qui déborde cache justement l'information du dessous. Les tailles sont donc
+  plus petites que sur les écrans de l'application.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tonde_widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tonde_widget_background"
+    android:orientation="vertical"
+    android:paddingStart="14dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="10dp">
+
+    <!-- Ligne d'en-tête : la marque à gauche, l'heure de dernière mise à jour à
+         droite. L'heure est ce qui permet au client de juger si le chiffre
+         affiché est encore vrai — un widget qui se fige sans le dire fait
+         rater un appel. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.12"
+            android:maxLines="1"
+            android:text="TONDE"
+            android:textColor="@color/tonde_widget_text_secondary"
+            android:textSize="9sp" />
+
+        <TextView
+            android:id="@+id/widget_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@color/tonde_widget_text_muted"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <!-- Le numéro de ticket est le seul élément en gras et en grand : c'est ce
+         que le client cherche des yeux, et ce qu'il montre au guichet. -->
+    <TextView
+        android:id="@+id/widget_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textColor="@color/tonde_widget_text_primary"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/widget_agency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/tonde_widget_text_secondary"
+        android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/widget_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textColor="@color/tonde_widget_accent"
+        android:textSize="11sp" />
+
+    <LinearLayout
+        android:id="@+id/widget_row_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/widget_position"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/tonde_widget_text_primary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/widget_eta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/tonde_widget_text_secondary"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

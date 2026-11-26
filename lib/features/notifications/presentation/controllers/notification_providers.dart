@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tonde/core/settings/settings_providers.dart';
+import 'package:tonde/features/notifications/data/call_alert_controller.dart';
 import 'package:tonde/features/notifications/domain/entities/tonde_notification.dart';
 import 'package:tonde/features/notifications/domain/notification_service.dart';
 import 'package:tonde/features/notifications/presentation/controllers/ticket_notification_watcher.dart';
 import 'package:tonde/features/tickets/presentation/controllers/ticket_controller.dart';
+import 'package:tonde/features/tracking/domain/entities/queue_snapshot.dart';
 import 'package:tonde/features/tracking/presentation/controllers/queue_tracking_controller.dart';
 import 'package:tonde/l10n/generated/app_localizations.dart';
 
@@ -65,6 +67,22 @@ final unreadNotificationsProvider = Provider<int>((ref) {
   return notifications.where((item) => !item.read).length;
 });
 
+/// Sonnerie d'appel au guichet.
+///
+/// Instance unique : elle porte l'état « en train de sonner » et la mémoire du
+/// dernier ticket sonné, qui sont ce qui empêche deux alertes simultanées.
+final callAlertProvider = Provider<CallAlertController>((ref) {
+  final controller = CallAlertController(
+    // Deux interrupteurs, un seul effet : le réglage général des notifications
+    // coupe tout, celui du son ne coupe que l'alerte sonore.
+    isEnabled: () =>
+        ref.read(notificationsEnabledProvider) &&
+        ref.read(callSoundEnabledProvider),
+  );
+  ref.onDispose(() => unawaited(controller.dispose()));
+  return controller;
+});
+
 /// Instance unique du veilleur : elle conserve la mémoire des étapes déjà
 /// notifiées d'un ticket à l'autre.
 final _notificationWatcherProvider = Provider<TicketNotificationWatcher>((
@@ -73,8 +91,21 @@ final _notificationWatcherProvider = Provider<TicketNotificationWatcher>((
   final watcher = TicketNotificationWatcher(
     service: ref.watch(notificationServiceProvider),
     localizations: () => _resolveLocalizations(ref),
-    onDelivered: (notification) =>
-        ref.read(notificationCenterProvider.notifier).add(notification),
+    onDelivered: (notification) {
+      ref.read(notificationCenterProvider.notifier).add(notification);
+      // L'appel au guichet est le seul cas qui fait sonner l'application :
+      // c'est aussi celui où le client peut être à vingt mètres du guichet,
+      // dans le bruit. Le rappel de présentation en hérite — c'est la même
+      // urgence, une minute plus tard.
+      if (notification.kind == TondeNotificationKind.called ||
+          notification.kind == TondeNotificationKind.presentationReminder) {
+        unawaited(
+          ref
+              .read(callAlertProvider)
+              .ring(ticketNumber: notification.ticketNumber),
+        );
+      }
+    },
     isEnabled: () => ref.read(notificationsEnabledProvider),
   );
   ref.onDispose(watcher.dispose);
@@ -92,14 +123,24 @@ final ticketNotificationDriverProvider = Provider<void>((ref) {
   watcher.onTicket(ticket);
 
   if (ticket == null) {
+    // Plus de ticket : plus rien à annoncer. Couper ici évite qu'une sonnerie
+    // survive à l'annulation qu'elle annonçait.
+    unawaited(ref.read(callAlertProvider).stop());
     return;
   }
   // Le flux est partagé avec les écrans : une seule connexion, plusieurs
   // lecteurs (carte du tableau de bord, suivi, notifications).
-  ref.listen(queueTrackingProvider(ticket), (previous, next) {
+  ref.listen(queueTrackingProvider(QueueTrackingKey(ticket)), (previous, next) {
     final snapshot = next.value?.snapshot;
-    if (snapshot != null) {
-      watcher.onSnapshot(snapshot);
+    if (snapshot == null) {
+      return;
+    }
+    watcher.onSnapshot(snapshot);
+    // Le client est arrivé au guichet (ou son passage est terminé) : la
+    // sonnerie n'a plus de raison d'être, et insister deviendrait du harcèlement.
+    if (snapshot.status == QueueStatus.inService ||
+        snapshot.status == QueueStatus.done) {
+      unawaited(ref.read(callAlertProvider).stop());
     }
   }, fireImmediately: true);
 });
