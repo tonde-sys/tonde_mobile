@@ -87,6 +87,31 @@ jobs:
         shell: bash
         run: yes | flutter doctor --android-licenses > /dev/null 2>&1 || true
 
+      # La clé de signature n'est pas dans le dépôt, et ne doit jamais y être.
+      # Sans elle, Gradle retombe sur la clé de debug : l'APK s'installe, mais
+      # la signature change à chaque build et Android refuse alors la mise à
+      # jour par-dessus la version précédente.
+      - name: Préparer la clé de signature
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning title=Signature::KEYSTORE_BASE64 absent — APK signé en debug, mises à jour impossibles."
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/tonde-release.jks"
+          {
+            echo "TONDE_KEYSTORE_PATH=$RUNNER_TEMP/tonde-release.jks"
+            echo "TONDE_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"
+            echo "TONDE_KEY_ALIAS=$KEY_ALIAS"
+            echo "TONDE_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+          echo "Clé de signature préparée : $(stat -c%s "$RUNNER_TEMP/tonde-release.jks") octets."
+
       # Le canal natif (sonnerie, widget) ne se valide qu'en compilant.
       #
       # L'échec est remonté en annotation : les journaux d'un job ne sont
@@ -100,9 +125,10 @@ jobs:
           # et la connexion échoue sans explication. Le défaut reprend l'URL du
           # backend pilote, la même que celle du desktop ; la variable de dépôt
           # permet de la changer sans toucher au code.
-          TONDE_API_BASE_URL: ${{ vars.TONDE_API_BASE_URL || 'https://tonde-api-pilot-fx1j.onrender.com' }}
+          TONDE_API_BASE_URL: ${{ vars.TONDE_API_BASE_URL || 'https://tonde-api-bdi.onrender.com' }}
         run: |
           set -o pipefail
+          echo "API ciblée par cet APK : $TONDE_API_BASE_URL"
           if ! flutter build apk --release --verbose \
             --dart-define=TONDE_ENVIRONMENT=prod \
             --dart-define=TONDE_API_BASE_URL="$TONDE_API_BASE_URL" \
@@ -153,6 +179,13 @@ jobs:
           fi
           CORPS=$(git log "$RANGE" --no-merges --pretty='- %s' --reverse \
             | grep -v '^- ci' | head -40 || true)
+          if [ -n "${TONDE_KEYSTORE_PATH:-}" ]; then
+            SIGNATURE="Signature : clé de release TONDE — les mises à jour s'installent"
+            SIGNATURE="$SIGNATURE par-dessus la version précédente."
+          else
+            SIGNATURE="Signature : clé de debug — les mises à jour ne s'installeront"
+            SIGNATURE="$SIGNATURE pas par-dessus une version précédente."
+          fi
           {
             echo "body<<NOTES"
             echo "APK Android (build ${BUILD})."
@@ -164,9 +197,13 @@ jobs:
             echo "Installation : ouvrir le fichier sur le téléphone, autoriser"
             echo "l'installation depuis cette source si Android le demande."
             echo
-            echo "L'APK est signé avec la clé de debug : il remplace une installation"
-            echo "de debug existante, mais ne peut pas être publié sur le Play Store."
+            echo "$SIGNATURE"
             echo "NOTES"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "short<<SHORT"
+            echo "${CORPS:-- pas de changement fonctionnel}"
+            echo "SHORT"
           } >> "$GITHUB_OUTPUT"
 
       - name: Publier la release
@@ -179,3 +216,32 @@ jobs:
           fail_on_unmatched_files: true
           draft: false
           prerelease: false
+
+      # Distribution directe à l'équipe, sans téléchargement manuel de l'APK.
+      # Volontairement après la publication GitHub : si Firebase échoue, le
+      # binaire reste disponible et installable.
+      #
+      # Désactivé tant que le secret n'est pas posé, pour qu'un fork ou une
+      # release sans Firebase reste verte.
+      - name: Vérifier la configuration de distribution
+        id: distribution
+        shell: bash
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$FIREBASE_SA" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=App Distribution::FIREBASE_SERVICE_ACCOUNT_JSON absent — distribution ignorée."
+          fi
+
+      - name: Distribuer via Firebase App Distribution
+        if: steps.distribution.outputs.enabled == 'true'
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: 1:344689943913:android:1f9f495606403d810fc9f8
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          groups: equipe-terrain
+          file: dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${{ env.BUILD }}.apk
+          releaseNotes: ${{ steps.notes.outputs.short }}

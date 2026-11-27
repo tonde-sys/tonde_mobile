@@ -23,6 +23,15 @@ if (googleServicesConfig.exists()) {
     )
 }
 
+// Signature de release fournie par l'environnement (CI) : chemin du fichier
+// + mots de passe en variables. Absente en développement, on garde alors la
+// clé de debug pour que `flutter run --release` continue de fonctionner.
+//
+// Sans clé stable, chaque build CI génère un nouveau keystore de debug : la
+// signature change à chaque version et Android refuse d'installer la mise à
+// jour par-dessus l'application existante (« App not installed »).
+val releaseKeystorePath: String? = System.getenv("TONDE_KEYSTORE_PATH")
+
 android {
     namespace = "app.tonde"
     compileSdk = flutter.compileSdkVersion
@@ -51,11 +60,27 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (!releaseKeystorePath.isNullOrBlank()) {
+            val keystorePath = releaseKeystorePath
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("TONDE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("TONDE_KEY_ALIAS")
+                keyPassword = System.getenv("TONDE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (!releaseKeystorePath.isNullOrBlank()) {
+                signingConfigs.getByName("release")
+            } else {
+                // Repli de développement uniquement : signature instable d'une
+                // machine à l'autre, donc inutilisable pour distribuer.
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
