@@ -258,6 +258,8 @@ jobs:
         with:
           appId: 1:344689943913:android:1f9f495606403d810fc9f8
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          groups: equipe-terrain
+          # Le groupe réel dans la console Firebase. Surchargeable par une
+          # variable de dépôt, pour renommer le groupe sans toucher au YAML.
+          groups: ${{ vars.FIREBASE_TESTER_GROUP || 'tonde-team-tester' }}
           file: dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${{ env.BUILD }}.apk
           releaseNotes: ${{ steps.notes.outputs.short }}
