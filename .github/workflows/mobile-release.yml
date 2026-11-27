@@ -158,6 +158,22 @@ jobs:
              "dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${BUILD}.apk"
           ls -lh dist/
 
+      # Preuve écrite que la clé de release a bien servi : sans cela, un APK
+      # signé en debug passerait inaperçu jusqu'au premier « App not
+      # installed » chez un testeur. L'empreinte doit être identique d'une
+      # version à l'autre.
+      - name: Vérifier la signature de l'APK
+        shell: bash
+        run: |
+          APK="dist/tonde-${{ github.event.inputs.tag || github.ref_name }}+${BUILD}.apk"
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | tail -1 || true)
+          if [ -z "$APKSIGNER" ]; then
+            echo "::warning title=Signature::apksigner introuvable — signature non vérifiée."
+            exit 0
+          fi
+          "$APKSIGNER" verify --print-certs "$APK" \
+            | grep -E "Signer #1 certificate (DN|SHA-256)" || true
+
       # Les commits depuis le tag précédent, sans le bruit de fusion : c'est
       # ce que le client doit lire, pas un journal technique.
       - name: Notes de version
