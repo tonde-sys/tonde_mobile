@@ -13,71 +13,41 @@ import 'package:tonde/features/notifications/presentation/controllers/notificati
 import 'package:tonde/features/profile/data/local_profile_photo_picker.dart';
 import 'package:tonde/features/profile/presentation/controllers/profile_photo_providers.dart';
 
-/// Temps maximal accordé à Firebase avant d'afficher l'écran.
+/// Budget accordé à une tâche de démarrage avant de la laisser continuer seule.
 ///
-/// En deçà, l'initialisation est terminée au moment du premier rendu et rien
-/// ne change par rapport à un démarrage strictement séquentiel. Au-delà — un
-/// téléphone d'entrée de gamme met parfois plus d'une seconde à démarrer le
-/// SDK natif — on affiche l'écran et l'initialisation continue seule. Le
-/// service attend sa propre disponibilité avant de rendre un jeton, donc
-/// aucun appareil ne perd son enregistrement push.
-const Duration _pushBudget = Duration(milliseconds: 800);
+/// Ce plafond protège la boucle Dart : au-delà, on cesse d'attendre. Il ne
+/// protège pas d'un blocage du thread natif Android — c'est précisément
+/// pourquoi plus rien de tout cela ne se trouve sur le chemin de la première
+/// image.
+const Duration _warmUpBudget = Duration(seconds: 5);
 
-Future<void> main() async {
+/// Démarre l'application.
+///
+/// **Rien n'est attendu avant `runApp`.** C'est la règle qui manquait : le
+/// démarrage enchaînait trois initialisations avant d'afficher quoi que ce
+/// soit, dont `Firebase.initializeApp()`. Sur un Infinix sous Android 11, cette
+/// dernière bloque le thread principal Android — donc aussi la boucle Dart,
+/// puisque Flutter les partage désormais. Résultat : le minuteur de sécurité
+/// lui-même ne pouvait pas se déclencher, aucune image n'était produite, et la
+/// fenêtre de démarrage du système restait affichée indéfiniment.
+///
+/// Désormais la première image part immédiatement ; ce qui peut attendre est
+/// préparé derrière elle, et Firebase n'est initialisé qu'au moment où un jeton
+/// devient réellement utile, c'est-à-dire après la connexion.
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   StartupTimeline.mark('main');
 
-  // Le cache local est ouvert avant le premier écran : le ticket actif doit
-  // être disponible dès l'affichage, même sans réseau. Hive ouvre un fichier
-  // local, l'attente se compte en dizaines de millisecondes.
-  final cache = await _openCache();
-  StartupTimeline.mark('cache');
-
-  // Les notifications système sont préparées ici, pas dans un écran : le
-  // canal doit exister avant la première alerte, et l'initialisation ne doit
-  // jamais retarder le démarrage.
   final notifications = LocalNotificationService();
-  try {
-    await notifications.initialize();
-  } on Object catch (error, stackTrace) {
-    FlutterError.reportError(
-      FlutterErrorDetails(
-        exception: error,
-        stack: stackTrace,
-        library: 'tonde',
-        context: ErrorDescription('initialisation des notifications'),
-      ),
-    );
-  }
-  StartupTimeline.mark('notifications');
-
-  // Firebase est lancé avant le premier écran, mais avec un budget.
-  //
-  // Jusqu'ici, `initializeApp` était attendu sans limite : c'est lui qui
-  // tenait l'écran figé sur les téléphones lents. Le handler de fond reste
-  // enregistré tôt, ce qui est la seule chose qui doive l'être avant un push.
   final push = FirebasePushService();
-  try {
-    await push.initialize().timeout(_pushBudget);
-  } on TimeoutException {
-    // Budget dépassé, pas initialisation abandonnée : elle se termine seule
-    // en tâche de fond, et `token()` l'attendra.
-  } on Object catch (error, stackTrace) {
-    FlutterError.reportError(
-      FlutterErrorDetails(
-        exception: error,
-        stack: stackTrace,
-        library: 'tonde',
-        context: ErrorDescription('initialisation des notifications push'),
-      ),
-    );
-  }
-  StartupTimeline.mark('push');
 
   runApp(
     ProviderScope(
       overrides: [
-        localCacheProvider.overrideWithValue(cache),
+        // Le cache s'ouvre à sa première lecture, pas au démarrage : Hive
+        // passe par le système de fichiers, et aucun écran ne doit attendre
+        // cela pour s'afficher.
+        localCacheProvider.overrideWithValue(HiveLocalCache()),
         notificationServiceProvider.overrideWithValue(notifications),
         pushServiceProvider.overrideWithValue(push),
         // Le sélecteur natif n'a besoin d'aucune initialisation : il est
@@ -88,28 +58,34 @@ Future<void> main() async {
     ),
   );
 
-  // Relevé après la première image, pas après l'initialisation de Flutter :
-  // c'est le moment où l'utilisateur voit l'application.
+  // Relevé après la première image, pas après une initialisation : c'est le
+  // moment où l'utilisateur voit l'application.
   WidgetsBinding.instance.addPostFrameCallback((_) {
     StartupTimeline.mark('first_frame');
     StartupTimeline.reportOnce();
+    unawaited(_warmUpNotifications(notifications));
   });
 }
 
-Future<LocalCache> _openCache() async {
+/// Crée les canaux de notification une fois l'application à l'écran.
+///
+/// Les canaux doivent exister avant la première alerte, mais rien ne justifie
+/// de retarder l'affichage pour eux. Un échec ici n'est pas définitif :
+/// [LocalNotificationService.initialize] reste réessayable, et `show()` la
+/// rappelle de toute façon.
+Future<void> _warmUpNotifications(LocalNotificationService notifications) async {
+  final watch = Stopwatch()..start();
   try {
-    return await HiveLocalCache.open();
+    await notifications.initialize().timeout(_warmUpBudget);
   } on Object catch (error, stackTrace) {
-    // Un stockage indisponible ne doit pas empêcher l'application de démarrer,
-    // mais l'incident est remonté plutôt que masqué.
     FlutterError.reportError(
       FlutterErrorDetails(
         exception: error,
         stack: stackTrace,
         library: 'tonde',
-        context: ErrorDescription('ouverture du cache local'),
+        context: ErrorDescription('initialisation des notifications'),
       ),
     );
-    return MemoryLocalCache();
   }
+  debugPrint('TONDE_WARMUP notifications=${watch.elapsedMilliseconds}ms');
 }

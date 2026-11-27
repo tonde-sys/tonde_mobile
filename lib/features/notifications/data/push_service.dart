@@ -115,10 +115,25 @@ Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
 
 /// Implémentation réelle, adossée à Firebase Cloud Messaging.
 final class FirebasePushService implements PushService {
-  FirebasePushService({FirebaseMessaging? messaging})
-    : _messaging = messaging ?? FirebaseMessaging.instance;
+  FirebasePushService({FirebaseMessaging? messaging}) : _injected = messaging;
 
-  final FirebaseMessaging _messaging;
+  final FirebaseMessaging? _injected;
+
+  /// Résolu à la première utilisation, jamais à la construction.
+  ///
+  /// `main()` crée ce service avant `runApp` : rien de ce qui touche à
+  /// Firebase ne doit pouvoir retarder la première image, ni échouer parce que
+  /// le SDK natif n'est pas encore prêt.
+  late final FirebaseMessaging _messaging =
+      _injected ?? FirebaseMessaging.instance;
+
+  /// Plafond d'initialisation du SDK natif.
+  ///
+  /// Ne protège pas d'un blocage du thread natif Android — aucun minuteur Dart
+  /// ne le peut, puisque Flutter partage ce thread avec la boucle d'événements.
+  /// En revanche, une initialisation seulement lente ne retient plus `token()`
+  /// indéfiniment.
+  static const Duration initializationBudget = Duration(seconds: 10);
 
   /// Initialisation en cours ou terminée.
   ///
@@ -145,9 +160,10 @@ final class FirebasePushService implements PushService {
     if (_ready) {
       return true;
     }
+    final watch = Stopwatch()..start();
     try {
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp();
+        await Firebase.initializeApp().timeout(initializationBudget);
       }
 
       // iOS n'a pas d'équivalent au POST_NOTIFICATIONS d'Android : la demande
@@ -172,6 +188,10 @@ final class FirebasePushService implements PushService {
 
       FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
       _ready = true;
+      // Trace conservée en release : c'est la seule façon de savoir, sur le
+      // téléphone d'un utilisateur, si l'initialisation Firebase a abouti ou
+      // si elle est restée en chemin. Une ligne, une fois par lancement.
+      debugPrint('TONDE_PUSH ready=true in ${watch.elapsedMilliseconds}ms');
       return true;
     } on Object catch (error, stackTrace) {
       // Configuration absente, Play Services manquant, autorisation refusée :
@@ -186,6 +206,9 @@ final class FirebasePushService implements PushService {
           library: 'tonde',
           context: ErrorDescription('initialisation des notifications push'),
         ),
+      );
+      debugPrint(
+        'TONDE_PUSH ready=false in ${watch.elapsedMilliseconds}ms ($error)',
       );
       return false;
     }

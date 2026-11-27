@@ -31,50 +31,67 @@ final class LocalNotificationService implements NotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin;
 
-  bool _initialized = false;
+  /// Initialisation en cours ou terminée, `null` tant qu'aucune n'a abouti.
+  Future<void>? _initialization;
+
   bool _permissionGranted = false;
   int _nextId = 1000;
 
+  /// Prépare les canaux, une seule fois.
+  ///
+  /// L'échec reste **réessayable** : l'initialisation est lancée en tâche de
+  /// fond au démarrage, et un échec à cet instant ne doit pas condamner les
+  /// notifications de toute la session. La marquer comme faite avant d'avoir
+  /// réussi rendait la panne définitive et silencieuse.
   @override
-  Future<void> initialize() async {
-    if (_initialized) {
-      return;
+  Future<void> initialize() => _initialization ??= _initialize();
+
+  Future<void> _initialize() async {
+    try {
+      await _plugin.initialize(
+        settings: const InitializationSettings(
+          android: AndroidInitializationSettings(smallIcon),
+        ),
+      );
+
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      await android?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          progressChannelId,
+          'Suivi de la file',
+          description:
+              'Confirmation du ticket, progression et fin de votre passage.',
+          importance: Importance.defaultImportance,
+        ),
+      );
+      await android?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          urgentChannelId,
+          'Appel au guichet',
+          description:
+              'Votre tour, appel au guichet et rappel de présentation.',
+          importance: Importance.max,
+        ),
+      );
+    } on Object {
+      // La prochaine demande retentera : on oublie la tentative.
+      _initialization = null;
+      rethrow;
     }
-    _initialized = true;
-
-    await _plugin.initialize(
-      settings: const InitializationSettings(
-        android: AndroidInitializationSettings(smallIcon),
-      ),
-    );
-
-    final android = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    await android?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        progressChannelId,
-        'Suivi de la file',
-        description:
-            'Confirmation du ticket, progression et fin de votre passage.',
-        importance: Importance.defaultImportance,
-      ),
-    );
-    await android?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        urgentChannelId,
-        'Appel au guichet',
-        description:
-            'Votre tour, appel au guichet et rappel de présentation.',
-        importance: Importance.max,
-      ),
-    );
   }
 
   @override
   Future<bool> requestPermission() async {
-    await initialize();
+    try {
+      await initialize();
+    } on Object {
+      // Sans canaux, demander l'autorisation n'aurait aucun effet : mieux vaut
+      // répondre franchement que laisser l'appelant croire que c'est réglé.
+      return false;
+    }
     final android = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -88,7 +105,14 @@ final class LocalNotificationService implements NotificationService {
 
   @override
   Future<void> show(TondeNotification notification) async {
-    await initialize();
+    try {
+      await initialize();
+    } on Object {
+      // Sans canaux, il n'y a rien à afficher — et une alerte manquée ne doit
+      // jamais interrompre le suivi de la file, qui reste la source de vérité
+      // à l'écran.
+      return;
+    }
     if (!_permissionGranted) {
       // Sans autorisation, `show` échouerait silencieusement : on évite un
       // aller-retour inutile vers le système.

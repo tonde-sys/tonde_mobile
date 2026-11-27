@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Écran de démarrage natif, Android 7 à 11.
 
-     Le fond seul laissait un aplat bleu pendant tout le chargement du moteur
-     Flutter : c'est ce que l'utilisateur voyait comme « un écran vide ». Le
-     logo est désormais posé au centre exact de l'écran, à la taille où l'écran
-     de marque Flutter le dessine. La première image de TONDE est donc la
-     marque elle-même, et le passage à Flutter ne déplace rien. -->
+     Fond de la marque + logo centré, à sa taille intrinsèque (116 dp). Le logo
+     est posé directement, sans passer par un `<inset>` : cette enveloppe n'a
+     de sens que pour l'icône d'Android 12 (voir `tonde_splash_icon`), et elle
+     n'a rien à faire dans un fond de fenêtre qui doit simplement se remplir.
+
+     Ce fichier n'est qu'une couverture : la première image de Flutter part
+     maintenant tout de suite (voir `main()`), donc il ne reste à l'écran que
+     le temps de charger le moteur. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/tonde_splash_background" />
-    <item
-        android:drawable="@drawable/tonde_splash_icon"
-        android:gravity="center" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/tonde_splash_logo" />
+    </item>
 </layer-list>
