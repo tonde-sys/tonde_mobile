@@ -94,9 +94,19 @@ jobs:
       # cela, un build cassé ne laisse qu'un « exit code 1 ».
       - name: Build APK release
         shell: bash
+        env:
+          # Sans cette valeur, `apiRoot` est nul et le client HTTP part avec une
+          # base vide : l'application s'ouvre, mais **aucune requête n'aboutit**
+          # et la connexion échoue sans explication. Le défaut reprend l'URL du
+          # backend pilote, la même que celle du desktop ; la variable de dépôt
+          # permet de la changer sans toucher au code.
+          TONDE_API_BASE_URL: ${{ vars.TONDE_API_BASE_URL || 'https://tonde-api-pilot-fx1j.onrender.com' }}
         run: |
           set -o pipefail
-          if ! flutter build apk --release --verbose 2>&1 | tee build-apk.log; then
+          if ! flutter build apk --release --verbose \
+            --dart-define=TONDE_ENVIRONMENT=prod \
+            --dart-define=TONDE_API_BASE_URL="$TONDE_API_BASE_URL" \
+            2>&1 | tee build-apk.log; then
             # Gradle met la cause dans « What went wrong », loin de la pile
             # d'appels qui termine le journal.
             MSG=$(grep -A 12 "What went wrong" build-apk.log | tr '\n' '|' | sed 's/%/%25/g; s/\r//g' | cut -c1-3000)
